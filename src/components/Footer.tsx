@@ -1,0 +1,78 @@
+import { Instagram, Facebook, Twitter } from "lucide-react";
+
+const Footer = () => {
+  return (
+    <footer className="bg-primary text-primary-foreground py-12">
+      <div className="container mx-auto px-6">
+        <div className="grid md:grid-cols-3 gap-8 mb-8">
+          <div>
+            <h3 className="font-serif text-2xl font-bold mb-4">ArtStudio</h3>
+            <p className="text-primary-foreground/80 leading-relaxed">
+              Creating unique artwork and bringing artistic visions to life through passion and dedication.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4">Quick Links</h4>
+            <ul className="space-y-2">
+              <li>
+                <button
+                  onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
+                  className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                >
+                  Portfolio
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
+                  className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                >
+                  About
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                  className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                >
+                  Contact
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4">Follow Me</h4>
+            <div className="flex gap-4">
+              <a
+                href="#"
+                className="bg-primary-foreground/10 p-2 rounded-lg hover:bg-primary-foreground/20 transition-colors"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a
+                href="#"
+                className="bg-primary-foreground/10 p-2 rounded-lg hover:bg-primary-foreground/20 transition-colors"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a
+                href="#"
+                className="bg-primary-foreground/10 p-2 rounded-lg hover:bg-primary-foreground/20 transition-colors"
+              >
+                <Twitter className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-primary-foreground/20 pt-8 text-center text-primary-foreground/60">
+          <p>&copy; {new Date().getFullYear()} ArtStudio. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
