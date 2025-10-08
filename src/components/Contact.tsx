@@ -27,10 +27,10 @@ const Contact = () => {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Get in Touch
+            Contactez-Moi
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Interested in commissioning artwork or have questions? I'd love to hear from you.
+            Intéressé par une commission ou souhaitez en savoir plus sur mon travail? Je serais ravie d'échanger avec vous.
           </p>
         </div>
 
@@ -42,7 +42,12 @@ const Contact = () => {
               </div>
               <div>
                 <h3 className="font-semibold text-foreground mb-1">Email</h3>
-                <p className="text-muted-foreground">artist@example.com</p>
+                <a
+                  href="mailto:omhind53@gmail.com"
+                  className="text-muted-foreground hover:text-accent transition-colors"
+                >
+                  omhind53@gmail.com
+                </a>
               </div>
             </div>
             <div className="flex items-start gap-4">
@@ -50,8 +55,13 @@ const Contact = () => {
                 <Phone className="w-6 h-6 text-accent" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground mb-1">Phone</h3>
-                <p className="text-muted-foreground">+1 (555) 123-4567</p>
+                <h3 className="font-semibold text-foreground mb-1">Téléphone</h3>
+                <a
+                  href="tel:+212666672756"
+                  className="text-muted-foreground hover:text-accent transition-colors"
+                >
+                  0666672756
+                </a>
               </div>
             </div>
             <div className="flex items-start gap-4">
@@ -59,35 +69,38 @@ const Contact = () => {
                 <MapPin className="w-6 h-6 text-accent" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground mb-1">Studio Location</h3>
-                <p className="text-muted-foreground">
-                  123 Art Street
-                  <br />
-                  Creative District, CA 90210
-                </p>
+                <h3 className="font-semibold text-foreground mb-1">Instagram</h3>
+                <a
+                  href="https://instagram.com/fatydouirani"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-accent transition-colors"
+                >
+                  @fatydouirani
+                </a>
               </div>
             </div>
 
             <div className="bg-gradient-subtle p-6 rounded-lg">
               <h3 className="font-serif text-xl font-bold text-foreground mb-3">
-                Commission Process
+                Processus de Commissions
               </h3>
               <ol className="space-y-2 text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <span className="font-semibold text-accent">1.</span>
-                  Share your vision and requirements
+                  Partagez votre vision et vos besoins
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-semibold text-accent">2.</span>
-                  Receive a personalized quote and timeline
+                  Recevez un devis personnalisé et un calendrier
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-semibold text-accent">3.</span>
-                  Review sketches and provide feedback
+                  Examinez les esquisses et donnez votre avis
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="font-semibold text-accent">4.</span>
-                  Receive your completed artwork
+                  Recevez votre œuvre d'art complétée
                 </li>
               </ol>
             </div>

@@ -7,17 +7,18 @@ const About = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="animate-fade-in">
             <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
-              About the Artist
+              Omhind Fatima Douirani
             </h2>
             <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-              With over a decade of experience in various artistic mediums, I create artwork
-              that captures emotion, beauty, and the essence of my subjects. Each piece is
-              carefully crafted with attention to detail and a passion for visual storytelling.
+              Artiste plasticienne, matériste. Elle a embrassé le domaine de l'art dès son
+              bas âge, en manipulant la matière naturelle. Elle a participé à plusieurs expositions
+              individuelles et collectives, nationales et internationales, et continue toujours à faire
+              des recherches.
             </p>
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              From intricate pencil portraits to vibrant watercolor landscapes, my work
-              explores the boundaries between realism and artistic interpretation. I believe
-              every artwork should evoke emotion and create a lasting connection with its viewer.
+              Omhind assure des ateliers de formation en art plastique, surtout pour des enfants
+              malades et démunis. Son travail explore la texture et la matière, créant des œuvres
+              uniques qui évoquent l'émotion et racontent des histoires visuelles captivantes.
             </p>
 
             <div className="space-y-4">
@@ -26,9 +27,9 @@ const About = () => {
                   <Palette className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Diverse Techniques</h3>
+                  <h3 className="font-semibold text-foreground mb-1">Art Matériste</h3>
                   <p className="text-muted-foreground">
-                    Mastery in watercolor, pencil, charcoal, and mixed media
+                    Spécialisation dans la manipulation de matières naturelles
                   </p>
                 </div>
               </div>
@@ -37,9 +38,9 @@ const About = () => {
                   <Heart className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Custom Commissions</h3>
+                  <h3 className="font-semibold text-foreground mb-1">Ateliers de Formation</h3>
                   <p className="text-muted-foreground">
-                    Personalized artwork tailored to your vision and space
+                    Ateliers d'art plastique pour enfants malades et démunis
                   </p>
                 </div>
               </div>
@@ -48,9 +49,9 @@ const About = () => {
                   <Star className="w-6 h-6 text-accent" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Award-Winning</h3>
+                  <h3 className="font-semibold text-foreground mb-1">Expositions Internationales</h3>
                   <p className="text-muted-foreground">
-                    Recognized in multiple regional and national art exhibitions
+                    Turquie, Allemagne, France et à travers le Maroc
                   </p>
                 </div>
               </div>
@@ -59,20 +60,20 @@ const About = () => {
 
           <div className="grid grid-cols-2 gap-4 animate-scale-in">
             <div className="bg-card p-8 rounded-lg shadow-elegant text-center">
-              <div className="text-4xl font-bold text-accent mb-2">10+</div>
-              <div className="text-muted-foreground">Years Experience</div>
+              <div className="text-4xl font-bold text-accent mb-2">14+</div>
+              <div className="text-muted-foreground">Années d'Expositions</div>
             </div>
             <div className="bg-card p-8 rounded-lg shadow-elegant text-center">
-              <div className="text-4xl font-bold text-accent mb-2">200+</div>
-              <div className="text-muted-foreground">Artworks Created</div>
+              <div className="text-4xl font-bold text-accent mb-2">30+</div>
+              <div className="text-muted-foreground">Expositions</div>
             </div>
             <div className="bg-card p-8 rounded-lg shadow-elegant text-center">
-              <div className="text-4xl font-bold text-accent mb-2">150+</div>
-              <div className="text-muted-foreground">Happy Clients</div>
+              <div className="text-4xl font-bold text-accent mb-2">5</div>
+              <div className="text-muted-foreground">Pays</div>
             </div>
             <div className="bg-card p-8 rounded-lg shadow-elegant text-center">
-              <div className="text-4xl font-bold text-accent mb-2">8</div>
-              <div className="text-muted-foreground">Awards Won</div>
+              <div className="text-4xl font-bold text-accent mb-2">∞</div>
+              <div className="text-muted-foreground">Créativité</div>
             </div>
           </div>
         </div>

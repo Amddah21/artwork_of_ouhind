@@ -17,11 +17,11 @@ const Hero = () => {
       <div className="container mx-auto px-6 py-32 relative z-10">
         <div className="max-w-3xl animate-fade-in">
           <h1 className="font-serif text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
-            Where Art Comes to Life
+            Omhind Fatima Douirani
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
-            Discover original artwork and custom drawings crafted with passion and precision.
-            Each piece tells a unique story.
+            Artiste plasticienne matériste - Explorant l'art à travers la manipulation
+            de matières naturelles depuis plus de 14 ans
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <button
