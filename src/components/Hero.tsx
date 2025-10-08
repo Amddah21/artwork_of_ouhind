@@ -1,4 +1,5 @@
 import heroImage from "@/assets/hero-artwork.jpg";
+import WatermarkOverlay from "./WatermarkOverlay";
 
 const Hero = () => {
   return (
@@ -12,6 +13,10 @@ const Hero = () => {
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/70 to-background"></div>
+        <WatermarkOverlay 
+          position="bottom-right"
+          opacity={0.3}
+        />
       </div>
 
       <div className="container mx-auto px-6 py-32 relative z-10">
@@ -28,13 +33,13 @@ const Hero = () => {
               onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
               className="bg-accent text-accent-foreground px-8 py-4 rounded-md hover:bg-accent/90 transition-all hover:shadow-hover font-medium"
             >
-              View Portfolio
+              Découvrir la Boutique
             </button>
             <button
               onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
               className="bg-card text-foreground px-8 py-4 rounded-md hover:shadow-elegant transition-all font-medium border border-border"
             >
-              Get in Touch
+              Me Contacter
             </button>
           </div>
         </div>

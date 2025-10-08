@@ -16,8 +16,8 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
-      title: "Message Sent!",
-      description: "Thank you for reaching out. I'll get back to you soon.",
+      title: "Message Envoyé !",
+      description: "Merci de m'avoir contactée. Je vous répondrai bientôt.",
     });
     setFormData({ name: "", email: "", message: "" });
   };
@@ -109,12 +109,12 @@ const Contact = () => {
           <form onSubmit={handleSubmit} className="space-y-6 animate-scale-in">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                Name
+                Nom
               </label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Your name"
+                placeholder="Votre nom"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
@@ -128,7 +128,7 @@ const Contact = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="your.email@example.com"
+                placeholder="votre.email@exemple.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
@@ -141,7 +141,7 @@ const Contact = () => {
               </label>
               <Textarea
                 id="message"
-                placeholder="Tell me about your project or inquiry..."
+                placeholder="Parlez-moi de votre projet ou de votre demande..."
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 required
@@ -152,7 +152,7 @@ const Contact = () => {
               type="submit"
               className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
             >
-              Send Message
+              Envoyer le Message
             </Button>
           </form>
         </div>

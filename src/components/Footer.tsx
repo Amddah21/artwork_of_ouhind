@@ -1,4 +1,5 @@
 import { Instagram, Facebook, Twitter } from "lucide-react";
+import Logo from "./Logo";
 
 const Footer = () => {
   return (
@@ -6,14 +7,17 @@ const Footer = () => {
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="font-serif text-2xl font-bold mb-4">ArtStudio</h3>
+            <div className="flex items-center gap-3 mb-4">
+              <Logo size="md" className="text-primary-foreground" />
+              <h3 className="font-serif text-2xl font-bold">Omhind Fatima Douirani</h3>
+            </div>
             <p className="text-primary-foreground/80 leading-relaxed">
-              Creating unique artwork and bringing artistic visions to life through passion and dedication.
+              Créer des œuvres d'art uniques et donner vie aux visions artistiques à travers la passion et le dévouement.
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
+            <h4 className="font-semibold mb-4">Liens Rapides</h4>
             <ul className="space-y-2">
               <li>
                 <button
@@ -43,7 +47,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Follow Me</h4>
+            <h4 className="font-semibold mb-4">Suivez-Moi</h4>
             <div className="flex gap-4">
               <a
                 href="#"
@@ -68,7 +72,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-primary-foreground/20 pt-8 text-center text-primary-foreground/60">
-          <p>&copy; {new Date().getFullYear()} ArtStudio. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Omhind Fatima Douirani. Tous droits réservés.</p>
         </div>
       </div>
     </footer>

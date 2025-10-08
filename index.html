@@ -6,22 +6,129 @@
     <title>Omhind Fatima Douirani - Artiste Plasticienne</title>
     <meta name="description" content="Portfolio de Omhind Fatima Douirani, artiste plasticienne matériste. Découvrez ses œuvres originales et expositions internationales au Maroc, Turquie, Allemagne et France." />
     <meta name="author" content="Omhind Fatima Douirani" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <meta property="og:title" content="aa111ab9-47b7-4267-9df3-7c8c15e9be40" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:title" content="Omhind Fatima Douirani - Artiste Plasticienne" />
+    <meta property="og:description" content="Portfolio de Omhind Fatima Douirani, artiste plasticienne matériste. Découvrez ses œuvres originales et expositions internationales." />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:image" content="/hero-artwork.jpg" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:title" content="Omhind Fatima Douirani - Artiste Plasticienne" />
+    <meta name="twitter:description" content="Portfolio de Omhind Fatima Douirani, artiste plasticienne matériste." />
+    <meta name="twitter:image" content="/hero-artwork.jpg" />
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Image Protection Script -->
+    <script>
+      // Disable right-click context menu
+      document.addEventListener('contextmenu', function(e) {
+        if (e.target.tagName === 'IMG') {
+          e.preventDefault();
+          showProtectionMessage();
+        }
+      });
+
+      // Disable drag and drop
+      document.addEventListener('dragstart', function(e) {
+        if (e.target.tagName === 'IMG') {
+          e.preventDefault();
+        }
+      });
+
+      // Disable common keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+        // Disable F12 (DevTools)
+        if (e.key === 'F12') {
+          e.preventDefault();
+          showProtectionMessage();
+        }
+        
+        // Disable Ctrl+Shift+I (DevTools)
+        if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+          e.preventDefault();
+          showProtectionMessage();
+        }
+        
+        // Disable Ctrl+U (View Source)
+        if (e.ctrlKey && e.key === 'u') {
+          e.preventDefault();
+          showProtectionMessage();
+        }
+        
+        // Disable Ctrl+S (Save)
+        if (e.ctrlKey && e.key === 's') {
+          e.preventDefault();
+          showProtectionMessage();
+        }
+        
+        // Disable Ctrl+Shift+S (Save As)
+        if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+          e.preventDefault();
+          showProtectionMessage();
+        }
+        
+        // Disable Print Screen
+        if (e.key === 'PrintScreen') {
+          e.preventDefault();
+          showProtectionMessage();
+        }
+      });
+
+      // Disable text selection on images
+      document.addEventListener('selectstart', function(e) {
+        if (e.target.tagName === 'IMG') {
+          e.preventDefault();
+        }
+      });
+
+      // Show protection message
+      function showProtectionMessage() {
+        // Create a temporary message
+        const message = document.createElement('div');
+        message.innerHTML = `
+          <div style="
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 10000;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+          ">
+            <div style="font-size: 24px; margin-bottom: 10px;">🔒</div>
+            <div style="font-weight: bold; margin-bottom: 5px;">Image Protégée</div>
+            <div style="font-size: 14px; opacity: 0.8;">Droits d'auteur réservés - Omhind Fatima Douirani</div>
+          </div>
+        `;
+        
+        document.body.appendChild(message);
+        
+        // Remove message after 2 seconds
+        setTimeout(() => {
+          if (message.parentNode) {
+            message.parentNode.removeChild(message);
+          }
+        }, 2000);
+      }
+
+      // Disable print functionality
+      window.addEventListener('beforeprint', function(e) {
+        e.preventDefault();
+        alert('L\'impression des images est désactivée pour protéger les droits d\'auteur.');
+      });
+    </script>
   </body>
 </html>

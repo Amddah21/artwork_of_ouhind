@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Logo from "./Logo";
+import Cart from "./Cart";
+import CurrencySelector from "./CurrencySelector";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,7 +33,10 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <h1 className="font-serif text-2xl font-bold text-foreground">ArtStudio</h1>
+          <div className="flex items-center gap-3">
+            <Logo size="md" className="text-foreground" />
+            <h1 className="font-serif text-2xl font-bold text-foreground">Omhind Fatima Douirani</h1>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
@@ -44,7 +50,7 @@ const Navbar = () => {
               onClick={() => scrollToSection("about")}
               className="text-foreground hover:text-accent transition-colors"
             >
-              About
+              À Propos
             </button>
             <button
               onClick={() => scrollToSection("contact")}
@@ -53,11 +59,19 @@ const Navbar = () => {
               Contact
             </button>
             <Button
-              onClick={() => scrollToSection("contact")}
+              onClick={() => scrollToSection("portfolio")}
               className="bg-accent text-accent-foreground hover:bg-accent/90"
             >
-              Commission Work
+              Boutique
             </Button>
+            <CurrencySelector />
+            <a
+              href="/admin"
+              className="text-foreground hover:text-accent transition-colors text-sm"
+            >
+              Admin
+            </a>
+            <Cart />
           </div>
 
           {/* Mobile Menu Button */}
@@ -83,7 +97,7 @@ const Navbar = () => {
                 onClick={() => scrollToSection("about")}
                 className="text-left text-foreground hover:text-accent transition-colors py-2"
               >
-                About
+                À Propos
               </button>
               <button
                 onClick={() => scrollToSection("contact")}
@@ -92,11 +106,23 @@ const Navbar = () => {
                 Contact
               </button>
               <Button
-                onClick={() => scrollToSection("contact")}
+                onClick={() => scrollToSection("portfolio")}
                 className="bg-accent text-accent-foreground hover:bg-accent/90 w-full"
               >
-                Commission Work
+                Boutique
               </Button>
+              <div className="flex justify-center mb-2">
+                <CurrencySelector />
+              </div>
+              <a
+                href="/admin"
+                className="text-left text-foreground hover:text-accent transition-colors py-2"
+              >
+                Admin
+              </a>
+              <div className="flex justify-center">
+                <Cart />
+              </div>
             </div>
           </div>
         )}
