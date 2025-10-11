@@ -1,17 +1,37 @@
-import heroImage from "@/assets/hero-artwork.jpg";
+import ImageSlideshow from "./ImageSlideshow";
 import WatermarkOverlay from "./WatermarkOverlay";
 
 const Hero = () => {
+  // Your 3 gallery images for the slideshow
+  const galleryImages = [
+    {
+      id: 1,
+      src: '/artwork1.JPG',
+      alt: 'Rêve Aquarelle - Abstract watercolor painting',
+      caption: 'Rêve Aquarelle - 2023'
+    },
+    {
+      id: 2,
+      src: '/artwork2.JPG', 
+      alt: 'Portrait au Crayon - Detailed pencil portrait',
+      caption: 'Portrait au Crayon - 2023'
+    },
+    {
+      id: 3,
+      src: '/artwork3.JPG',
+      alt: 'Étude au Fusain - Charcoal study with dramatic lighting',
+      caption: 'Étude au Fusain - 2023'
+    }
+  ];
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url(${heroImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
+      <div className="absolute inset-0 z-0">
+        <ImageSlideshow 
+          images={galleryImages}
+          interval={30000} // 30 seconds
+          className="w-full h-full"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/70 to-background"></div>
         <WatermarkOverlay 
           position="bottom-right"

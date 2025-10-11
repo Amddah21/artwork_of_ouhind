@@ -9,7 +9,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center gap-3 mb-4">
               <Logo size="md" className="text-primary-foreground" />
-              <h3 className="font-serif text-2xl font-bold">Omhind Fatima Douirani</h3>
+              <h3 className="font-serif text-2xl font-bold">Artiste OmHind</h3>
             </div>
             <p className="text-primary-foreground/80 leading-relaxed">
               Créer des œuvres d'art uniques et donner vie aux visions artistiques à travers la passion et le dévouement.
@@ -72,7 +72,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-primary-foreground/20 pt-8 text-center text-primary-foreground/60">
-          <p>&copy; {new Date().getFullYear()} Omhind Fatima Douirani. Tous droits réservés.</p>
+          <p>&copy; {new Date().getFullYear()}Artiste OmHind. Tous droits réservés.</p>
         </div>
       </div>
     </footer>

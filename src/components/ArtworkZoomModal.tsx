@@ -3,7 +3,6 @@ import { X, ZoomIn, ZoomOut, RotateCw, Heart, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useCurrency } from '@/contexts/CurrencyContext';
 import ReviewSection from './ReviewSection';
 import RatingDisplay from './RatingDisplay';
 import ProtectedImage from './ProtectedImage';
@@ -15,16 +14,9 @@ interface ArtworkZoomModalProps {
     title: string;
     category: string;
     image: string;
-    price: number;
-    originalPrice?: number;
     size: string;
     year: string;
     description: string;
-    offer?: {
-      type: 'percentage' | 'fixed';
-      value: number;
-      active: boolean;
-    };
     technique?: string;
     materials?: string[];
     tags?: string[];
@@ -36,7 +28,6 @@ interface ArtworkZoomModalProps {
 const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) => {
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
-  const { formatPrice } = useCurrency();
   const { getArtworkRating } = useReview();
 
   if (!isOpen) return null;
@@ -132,32 +123,14 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
             {/* Details Section */}
             <div className="w-full lg:w-80 p-6 bg-background border-l overflow-y-auto">
               <div className="space-y-6">
-                {/* Price */}
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    {artwork.originalPrice && (
-                      <span className="text-lg text-muted-foreground line-through">
-                        {formatPrice(artwork.originalPrice)}
-                      </span>
-                    )}
-                    <span className="text-2xl font-bold text-foreground">
-                      {formatPrice(artwork.price)}
-                    </span>
-                    {artwork.offer?.active && (
-                      <Badge variant="destructive">
-                        -{artwork.offer.type === 'percentage' ? `${artwork.offer.value}%` : `${formatPrice(artwork.offer.value)}`}
-                      </Badge>
-                    )}
-                  </div>
-                  {/* Rating Display */}
-                  <div className="mt-2">
-                    <RatingDisplay
-                      rating={getArtworkRating(artwork.id).average}
-                      size="md"
-                      showNumber
-                      count={getArtworkRating(artwork.id).count}
-                    />
-                  </div>
+                {/* Rating Display */}
+                <div className="mt-2">
+                  <RatingDisplay
+                    rating={getArtworkRating(artwork.id).average}
+                    size="md"
+                    showNumber
+                    count={getArtworkRating(artwork.id).count}
+                  />
                 </div>
 
                 {/* Tabs for Details and Reviews */}

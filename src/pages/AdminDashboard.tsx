@@ -1,133 +1,261 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit, Trash2, Eye, EyeOff, Star, StarOff, Package, DollarSign, Users, TrendingUp, MessageSquare } from 'lucide-react';
+import { 
+  BarChart3, 
+  Users, 
+  Eye, 
+  EyeOff, 
+  Activity, 
+  Shield, 
+  Clock, 
+  AlertCircle,
+  CheckCircle,
+  Info,
+  XCircle,
+  RefreshCw,
+  Download,
+  Filter,
+  Search
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useAdmin } from '@/contexts/AdminContext';
-import { useCurrency } from '@/contexts/CurrencyContext';
-import { useReview } from '@/contexts/ReviewContext';
-import ArtworkForm from '../components/ArtworkForm';
-import RatingDisplay from '../components/RatingDisplay';
-import ProtectedImage from '../components/ProtectedImage';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-const AdminDashboard = () => {
-  const { state, deleteArtwork, toggleAvailability, toggleFeatured, resetAllToAvailable, resetAllToUnavailable } = useAdmin();
-  const { formatPrice } = useCurrency();
-  const { state: reviewState, getArtworkRating } = useReview();
+// Types
+interface LogEntry {
+  id: string;
+  timestamp: Date;
+  level: 'info' | 'warning' | 'error' | 'success';
+  category: 'auth' | 'artwork' | 'user' | 'system' | 'security';
+  message: string;
+  details?: any;
+  userAgent?: string;
+  ipAddress?: string;
+}
+
+interface DashboardStats {
+  totalVisits: number;
+  uniqueVisitors: number;
+  pageViews: number;
+  artworkViews: number;
+  errorCount: number;
+  lastActivity: Date;
+}
+
+const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const [showForm, setShowForm] = useState(false);
-  const [editingArtwork, setEditingArtwork] = useState<any>(null);
-  const [view, setView] = useState<'grid' | 'list'>('grid');
-  const [filterStatus, setFilterStatus] = useState<'all' | 'available' | 'unavailable' | 'featured'>('all');
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [filteredLogs, setFilteredLogs] = useState<LogEntry[]>([]);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalVisits: 0,
+    uniqueVisitors: 0,
+    pageViews: 0,
+    artworkViews: 0,
+    errorCount: 0,
+    lastActivity: new Date()
+  });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [levelFilter, setLevelFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
-  const handleEdit = (artwork: any) => {
-    setEditingArtwork(artwork);
-    setShowForm(true);
+  // Sample log data - in a real app, this would come from your backend
+  const generateSampleLogs = (): LogEntry[] => {
+    const sampleLogs: LogEntry[] = [
+      {
+        id: '1',
+        timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
+        level: 'info',
+        category: 'artwork',
+        message: 'Artwork "Rêve Aquarelle" viewed',
+        details: { artworkId: 1, userId: 'visitor_123' },
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        ipAddress: '192.168.1.100'
+      },
+      {
+        id: '2',
+        timestamp: new Date(Date.now() - 1000 * 60 * 10), // 10 minutes ago
+        level: 'success',
+        category: 'auth',
+        message: 'Admin login successful',
+        details: { userId: 'admin', sessionId: 'sess_456' },
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        ipAddress: '192.168.1.101'
+      },
+      {
+        id: '3',
+        timestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
+        level: 'warning',
+        category: 'security',
+        message: 'Failed login attempt detected',
+        details: { username: 'admin', attempts: 3 },
+        userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
+        ipAddress: '192.168.1.102'
+      },
+      {
+        id: '4',
+        timestamp: new Date(Date.now() - 1000 * 60 * 20), // 20 minutes ago
+        level: 'error',
+        category: 'system',
+        message: 'Image loading failed for artwork ID 2',
+        details: { artworkId: 2, error: '404 Not Found' },
+        userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X)',
+        ipAddress: '192.168.1.103'
+      },
+      {
+        id: '5',
+        timestamp: new Date(Date.now() - 1000 * 60 * 25), // 25 minutes ago
+        level: 'info',
+        category: 'user',
+        message: 'New visitor from France',
+        details: { country: 'France', city: 'Paris' },
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        ipAddress: '192.168.1.104'
+      }
+    ];
+    return sampleLogs;
   };
 
-  const handleViewArtwork = (artwork: any) => {
-    navigate(`/artwork/${artwork.id}`);
-  };
+  // Load logs and stats
+  useEffect(() => {
+    const loadData = () => {
+      const sampleLogs = generateSampleLogs();
+      setLogs(sampleLogs);
+      
+      // Generate sample stats
+      setStats({
+        totalVisits: Math.floor(Math.random() * 1000) + 500,
+        uniqueVisitors: Math.floor(Math.random() * 300) + 200,
+        pageViews: Math.floor(Math.random() * 2000) + 1000,
+        artworkViews: Math.floor(Math.random() * 500) + 300,
+        errorCount: sampleLogs.filter(log => log.level === 'error').length,
+        lastActivity: new Date()
+      });
+    };
 
-  const handleCloseForm = () => {
-    setShowForm(false);
-    setEditingArtwork(null);
-  };
+    loadData();
 
-  const handleDelete = (id: number) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette œuvre ?')) {
-      deleteArtwork(id);
+    // Auto-refresh every 30 seconds if enabled
+    if (autoRefresh) {
+      const interval = setInterval(loadData, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [autoRefresh]);
+
+  // Filter logs
+  useEffect(() => {
+    let filtered = logs;
+
+    if (searchTerm) {
+      filtered = filtered.filter(log =>
+        log.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (levelFilter !== 'all') {
+      filtered = filtered.filter(log => log.level === levelFilter);
+    }
+
+    if (categoryFilter !== 'all') {
+      filtered = filtered.filter(log => log.category === categoryFilter);
+    }
+
+    setFilteredLogs(filtered);
+  }, [logs, searchTerm, levelFilter, categoryFilter]);
+
+  const getLevelIcon = (level: string) => {
+    switch (level) {
+      case 'error': return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'warning': return <AlertCircle className="w-4 h-4 text-yellow-500" />;
+      case 'success': return <CheckCircle className="w-4 h-4 text-green-500" />;
+      default: return <Info className="w-4 h-4 text-blue-500" />;
     }
   };
 
-  const handleToggleAvailability = (id: number) => {
-    toggleAvailability(id);
+  const getLevelBadge = (level: string) => {
+    const variants = {
+      error: 'destructive',
+      warning: 'secondary',
+      success: 'default',
+      info: 'outline'
+    } as const;
+
+    return (
+      <Badge variant={variants[level as keyof typeof variants] || 'outline'}>
+        {level.toUpperCase()}
+      </Badge>
+    );
   };
 
-  const clearStorageAndReset = () => {
-    if (confirm('Êtes-vous sûr de vouloir effacer toutes les données et réinitialiser ?')) {
-      localStorage.removeItem('artworks');
-      window.location.reload();
-    }
+  const exportLogs = () => {
+    const csvContent = [
+      ['Timestamp', 'Level', 'Category', 'Message', 'IP Address', 'User Agent'].join(','),
+      ...filteredLogs.map(log => [
+        log.timestamp.toISOString(),
+        log.level,
+        log.category,
+        `"${log.message}"`,
+        log.ipAddress || '',
+        `"${log.userAgent || ''}"`
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `admin-logs-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
-  const stats = {
-    totalArtworks: state.artworks.length,
-    availableArtworks: state.artworks.filter(a => a.available).length,
-    featuredArtworks: state.artworks.filter(a => a.featured).length,
-    totalValue: state.artworks.reduce((sum, a) => sum + a.price, 0),
-    totalReviews: reviewState.reviews.length,
-    averageRating: reviewState.reviews.length > 0 
-      ? reviewState.reviews.reduce((sum, r) => sum + r.rating, 0) / reviewState.reviews.length 
-      : 0
-  };
-
-  // Filter artworks based on selected filter
-  const getFilteredArtworks = () => {
-    switch (filterStatus) {
-      case 'available':
-        return state.artworks.filter(a => a.available);
-      case 'unavailable':
-        return state.artworks.filter(a => !a.available);
-      case 'featured':
-        return state.artworks.filter(a => a.featured);
-      default:
-        return state.artworks;
-    }
+  const refreshData = () => {
+    const sampleLogs = generateSampleLogs();
+    setLogs(sampleLogs);
+    
+    setStats({
+      totalVisits: Math.floor(Math.random() * 1000) + 500,
+      uniqueVisitors: Math.floor(Math.random() * 300) + 200,
+      pageViews: Math.floor(Math.random() * 2000) + 1000,
+      artworkViews: Math.floor(Math.random() * 500) + 300,
+      errorCount: sampleLogs.filter(log => log.level === 'error').length,
+      lastActivity: new Date()
+    });
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-primary text-primary-foreground py-8">
+      <div className="bg-primary text-primary-foreground py-6">
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Tableau de Bord Admin</h1>
+              <h1 className="text-3xl font-bold">Admin Dashboard</h1>
               <p className="text-primary-foreground/80 mt-2">
-                Gérez votre galerie d'art et vos œuvres
+                Monitor your gallery activity and system logs
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
+            <div className="flex gap-2">
               <Button
-                onClick={() => setShowForm(true)}
-                className="bg-accent text-accent-foreground hover:bg-accent/90 w-full sm:w-auto"
-                size="sm"
+                variant="secondary"
+                onClick={() => navigate('/')}
+                className="bg-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/30"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                <span className="hidden xs:inline">Ajouter une Œuvre</span>
-                <span className="xs:hidden">Ajouter</span>
+                <Eye className="w-4 h-4 mr-2" />
+                View Site
               </Button>
-              <div className="flex gap-2">
-                <Button
-                  onClick={resetAllToAvailable}
-                  variant="outline"
-                  className="bg-green-600 text-white hover:bg-green-700 flex-1 sm:flex-none"
-                  size="sm"
-                >
-                  <span className="hidden xs:inline">Tout Afficher</span>
-                  <span className="xs:hidden">Afficher</span>
-                </Button>
-                <Button
-                  onClick={resetAllToUnavailable}
-                  variant="outline"
-                  className="bg-gray-600 text-white hover:bg-gray-700 flex-1 sm:flex-none"
-                  size="sm"
-                >
-                  <span className="hidden xs:inline">Tout Masquer</span>
-                  <span className="xs:hidden">Masquer</span>
-                </Button>
-                <Button
-                  onClick={clearStorageAndReset}
-                  variant="outline"
-                  className="bg-red-600 text-white hover:bg-red-700 flex-1 sm:flex-none"
-                  size="sm"
-                >
-                  <span className="hidden xs:inline">Réinitialiser</span>
-                  <span className="xs:hidden">Reset</span>
-                </Button>
-              </div>
+              <Button
+                variant="secondary"
+                onClick={refreshData}
+                className="bg-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/30"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh
+              </Button>
             </div>
           </div>
         </div>
@@ -135,336 +263,253 @@ const AdminDashboard = () => {
 
       <div className="container mx-auto px-6 py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Œuvres</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Total Visits</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalArtworks}</div>
+              <div className="text-2xl font-bold">{stats.totalVisits.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">
+                +12% from last week
+              </p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Disponibles</CardTitle>
+              <CardTitle className="text-sm font-medium">Unique Visitors</CardTitle>
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.uniqueVisitors.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">
+                +8% from last week
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Artwork Views</CardTitle>
               <Eye className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.availableArtworks}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">En Vedette</CardTitle>
-              <Star className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.featuredArtworks}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Valeur Totale</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{formatPrice(stats.totalValue)}</div>
+              <div className="text-2xl font-bold">{stats.artworkViews.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">
+                +15% from last week
+              </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Avis</CardTitle>
-              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Errors</CardTitle>
+              <AlertCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalReviews}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Note Moyenne</CardTitle>
-              <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.averageRating.toFixed(1)} ⭐</div>
+              <div className="text-2xl font-bold text-red-500">{stats.errorCount}</div>
+              <p className="text-xs text-muted-foreground">
+                Last 24 hours
+              </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Artworks Management */}
-        <Card>
-          <CardHeader>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <CardTitle>Gestion des Œuvres</CardTitle>
-                  <CardDescription className="text-sm sm:text-base">
-                    Gérez vos œuvres d'art, prix, offres et descriptions
-                  </CardDescription>
-                </div>
-                <div className="flex gap-2 self-start sm:self-auto">
-                  <Button
-                    variant={view === 'grid' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setView('grid')}
-                    className="flex-1 sm:flex-none"
-                  >
-                    <span className="hidden xs:inline">Grille</span>
-                    <span className="xs:hidden">📱</span>
-                  </Button>
-                  <Button
-                    variant={view === 'list' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setView('list')}
-                    className="flex-1 sm:flex-none"
-                  >
-                    <span className="hidden xs:inline">Liste</span>
-                    <span className="xs:hidden">📋</span>
-                  </Button>
-                </div>
+        {/* Main Content */}
+        <Tabs defaultValue="logs" className="space-y-6">
+          <div className="flex items-center justify-between">
+            <TabsList>
+              <TabsTrigger value="logs">Activity Logs</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="security">Security</TabsTrigger>
+            </TabsList>
+
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={autoRefresh ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setAutoRefresh(!autoRefresh)}
+                >
+                  <Activity className="w-4 h-4 mr-2" />
+                  Auto-refresh
+                </Button>
+                <Button variant="outline" size="sm" onClick={exportLogs}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Export
+                </Button>
               </div>
-          </CardHeader>
-          <CardContent>
-            {/* Filter Options */}
-            <div className="flex gap-2 mb-6 flex-wrap">
-              <Button
-                variant={filterStatus === 'all' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setFilterStatus('all')}
-              >
-                Tous ({state.artworks.length})
-              </Button>
-              <Button
-                variant={filterStatus === 'available' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setFilterStatus('available')}
-              >
-                Disponibles ({stats.availableArtworks})
-              </Button>
-              <Button
-                variant={filterStatus === 'unavailable' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setFilterStatus('unavailable')}
-              >
-                Indisponibles ({state.artworks.length - stats.availableArtworks})
-              </Button>
-              <Button
-                variant={filterStatus === 'featured' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setFilterStatus('featured')}
-              >
-                En Vedette ({stats.featuredArtworks})
-              </Button>
             </div>
-            {view === 'grid' ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {getFilteredArtworks().map((artwork) => (
-                  <Card key={artwork.id} className="overflow-hidden">
-                    <div 
-                      className="aspect-square overflow-hidden cursor-pointer"
-                      onClick={() => handleViewArtwork(artwork)}
-                    >
-                      <ProtectedImage
-                        src={artwork.image}
-                        alt={artwork.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-                        showWatermark={true}
-                        watermarkPosition="bottom-left"
+          </div>
+
+          <TabsContent value="logs" className="space-y-4">
+            {/* Filters */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Filter className="w-5 h-5" />
+                  Filters
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Search</label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                      <Input
+                        placeholder="Search logs..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
                       />
                     </div>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-semibold text-lg">{artwork.title}</h3>
-                        <div className="flex gap-1">
-                          {artwork.featured && (
-                            <Badge variant="secondary" className="text-xs">
-                              <Star className="w-3 h-3 mr-1" />
-                              Vedette
-                            </Badge>
-                          )}
-                          <Badge variant={artwork.available ? 'default' : 'secondary'}>
-                            {artwork.available ? 'Disponible' : 'Indisponible'}
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Level</label>
+                    <Select value={levelFilter} onValueChange={setLevelFilter}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All levels" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Levels</SelectItem>
+                        <SelectItem value="error">Error</SelectItem>
+                        <SelectItem value="warning">Warning</SelectItem>
+                        <SelectItem value="info">Info</SelectItem>
+                        <SelectItem value="success">Success</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Category</label>
+                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All categories" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Categories</SelectItem>
+                        <SelectItem value="auth">Authentication</SelectItem>
+                        <SelectItem value="artwork">Artwork</SelectItem>
+                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="system">System</SelectItem>
+                        <SelectItem value="security">Security</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Logs Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Activity Logs</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Showing {filteredLogs.length} of {logs.length} entries
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {filteredLogs.map((log) => (
+                    <div
+                      key={log.id}
+                      className="flex items-start gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex-shrink-0 mt-1">
+                        {getLevelIcon(log.level)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          {getLevelBadge(log.level)}
+                          <Badge variant="outline" className="text-xs">
+                            {log.category}
                           </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {log.timestamp.toLocaleString()}
+                          </span>
                         </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-2">{artwork.category}</p>
-                      <p className="text-sm text-muted-foreground mb-2">{artwork.size} • {artwork.year}</p>
-                      <div className="mb-3">
-                        <RatingDisplay
-                          rating={getArtworkRating(artwork.id).average}
-                          size="sm"
-                          showNumber
-                          count={getArtworkRating(artwork.id).count}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          {artwork.originalPrice && (
-                            <span className="text-sm text-muted-foreground line-through mr-2">
-                              {formatPrice(artwork.originalPrice)}
+                        <p className="text-sm font-medium mb-1">{log.message}</p>
+                        {log.details && (
+                          <details className="text-xs text-muted-foreground">
+                            <summary className="cursor-pointer hover:text-foreground">
+                              Details
+                            </summary>
+                            <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-x-auto">
+                              {JSON.stringify(log.details, null, 2)}
+                            </pre>
+                          </details>
+                        )}
+                        <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                          {log.ipAddress && (
+                            <span>IP: {log.ipAddress}</span>
+                          )}
+                          {log.userAgent && (
+                            <span className="truncate max-w-xs">
+                              UA: {log.userAgent.substring(0, 50)}...
                             </span>
                           )}
-                          <span className="font-bold text-lg">{formatPrice(artwork.price)}</span>
                         </div>
-                        {artwork.offer?.active && (
-                          <Badge variant="destructive">
-                            -{artwork.offer.type === 'percentage' ? `${artwork.offer.value}%` : `${formatPrice(artwork.offer.value)}`}
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEdit(artwork)}
-                          className="col-span-2"
-                        >
-                          <Edit className="w-4 h-4 mr-1" />
-                          Modifier
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={artwork.available ? "default" : "secondary"}
-                          onClick={() => handleToggleAvailability(artwork.id)}
-                          title={artwork.available ? "Rendre indisponible" : "Rendre disponible"}
-                          className={`${artwork.available ? "bg-green-600 hover:bg-green-700" : "bg-gray-600 hover:bg-gray-700"} text-xs`}
-                        >
-                          {artwork.available ? (
-                            <>
-                              <EyeOff className="w-3 h-3 mr-1" />
-                              <span className="hidden xs:inline">Masquer</span>
-                              <span className="xs:hidden">Hide</span>
-                            </>
-                          ) : (
-                            <>
-                              <Eye className="w-3 h-3 mr-1" />
-                              <span className="hidden xs:inline">Afficher</span>
-                              <span className="xs:hidden">Show</span>
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => toggleFeatured(artwork.id)}
-                          className="text-xs"
-                        >
-                          {artwork.featured ? <StarOff className="w-3 h-3" /> : <Star className="w-3 h-3" />}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleDelete(artwork.id)}
-                          className="col-span-2 text-xs"
-                        >
-                          <Trash2 className="w-3 h-3 mr-1" />
-                          Supprimer
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-3 sm:space-y-4">
-                {getFilteredArtworks().map((artwork) => (
-                  <div key={artwork.id} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
-                    <ProtectedImage
-                      src={artwork.image}
-                      alt={artwork.title}
-                      className="w-full sm:w-16 h-32 sm:h-16 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => handleViewArtwork(artwork)}
-                      showWatermark={true}
-                      watermarkPosition="bottom-right"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-sm sm:text-base truncate">{artwork.title}</h3>
-                        <div className="flex gap-2 flex-wrap">
-                          {artwork.featured && (
-                            <Badge variant="secondary" className="text-xs">
-                              <Star className="w-3 h-3 mr-1" />
-                              Vedette
-                            </Badge>
-                          )}
-                          <Badge variant={artwork.available ? 'default' : 'secondary'} className="text-xs">
-                            {artwork.available ? 'Disponible' : 'Indisponible'}
-                          </Badge>
-                        </div>
-                      </div>
-                      <p className="text-xs sm:text-sm text-muted-foreground mb-2">{artwork.category} • {artwork.size} • {artwork.year}</p>
-                      <div className="mb-2">
-                        <RatingDisplay
-                          rating={getArtworkRating(artwork.id).average}
-                          size="sm"
-                          showNumber
-                          count={getArtworkRating(artwork.id).count}
-                        />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="font-bold text-sm sm:text-base">{formatPrice(artwork.price)}</div>
-                        {artwork.offer?.active && (
-                          <Badge variant="destructive" className="text-xs">
-                            -{artwork.offer.type === 'percentage' ? `${artwork.offer.value}%` : `${formatPrice(artwork.offer.value)}`}
-                          </Badge>
-                        )}
                       </div>
                     </div>
-                    <div className="flex gap-2 flex-wrap sm:flex-nowrap">
-                      <Button size="sm" variant="outline" onClick={() => handleEdit(artwork)} className="flex-1 sm:flex-none text-xs">
-                        <Edit className="w-3 h-3 mr-1" />
-                        <span className="hidden xs:inline">Modifier</span>
-                        <span className="xs:hidden">Edit</span>
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant={artwork.available ? "default" : "secondary"}
-                        onClick={() => handleToggleAvailability(artwork.id)}
-                        title={artwork.available ? "Rendre indisponible" : "Rendre disponible"}
-                        className={`${artwork.available ? "bg-green-600 hover:bg-green-700" : "bg-gray-600 hover:bg-gray-700"} flex-1 sm:flex-none text-xs`}
-                      >
-                        {artwork.available ? (
-                          <>
-                            <EyeOff className="w-3 h-3 mr-1" />
-                            <span className="hidden xs:inline">Masquer</span>
-                            <span className="xs:hidden">Hide</span>
-                          </>
-                        ) : (
-                          <>
-                            <Eye className="w-3 h-3 mr-1" />
-                            <span className="hidden xs:inline">Afficher</span>
-                            <span className="xs:hidden">Show</span>
-                          </>
-                        )}
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => toggleFeatured(artwork.id)} className="text-xs">
-                        {artwork.featured ? <StarOff className="w-3 h-3" /> : <Star className="w-3 h-3" />}
-                      </Button>
-                      <Button size="sm" variant="destructive" onClick={() => handleDelete(artwork.id)} className="text-xs">
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
+                  ))}
+                  {filteredLogs.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No logs found matching your filters.
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Analytics Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-muted-foreground">
+                  <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>Analytics dashboard coming soon...</p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="security" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="w-5 h-5" />
+                  Security Monitoring
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 border rounded-lg">
+                      <h3 className="font-medium mb-2">Failed Login Attempts</h3>
+                      <p className="text-2xl font-bold text-red-500">3</p>
+                      <p className="text-sm text-muted-foreground">Last 24 hours</p>
+                    </div>
+                    <div className="p-4 border rounded-lg">
+                      <h3 className="font-medium mb-2">Suspicious Activity</h3>
+                      <p className="text-2xl font-bold text-yellow-500">1</p>
+                      <p className="text-sm text-muted-foreground">Currently monitoring</p>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Shield className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Security monitoring features coming soon...</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-
-      {/* Artwork Form Modal */}
-      {showForm && (
-        <ArtworkForm
-          artwork={editingArtwork}
-          onClose={handleCloseForm}
-        />
-      )}
-
     </div>
   );
 };

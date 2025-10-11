@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/contexts/CartContext";
-import { useAdmin } from "@/contexts/AdminContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
+import { useArtwork } from "@/contexts/ArtworkContext";
 import { useReview } from "@/contexts/ReviewContext";
-import { useToast } from "@/hooks/use-toast";
 import RatingDisplay from "./RatingDisplay";
 import ProtectedImage from "./ProtectedImage";
 
@@ -14,31 +11,8 @@ import ProtectedImage from "./ProtectedImage";
 const Portfolio = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const navigate = useNavigate();
-  const { dispatch } = useCart();
-  const { state: adminState } = useAdmin();
-  const { formatPrice } = useCurrency();
+  const { artworks } = useArtwork();
   const { getArtworkRating } = useReview();
-  const { toast } = useToast();
-
-  const handleAddToCart = (artwork: any) => {
-    console.log('Adding to cart:', artwork);
-    dispatch({
-      type: 'ADD_ITEM',
-      payload: {
-        id: artwork.id,
-        title: artwork.title,
-        price: artwork.price,
-        image: artwork.image,
-        size: artwork.size
-      }
-    });
-    
-    // Show success message
-    toast({
-      title: "Ajouté au panier",
-      description: `${artwork.title} a été ajouté à votre panier`,
-    });
-  };
 
   const handleViewArtwork = (artwork: any) => {
     navigate(`/artwork/${artwork.id}`);
@@ -57,7 +31,7 @@ const Portfolio = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {adminState.artworks.filter(artwork => artwork.available).map((artwork, index) => (
+          {artworks.filter(artwork => artwork.available).map((artwork, index) => (
             <div
               key={artwork.id}
               className="group relative overflow-hidden rounded-lg shadow-elegant hover:shadow-hover transition-all duration-500 animate-scale-in cursor-pointer"
@@ -99,43 +73,18 @@ const Portfolio = () => {
                     count={getArtworkRating(artwork.id).count}
                   />
                 </div>
-                <div className="flex items-center gap-2 mt-2">
-                  {artwork.originalPrice && (
-                    <span className="text-primary-foreground/60 text-sm line-through">
-                      {formatPrice(artwork.originalPrice)}
-                    </span>
-                  )}
-                  <p className="text-primary-foreground font-semibold text-lg">
-                    {formatPrice(artwork.price)}
-                  </p>
-                  {artwork.offer?.active && (
-                    <span className="bg-accent text-accent-foreground text-xs px-2 py-1 rounded">
-                      -{artwork.offer.type === 'percentage' ? `${artwork.offer.value}%` : `${formatPrice(artwork.offer.value)}`}
-                    </span>
-                  )}
-                </div>
                 <div className="flex gap-2 mt-3">
                   <Button
                     size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToCart(artwork);
-                    }}
-                    className="bg-accent text-accent-foreground hover:bg-accent/90 flex-1"
-                  >
-                    <ShoppingCart className="w-4 h-4 mr-1" />
-                    Ajouter
-                  </Button>
-                  <Button
-                    size="sm"
                     variant="outline"
-                    className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground/30"
+                    className="bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground/30 flex-1"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleViewArtwork(artwork);
                     }}
                   >
-                    <Eye className="w-4 h-4" />
+                    <Eye className="w-4 h-4 mr-2" />
+                    Voir les détails
                   </Button>
                 </div>
                 <p className="text-primary-foreground/80 text-xs mt-2">

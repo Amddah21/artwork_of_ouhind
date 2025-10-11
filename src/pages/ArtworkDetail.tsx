@@ -1,15 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Share2, ShoppingCart, Mail, Phone, MapPin } from 'lucide-react';
+import { ArrowLeft, Heart, Share2, Mail, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { useAdmin } from '@/contexts/AdminContext';
-import { useCurrency } from '@/contexts/CurrencyContext';
+import { useArtwork } from '@/contexts/ArtworkContext';
 import { useReview } from '@/contexts/ReviewContext';
-import { useCart } from '@/contexts/CartContext';
-import { useToast } from '@/hooks/use-toast';
 import ProtectedImage from '@/components/ProtectedImage';
 import RatingDisplay from '@/components/RatingDisplay';
 import ReviewSection from '@/components/ReviewSection';
@@ -17,44 +14,20 @@ import ReviewSection from '@/components/ReviewSection';
 const ArtworkDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { state: adminState } = useAdmin();
-  const { formatPrice } = useCurrency();
+  const { artworks } = useArtwork();
   const { getArtworkRating } = useReview();
-  const { dispatch } = useCart();
-  const { toast } = useToast();
   const [artwork, setArtwork] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
-      const foundArtwork = adminState.artworks.find(a => a.id === parseInt(id));
+      const foundArtwork = artworks.find(a => a.id === parseInt(id));
       if (foundArtwork) {
         setArtwork(foundArtwork);
       }
       setIsLoading(false);
     }
-  }, [id, adminState.artworks]);
-
-  const handleAddToCart = () => {
-    if (artwork) {
-      dispatch({
-        type: 'ADD_ITEM',
-        payload: {
-          id: artwork.id,
-          title: artwork.title,
-          price: artwork.price,
-          image: artwork.image,
-          size: artwork.size
-        }
-      });
-      
-      // Show success message
-      toast({
-        title: "Ajouté au panier",
-        description: `${artwork.title} a été ajouté à votre panier`,
-      });
-    }
-  };
+  }, [id, artworks]);
 
   const handleContact = () => {
     // Scroll to contact section
@@ -129,14 +102,6 @@ const ArtworkDetail = () => {
             
             {/* Action Buttons */}
             <div className="flex gap-3">
-              <Button
-                onClick={handleAddToCart}
-                className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
-                disabled={!artwork.available}
-              >
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                {artwork.available ? 'Ajouter au panier' : 'Indisponible'}
-              </Button>
               <Button variant="outline" className="flex-1">
                 <Heart className="w-4 h-4 mr-2" />
                 Favoris
@@ -161,27 +126,6 @@ const ArtworkDetail = () => {
                   count={ratingData.count}
                 />
                 <Badge variant="secondary">{artwork.category}</Badge>
-              </div>
-            </div>
-
-            {/* Price */}
-            <div className="bg-muted p-4 rounded-lg">
-              <div className="flex items-center justify-between">
-                <div>
-                  {artwork.originalPrice && (
-                    <span className="text-lg text-muted-foreground line-through mr-2">
-                      {formatPrice(artwork.originalPrice)}
-                    </span>
-                  )}
-                  <span className="text-3xl font-bold">
-                    {formatPrice(artwork.price)}
-                  </span>
-                </div>
-                {artwork.offer?.active && (
-                  <Badge variant="destructive" className="text-sm">
-                    -{artwork.offer.type === 'percentage' ? `${artwork.offer.value}%` : `${formatPrice(artwork.offer.value)}`}
-                  </Badge>
-                )}
               </div>
             </div>
 
