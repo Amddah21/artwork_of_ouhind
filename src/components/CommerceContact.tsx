@@ -1,0 +1,221 @@
+import React from 'react';
+import { Button } from './ui/button';
+import { Card } from './ui/card';
+import { Phone, Mail, MessageCircle, Instagram, Facebook, MapPin, Clock, Euro, Palette } from 'lucide-react';
+
+const CommerceContact: React.FC = () => {
+  const handleWhatsAppContact = () => {
+    const message = "Bonjour ! Je souhaite obtenir des informations sur vos œuvres d'art disponibles à la vente.";
+    const whatsappUrl = `https://wa.me/33123456789?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const handleEmailContact = () => {
+    const subject = "Demande d'information - Œuvres d'art";
+    const body = "Bonjour,\n\nJe suis intéressé(e) par vos œuvres d'art. Pourriez-vous me donner plus d'informations sur les pièces disponibles et les modalités d'achat ?\n\nCordialement,";
+    const mailtoUrl = `mailto:contact@oumhind-art.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(mailtoUrl);
+  };
+
+  const handleInstagramContact = () => {
+    window.open('https://instagram.com/oumhind_art', '_blank');
+  };
+
+  const handleFacebookContact = () => {
+    window.open('https://facebook.com/oumhind.art', '_blank');
+  };
+
+  return (
+    <section className="py-20 watercolor-bg canvas-texture">
+      <div className="container mx-auto px-6">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full painterly-card mb-6">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+              <MessageCircle className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-sm font-medium font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+              Contact & Achat
+            </span>
+          </div>
+          <h2 className="heading-lg mb-6 text-gradient">Comment Acquérir une Œuvre</h2>
+          <p className="text-xl max-w-3xl mx-auto leading-relaxed font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+            Intéressé par une œuvre ? Contactez-moi directement pour discuter de sa valeur artistique et des modalités d'acquisition.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Contact Methods */}
+          <div className="space-y-8">
+            <h3 className="text-2xl font-display font-semibold mb-6" style={{ color: 'hsl(240, 10%, 15%)' }}>
+              Méthodes de Contact
+            </h3>
+
+            {/* WhatsApp */}
+            <Card className="painterly-card p-6 hover-painterly-lift">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                  <Phone className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                    WhatsApp
+                  </h4>
+                  <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                    Réponse rapide garantie
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleWhatsAppContact}
+                  className="hover-painterly-lift"
+                  style={{
+                    background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+                    color: 'white'
+                  }}
+                >
+                  Contacter
+                </Button>
+              </div>
+            </Card>
+
+            {/* Email */}
+            <Card className="painterly-card p-6 hover-painterly-lift">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                  <Mail className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                    Email
+                  </h4>
+                  <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                    contact@oumhind-art.com
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleEmailContact}
+                  className="hover-painterly-lift"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
+                    color: 'hsl(45, 100%, 97%)'
+                  }}
+                >
+                  Envoyer
+                </Button>
+              </div>
+            </Card>
+
+            {/* Social Media */}
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="painterly-card p-4 hover-painterly-lift">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+                    <Instagram className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h5 className="font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                      Instagram
+                    </h5>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleInstagramContact}
+                      className="mt-1 hover-ink-flow"
+                    >
+                      Suivre
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="painterly-card p-4 hover-painterly-lift">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
+                    <Facebook className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h5 className="font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                      Facebook
+                    </h5>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={handleFacebookContact}
+                      className="mt-1 hover-ink-flow"
+                    >
+                      Suivre
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+
+          {/* Purchase Information */}
+          <div className="space-y-8">
+            <h3 className="text-2xl font-display font-semibold mb-6" style={{ color: 'hsl(240, 10%, 15%)' }}>
+              Modalités d'Achat
+            </h3>
+
+            {/* Art Value Info */}
+            <Card className="painterly-card p-6">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                  <Palette className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                  Valeur Artistique
+                </h4>
+              </div>
+              <ul className="space-y-2 text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                <li>• Chaque œuvre est unique et inestimable</li>
+                <li>• Prix à discuter selon la valeur artistique</li>
+                <li>• Paiement uniquement en espèces</li>
+                <li>• Certificat d'authenticité inclus</li>
+              </ul>
+            </Card>
+
+            {/* Delivery Info */}
+            <Card className="painterly-card p-6">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                  <MapPin className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                  Livraison & Retrait
+                </h4>
+              </div>
+              <ul className="space-y-2 text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                <li>• Retrait possible à l'atelier (Paris)</li>
+                <li>• Livraison en région parisienne</li>
+                <li>• Frais de livraison à discuter</li>
+                <li>• Emballage professionnel inclus</li>
+              </ul>
+            </Card>
+
+            {/* Process Info */}
+            <Card className="painterly-card p-6">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-white" />
+                </div>
+                <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                  Processus d'Achat
+                </h4>
+              </div>
+              <ol className="space-y-2 text-sm font-body list-decimal list-inside" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                <li>Contactez-moi via WhatsApp ou Email</li>
+                <li>Échange sur la valeur artistique de l'œuvre</li>
+                <li>Visite de l'atelier (optionnelle)</li>
+                <li>Discussion du prix selon la valeur artistique</li>
+                <li>Acquisition en espèces avec certificat</li>
+              </ol>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default CommerceContact;

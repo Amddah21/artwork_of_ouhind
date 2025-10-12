@@ -3,13 +3,20 @@ import Logo from "./Logo";
 
 const Footer = () => {
   return (
-    <footer className="bg-primary text-primary-foreground py-12">
-      <div className="container mx-auto px-6">
+    <footer className="bg-primary text-primary-foreground py-16 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-accent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-accent rounded-full blur-3xl"></div>
+      </div>
+      <div className="container mx-auto px-6 relative z-10">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <Logo size="md" className="text-primary-foreground" />
-              <h3 className="font-serif text-2xl font-bold">Artiste OmHind</h3>
+            <div className="flex items-center gap-4 mb-6">
+              <Logo size="lg" className="text-primary-foreground" />
+              <div>
+                <h3 className="font-serif text-2xl font-bold">Artiste OmHind</h3>
+                <p className="text-primary-foreground/70 text-sm">Omhind Fatima Douirani</p>
+              </div>
             </div>
             <p className="text-primary-foreground/80 leading-relaxed">
               Créer des œuvres d'art uniques et donner vie aux visions artistiques à travers la passion et le dévouement.

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import Logo from "./Logo";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -26,19 +27,26 @@ const Contact = () => {
     <section id="contact" className="py-24 bg-background">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16 animate-fade-in">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
+          <div className="flex justify-center mb-6">
+            <Logo size="lg" className="text-foreground/60" />
+          </div>
+          <div className="inline-block mb-4">
+            <span className="text-sm font-semibold text-accent uppercase tracking-wider">Restons en Contact</span>
+          </div>
+          <h2 className="heading-lg mb-4">
             Contactez-Moi
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <div className="section-divider"></div>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Intéressé par une commission ou souhaitez en savoir plus sur mon travail? Je serais ravie d'échanger avec vous.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-          <div className="space-y-8 animate-fade-in">
-            <div className="flex items-start gap-4">
-              <div className="bg-accent/10 p-3 rounded-lg">
-                <Mail className="w-6 h-6 text-accent" />
+          <div className="space-y-6 animate-fade-in">
+            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-card/50 transition-all duration-300">
+              <div className="icon-badge">
+                <Mail className="w-6 h-6" />
               </div>
               <div>
                 <h3 className="font-semibold text-foreground mb-1">Email</h3>
@@ -50,9 +58,9 @@ const Contact = () => {
                 </a>
               </div>
             </div>
-            <div className="flex items-start gap-4">
-              <div className="bg-accent/10 p-3 rounded-lg">
-                <Phone className="w-6 h-6 text-accent" />
+            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-card/50 transition-all duration-300">
+              <div className="icon-badge">
+                <Phone className="w-6 h-6" />
               </div>
               <div>
                 <h3 className="font-semibold text-foreground mb-1">Téléphone</h3>
@@ -64,9 +72,9 @@ const Contact = () => {
                 </a>
               </div>
             </div>
-            <div className="flex items-start gap-4">
-              <div className="bg-accent/10 p-3 rounded-lg">
-                <MapPin className="w-6 h-6 text-accent" />
+            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-card/50 transition-all duration-300">
+              <div className="icon-badge">
+                <MapPin className="w-6 h-6" />
               </div>
               <div>
                 <h3 className="font-semibold text-foreground mb-1">Instagram</h3>
@@ -81,8 +89,8 @@ const Contact = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-subtle p-6 rounded-lg">
-              <h3 className="font-serif text-xl font-bold text-foreground mb-3">
+            <div className="bg-gradient-subtle p-8 rounded-xl shadow-elegant border border-border/30">
+              <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
                 Processus de Commissions
               </h3>
               <ol className="space-y-2 text-muted-foreground">
@@ -150,7 +158,7 @@ const Contact = () => {
             </div>
             <Button
               type="submit"
-              className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+              className="btn-primary w-full"
             >
               Envoyer le Message
             </Button>

@@ -1,73 +1,199 @@
-import ImageSlideshow from "./ImageSlideshow";
-import WatermarkOverlay from "./WatermarkOverlay";
+import React, { useEffect, useRef, useState } from 'react';
+import { Button } from './ui/button';
+import { ArrowRight, Palette, Award, Users, Globe, Brush, Sparkles, Heart } from 'lucide-react';
+import Logo from './Logo';
 
-const Hero = () => {
-  // Your 3 gallery images for the slideshow
-  const galleryImages = [
-    {
-      id: 1,
-      src: '/artwork1.JPG',
-      alt: 'Rêve Aquarelle - Abstract watercolor painting',
-      caption: 'Rêve Aquarelle - 2023'
-    },
-    {
-      id: 2,
-      src: '/artwork2.JPG', 
-      alt: 'Portrait au Crayon - Detailed pencil portrait',
-      caption: 'Portrait au Crayon - 2023'
-    },
-    {
-      id: 3,
-      src: '/artwork3.JPG',
-      alt: 'Étude au Fusain - Charcoal study with dramatic lighting',
-      caption: 'Étude au Fusain - 2023'
-    }
-  ];
+const Hero: React.FC = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <ImageSlideshow 
-          images={galleryImages}
-          interval={30000} // 30 seconds
-          className="w-full h-full"
+    <section 
+      ref={heroRef}
+      className="relative min-h-screen flex items-center justify-center overflow-hidden watercolor-bg canvas-texture"
+    >
+      {/* Animated Background with flowing watercolor gradients */}
+      <div className="absolute inset-0">
+        <div 
+          className="absolute inset-0 animate-watercolor-flow" 
+          style={{ 
+            background: 'linear-gradient(135deg, hsl(48, 100%, 97%) 0%, hsl(45, 100%, 95%) 25%, hsl(200, 30%, 94%) 50%, hsl(280, 20%, 95%) 75%, hsl(48, 100%, 97%) 100%)',
+            backgroundSize: '400% 400%' 
+          }} 
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/70 to-background"></div>
-        <WatermarkOverlay 
-          position="bottom-right"
-          opacity={0.3}
+        <div 
+          className="absolute inset-0 animate-watercolor-flow" 
+          style={{ 
+            background: 'linear-gradient(45deg, hsl(330, 20%, 96%) 0%, hsl(330, 20%, 96%, 0.8) 40%, hsl(45, 100%, 95%, 0.9) 100%)',
+            backgroundSize: '300% 300%', 
+            animationDelay: '1s' 
+          }} 
         />
       </div>
 
-      <div className="container mx-auto px-6 py-32 relative z-10">
-        <div className="max-w-3xl animate-fade-in">
-          <h1 className="font-serif text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
-            Omhind Fatima Douirani
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
-            Artiste plasticienne matériste - Explorant l'art à travers la manipulation
-            de matières naturelles depuis plus de 14 ans
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
-              className="bg-accent text-accent-foreground px-8 py-4 rounded-md hover:bg-accent/90 transition-all hover:shadow-hover font-medium"
-            >
-              Découvrir la Boutique
-            </button>
-            <button
-              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="bg-card text-foreground px-8 py-4 rounded-md hover:shadow-elegant transition-all font-medium border border-border"
-            >
-              Me Contacter
-            </button>
+      {/* Floating brush strokes decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 left-10 w-16 h-16 opacity-20 animate-floatingBrush">
+          <Brush className="w-full h-full" style={{ color: 'hsl(38, 95%, 60%)' }} />
+        </div>
+        <div className="absolute top-40 right-20 w-12 h-12 opacity-15 animate-floatingBrush" style={{ animationDelay: '2s' }}>
+          <Sparkles className="w-full h-full" style={{ color: 'hsl(330, 20%, 60%)' }} />
+        </div>
+        <div className="absolute bottom-32 left-1/4 w-14 h-14 opacity-25 animate-floatingBrush" style={{ animationDelay: '4s' }}>
+          <Palette className="w-full h-full" style={{ color: 'hsl(38, 95%, 60%)' }} />
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-6 py-20 relative z-10">
+        <div className="grid lg:grid-cols-5 gap-12 items-center">
+          {/* Left Side - 60% (3 columns) */}
+          <div className="lg:col-span-3 space-y-8">
+            {/* Artist Badge with ink reveal */}
+            <div className={`inline-flex items-center space-x-2 px-6 py-3 rounded-full painterly-card transition-all duration-1000 ${
+              isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
+            }`}>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+                <Palette className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                Artiste Peintre Professionnelle
+              </span>
+            </div>
+
+            {/* Main Heading with ink reveal animation */}
+            <div className={`space-y-6 transition-all duration-1200 ${
+              isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-12'
+            }`} style={{ animationDelay: '0.3s' }}>
+              <div className="ink-reveal">
+                <h1 className="heading-xl text-gradient">
+                  Oum Hind F. Douirani
+                </h1>
+              </div>
+              <p className="text-xl leading-relaxed max-w-2xl font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                Artiste peintre passionnée, je crée des œuvres qui capturent l'essence de la beauté et de l'émotion à travers des techniques mixtes et une palette de couleurs vibrantes.
+              </p>
+            </div>
+
+            {/* CTA Buttons with paint splash effect */}
+            <div className={`flex flex-col sm:flex-row gap-6 transition-all duration-1000 ${
+              isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
+            }`} style={{ animationDelay: '0.6s' }}>
+              <Button 
+                size="lg" 
+                className="group hover-painterly-lift paint-splash relative overflow-hidden"
+                style={{ 
+                  background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
+                  color: 'hsl(45, 100%, 97%)',
+                  border: 'none',
+                  boxShadow: '0 8px 32px hsl(38, 95%, 60%, 0.3)'
+                }}
+              >
+                <span className="relative z-10 font-body font-medium">
+                  Explorer la Galerie
+                  <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="hover-ink-flow painterly-card"
+                style={{ 
+                  borderColor: 'hsl(330, 20%, 88%)',
+                  color: 'hsl(240, 10%, 15%)',
+                  backgroundColor: 'transparent',
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                <span className="font-body font-medium">Voir les Œuvres</span>
+              </Button>
+            </div>
+
+            {/* Stats with staggered animation */}
+            <div className={`grid grid-cols-3 gap-6 pt-8 transition-all duration-1000 ${
+              isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
+            }`} style={{ animationDelay: '0.9s' }}>
+              {[
+                { number: "15+", label: "Années d'Expérience", icon: Award },
+                { number: "200+", label: "Œuvres Créées", icon: Heart },
+                { number: "50+", label: "Expositions", icon: Globe }
+              ].map((stat, index) => {
+                const IconComponent = stat.icon;
+                return (
+                  <div 
+                    key={index}
+                    className="text-center painterly-card p-6 hover-watercolor-blend"
+                    style={{ animationDelay: `${1.2 + index * 0.1}s` }}
+                  >
+                    <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+                      <IconComponent className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="text-2xl font-bold text-gradient font-display">
+                      {stat.number}
+                    </div>
+                    <div className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                      {stat.label}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right Side - 40% (2 columns) */}
+          <div className={`lg:col-span-2 relative transition-all duration-1200 ${
+            isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-x-12'
+          }`} style={{ animationDelay: '0.6s' }}>
+            <div className="relative">
+              {/* Main artwork image with artistic frame */}
+              <div className="relative rounded-3xl overflow-hidden painterly-shadow">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 via-pink-400/10 to-transparent rounded-3xl" />
+                <img
+                  src="/src/assets/hero-artwork.jpg"
+                  alt="Artwork by Oum Hind F. Douirani"
+                  className="w-full h-96 object-cover transition-transform duration-700 hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+                
+                {/* Artistic corner decorations */}
+                <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-yellow-400 rounded-tr-lg opacity-60" />
+                <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-yellow-400 rounded-bl-lg opacity-60" />
+              </div>
+
+              {/* Floating quote card with watercolor effect */}
+              <div className="absolute -bottom-8 -left-8 painterly-card p-6 max-w-xs watercolor-bg">
+                <div className="relative">
+                  <blockquote className="text-lg italic font-accent leading-relaxed" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                    "L'art est l'expression de l'âme à travers la couleur et la forme."
+                  </blockquote>
+                  <div className="mt-3 text-sm font-medium font-body" style={{ color: 'hsl(38, 95%, 60%)' }}>
+                    - Oum Hind F. Douirani
+                  </div>
+                  
+                  {/* Decorative brush stroke */}
+                  <div className="absolute -top-2 -left-2 w-12 h-1 bg-gradient-to-r from-yellow-400 to-pink-400 rounded-full opacity-60" />
+                </div>
+              </div>
+
+              {/* Floating signature */}
+              <div className="absolute -top-4 -right-4 painterly-card p-3">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+                  <Logo size="sm" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Scroll indicator with artistic animation */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-foreground/30 rounded-full flex justify-center">
-          <div className="w-1.5 h-3 bg-foreground/30 rounded-full mt-2"></div>
+        <div className="w-6 h-10 border-2 rounded-full flex justify-center" style={{ borderColor: 'hsl(38, 95%, 60%)' }}>
+          <div className="w-1 h-3 rounded-full mt-2 animate-pulse" style={{ backgroundColor: 'hsl(38, 95%, 60%)' }} />
         </div>
       </div>
     </section>

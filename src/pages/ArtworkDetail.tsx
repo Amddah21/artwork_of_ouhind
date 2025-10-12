@@ -1,280 +1,492 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Share2, Mail, Phone, MapPin } from 'lucide-react';
+import { ArrowLeft, Heart, Share2, Eye, ShoppingCart, MessageCircle, Flag, Palette, Calendar, Tag, Maximize, ZoomIn, RotateCcw, Star, Phone, Mail, Euro } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { useArtwork } from '@/contexts/ArtworkContext';
-import { useReview } from '@/contexts/ReviewContext';
-import ProtectedImage from '@/components/ProtectedImage';
-import RatingDisplay from '@/components/RatingDisplay';
-import ReviewSection from '@/components/ReviewSection';
+import { Card } from '@/components/ui/card';
+import StarRating from '@/components/StarRating';
+import CommentForm from '@/components/CommentForm';
+import CommentsDisplay from '@/components/CommentsDisplay';
+import { useRating } from '@/contexts/RatingContext';
 
-const ArtworkDetail = () => {
+interface Artwork {
+  id: string;
+  title: string;
+  artist: string;
+  year: number;
+  medium: string;
+  dimensions: string;
+  category: string;
+  support: string;
+  reference: string;
+  price: string;
+  priceEur: string;
+  description: string;
+  story: string;
+  imageUrl: string;
+  thumbnailUrl: string;
+  views: number;
+  isAvailable: boolean;
+  tags: string[];
+  rating: number;
+  reviews: number;
+}
+
+const ArtworkDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { artworks } = useArtwork();
-  const { getArtworkRating } = useReview();
-  const [artwork, setArtwork] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [comments, setComments] = useState<any[]>([]);
+  
+  const { addRating, getAverageRating, getRatingCount, getUserRating } = useRating();
 
-  useEffect(() => {
-    if (id) {
-      const foundArtwork = artworks.find(a => a.id === parseInt(id));
-      if (foundArtwork) {
-        setArtwork(foundArtwork);
-      }
-      setIsLoading(false);
-    }
-  }, [id, artworks]);
+  // Sample artwork data - in real app, this would come from API
+  const artwork: Artwork = {
+    id: id || '1',
+    title: 'Rêve Aquarelle',
+    artist: 'Oum Hind F. Douirani',
+    year: 2023,
+    medium: 'Aquarelle sur papier',
+    dimensions: '100 x 110 cm',
+    category: 'Tableaux',
+    support: 'Papier',
+    reference: 'OHD-2023-001',
+    price: '45 000 MAD',
+    priceEur: '4 200 €',
+    description: 'Une œuvre impressionniste qui capture l\'essence des rêves à travers la fluidité de l\'aquarelle. Les couches mesurées et les éclaboussures de couleurs créent une composition où l\'émotion se mêle à la matière.',
+    story: 'Cette œuvre naît d\'une nuit d\'insomnie où les rêves se mélangent à la réalité. L\'artiste a cherché à capturer cette fluidité entre le conscient et l\'inconscient, utilisant la transparence de l\'aquarelle pour créer des couches de sens et d\'émotion.',
+    imageUrl: '/artwork1.JPG',
+    thumbnailUrl: '/artwork1.JPG',
+    views: 2432,
+    isAvailable: true,
+    tags: ['Impressionniste', 'Aquarelle', 'Rêves', 'Fluidité'],
+    rating: 4.8,
+    reviews: 24
+  };
 
-  const handleContact = () => {
-    // Scroll to contact section
-    const contactSection = document.getElementById('contact-section');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' });
+  const multipleViews = [
+    { url: '/artwork1.JPG', alt: 'Vue principale' },
+    { url: '/artwork2.JPG', alt: 'Détail texture' },
+    { url: '/artwork3.JPG', alt: 'Vue rapprochée' }
+  ];
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: artwork.title,
+        text: artwork.description,
+        url: window.location.href
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Chargement...</p>
-        </div>
-      </div>
-    );
-  }
+  const handleRating = (rating: number) => {
+    addRating(artwork.id, rating);
+  };
 
-  if (!artwork) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Œuvre non trouvée</h1>
-          <Button onClick={() => navigate('/')}>
-            Retour à la galerie
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const handleCommentSubmit = (comment: { rating: number; content: string }) => {
+    const newComment = {
+      id: Date.now().toString(),
+      userId: 'current-user',
+      userName: 'Vous',
+      content: comment.content,
+      rating: comment.rating,
+      timestamp: new Date().toISOString(),
+      likes: 0,
+      dislikes: 0,
+      replies: [],
+      isEdited: false
+    };
+    setComments([newComment, ...comments]);
+  };
 
-  const ratingData = getArtworkRating(artwork.id);
+  const handleLikeComment = (commentId: string) => {
+    setComments(comments.map(comment => 
+      comment.id === commentId 
+        ? { ...comment, likes: comment.likes + 1 }
+        : comment
+    ));
+  };
+
+  const handleDislikeComment = (commentId: string) => {
+    setComments(comments.map(comment => 
+      comment.id === commentId 
+        ? { ...comment, dislikes: comment.dislikes + 1 }
+        : comment
+    ));
+  };
+
+  const handleReply = (commentId: string, content: string) => {
+    // Handle reply logic
+  };
+
+  const handleReport = (commentId: string) => {
+    // Handle report logic
+  };
+
+  const handleDelete = (commentId: string) => {
+    setComments(comments.filter(comment => comment.id !== commentId));
+  };
+
+  const handleWhatsAppContact = () => {
+    const message = `Bonjour ! Je suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist}. Pourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?`;
+    const whatsappUrl = `https://wa.me/33123456789?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const handleEmailContact = () => {
+    const subject = `Demande d'information - ${artwork.title}`;
+    const body = `Bonjour,\n\nJe suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist}.\n\nDimensions: ${artwork.dimensions}\nAnnée: ${artwork.year}\nMédium: ${artwork.medium}\n\nPourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique et des modalités d'acquisition ?\n\nCordialement,`;
+    const mailtoUrl = `mailto:contact@oumhind-art.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(mailtoUrl);
+  };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen watercolor-bg canvas-texture">
       {/* Header */}
-      <div className="bg-primary text-primary-foreground py-4">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center gap-4">
+      <div className="bg-white/95 backdrop-blur-md shadow-watercolor border-b border-gray-200 mt-16">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="text-primary-foreground hover:bg-primary-foreground/20"
+              onClick={handleBack}
+              variant="outline"
+              className="hover-painterly-lift painterly-card"
+              style={{ 
+                borderColor: 'hsl(330, 20%, 88%)',
+                color: 'hsl(240, 10%, 15%)'
+              }}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Retour à la galerie
+              Retour
             </Button>
-            <div className="flex-1">
-              <h1 className="text-xl font-semibold">{artwork.title}</h1>
-              <p className="text-primary-foreground/80 text-sm">{artwork.category}</p>
+            <div className="flex items-center gap-4">
+              <Badge 
+                className="painterly-card" 
+                style={{
+                  backgroundColor: 'rgba(251, 191, 36, 0.1)', 
+                  color: 'hsl(38, 95%, 60%)',
+                  borderColor: 'rgba(251, 191, 36, 0.3)'
+                }}
+              >
+                <Eye className="w-4 h-4 mr-1" />
+                {artwork.views.toLocaleString()} vues
+              </Badge>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Image Section */}
-          <div className="space-y-4">
-            <div className="aspect-square bg-muted rounded-lg overflow-hidden">
-              <ProtectedImage
-                src={artwork.image}
-                alt={artwork.title}
-                className="w-full h-full object-cover"
-                showWatermark={true}
-                watermarkPosition="center"
-              />
-            </div>
-            
-            {/* Action Buttons */}
-            <div className="flex gap-3">
-              <Button variant="outline" className="flex-1">
-                <Heart className="w-4 h-4 mr-2" />
-                Favoris
-              </Button>
-              <Button variant="outline" disabled title="Partage désactivé pour protéger les droits d'auteur">
-                <Share2 className="w-4 h-4 mr-2" />
-                Partager
-              </Button>
+      <div className="container mx-auto px-6 py-12">
+        <div className="grid lg:grid-cols-2 gap-12">
+          
+          {/* Left Side - Artwork Image */}
+          <div className="space-y-6">
+            {/* Main Image */}
+            <div className="relative group">
+              <Card className="comfort-card overflow-hidden aspect-[4/3]">
+                <img
+                  src={multipleViews[currentImageIndex]?.url || artwork.imageUrl}
+                  alt={artwork.title}
+                  className={`w-full h-full object-cover transition-all duration-500 ${isZoomed ? 'scale-150' : 'group-hover:scale-105'}`}
+                />
+                
+                {/* Zoom Controls */}
+                <div className="absolute top-4 right-4 flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="comfort-card opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => setIsZoomed(!isZoomed)}
+                  >
+                    {isZoomed ? <Maximize className="w-4 h-4" /> : <ZoomIn className="w-4 h-4" />}
+                  </Button>
+                </div>
+
+                {/* High Resolution Badge */}
+                <Badge className="absolute top-4 left-4 comfort-card" style={{backgroundColor: 'rgba(248, 248, 248, 0.9)', color: '#7A6B5A'}}>
+                  Haute Résolution
+                </Badge>
+              </Card>
+
+              {/* Thumbnail Navigation */}
+              {multipleViews.length > 1 && (
+                <div className="flex gap-3 mt-4">
+                  {multipleViews.map((view, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        currentImageIndex === index 
+                          ? 'border-[#7A6B5A] shadow-lg' 
+                          : 'border-transparent hover:border-[#7A6B5A]/50'
+                      }`}
+                    >
+                      <img
+                        src={view.url}
+                        alt={view.alt}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Details Section */}
-          <div className="space-y-6">
-            {/* Title and Rating */}
+          {/* Right Side - Artwork Details */}
+          <div className="space-y-8">
+            
+            {/* Title and Artist */}
             <div>
-              <h1 className="text-3xl font-bold mb-2">{artwork.title}</h1>
-              <div className="flex items-center gap-4 mb-4">
-                <RatingDisplay
-                  rating={ratingData.average}
-                  size="md"
-                  showNumber
-                  count={ratingData.count}
-                />
-                <Badge variant="secondary">{artwork.category}</Badge>
+              <h1 className="text-4xl lg:text-5xl font-display font-bold comfort-text mb-2">
+                {artwork.title}
+              </h1>
+              <p className="text-xl comfort-text-muted font-body">
+                par <span className="font-semibold" style={{color: '#7A6B5A'}}>{artwork.artist}</span>
+              </p>
+            </div>
+
+            {/* Artwork Details Grid */}
+            <div className="grid grid-cols-2 gap-6">
+              <Card className="comfort-card p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(122, 107, 90, 0.1)'}}>
+                    <Palette className="w-5 h-5" style={{color: '#7A6B5A'}} />
+                  </div>
+                  <div>
+                    <p className="text-sm comfort-text-muted font-body">Technique</p>
+                    <p className="font-semibold comfort-text">{artwork.medium}</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="comfort-card p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(122, 107, 90, 0.1)'}}>
+                    <Maximize className="w-5 h-5" style={{color: '#7A6B5A'}} />
+                  </div>
+                  <div>
+                    <p className="text-sm comfort-text-muted font-body">Dimensions</p>
+                    <p className="font-semibold comfort-text">{artwork.dimensions}</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="comfort-card p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(122, 107, 90, 0.1)'}}>
+                    <Calendar className="w-5 h-5" style={{color: '#7A6B5A'}} />
+                  </div>
+                  <div>
+                    <p className="text-sm comfort-text-muted font-body">Année</p>
+                    <p className="font-semibold comfort-text">{artwork.year}</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="comfort-card p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(122, 107, 90, 0.1)'}}>
+                    <Tag className="w-5 h-5" style={{color: '#7A6B5A'}} />
+                  </div>
+                  <div>
+                    <p className="text-sm comfort-text-muted font-body">Référence</p>
+                    <p className="font-semibold comfort-text">{artwork.reference}</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Story Behind the Piece */}
+            <Card className="comfort-card p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-1 h-20 rounded-full" style={{backgroundColor: '#7A6B5A'}}></div>
+                <div>
+                  <h3 className="text-lg font-semibold comfort-text mb-3">Histoire de cette œuvre</h3>
+                  <p className="comfort-text-muted font-body leading-relaxed italic">
+                    {artwork.story}
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            {/* Tags */}
+            <div>
+              <h3 className="text-lg font-semibold comfort-text mb-3">Tags</h3>
+              <div className="flex flex-wrap gap-2">
+                {artwork.tags.map((tag, index) => (
+                  <Badge key={index} variant="secondary" className="comfort-card">
+                    {tag}
+                  </Badge>
+                ))}
               </div>
             </div>
 
-            {/* Description */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Description</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  {artwork.description}
-                </p>
-              </CardContent>
+            {/* Price and Availability */}
+            <Card className="comfort-card p-6">
+              <div className="text-center space-y-4">
+                <div>
+                  <p className="text-3xl font-bold font-display" style={{color: '#7A6B5A'}}>
+                    {artwork.price}
+                  </p>
+                  <p className="comfort-text-muted font-body">
+                    {artwork.priceEur}
+                  </p>
+                </div>
+                
+                <Badge 
+                  className={`px-4 py-2 ${
+                    artwork.isAvailable 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-red-100 text-red-800'
+                  }`}
+                >
+                  {artwork.isAvailable ? 'Disponible' : 'Vendu'}
+                </Badge>
+
+                {/* Art Value Display */}
+                <div className="flex items-center space-x-2 py-4 border-t border-gray-200">
+                  <Palette className="w-6 h-6" style={{ color: 'hsl(38, 95%, 60%)' }} />
+                  <span className="text-lg font-semibold text-gradient font-display">
+                    Valeur Artistique Inestimable
+                  </span>
+                </div>
+
+                {/* Direct Contact Buttons */}
+                <div className="space-y-3 pt-4">
+                  <div className="flex gap-3">
+                    <Button 
+                      className="flex-1 hover-painterly-lift"
+                      style={{
+                        background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+                        color: 'white'
+                      }}
+                      onClick={handleWhatsAppContact}
+                    >
+                      <Phone className="w-4 h-4 mr-2" />
+                      WhatsApp
+                    </Button>
+                    <Button 
+                      className="flex-1 hover-painterly-lift"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
+                        color: 'hsl(45, 100%, 97%)'
+                      }}
+                      onClick={handleEmailContact}
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Email
+                    </Button>
+                  </div>
+                  
+                  <div className="flex gap-3">
+                    <Button 
+                      variant="outline" 
+                      className="hover-ink-flow painterly-card"
+                      style={{ 
+                        borderColor: 'hsl(330, 20%, 88%)',
+                        color: 'hsl(240, 10%, 15%)'
+                      }}
+                    >
+                      <Heart className="w-4 h-4 mr-2" />
+                      Favoris
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="hover-ink-flow painterly-card"
+                      style={{ 
+                        borderColor: 'hsl(330, 20%, 88%)',
+                        color: 'hsl(240, 10%, 15%)'
+                      }}
+                      onClick={handleShare}
+                    >
+                      <Share2 className="w-4 h-4 mr-2" />
+                      Partager
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Acquisition Information */}
+                <div className="mt-4 p-4 painterly-card rounded-lg">
+                  <h4 className="font-semibold mb-2 font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                    Modalités d'Acquisition
+                  </h4>
+                  <ul className="text-sm space-y-1 font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                    <li>• Prix à discuter selon la valeur artistique</li>
+                    <li>• Paiement en espèces uniquement</li>
+                    <li>• Certificat d'authenticité inclus</li>
+                    <li>• Livraison ou retrait à l'atelier</li>
+                  </ul>
+                </div>
+              </div>
             </Card>
 
-            {/* Technical Details */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Détails Techniques</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Dimensions:</span>
-                  <span className="font-medium">{artwork.size}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Année:</span>
-                  <span className="font-medium">{artwork.year}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Catégorie:</span>
-                  <span className="font-medium">{artwork.category}</span>
-                </div>
-                {artwork.technique && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Technique:</span>
-                    <span className="font-medium">{artwork.technique}</span>
+            {/* Rating Section */}
+            <Card className="comfort-card p-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold comfort-text">Évaluation</h3>
+                
+                {/* Current Rating Display */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <StarRating
+                      rating={getAverageRating(artwork.id) || artwork.rating}
+                      size="lg"
+                      showCount={true}
+                      count={getRatingCount(artwork.id) || artwork.reviews}
+                    />
                   </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Disponibilité:</span>
-                  <Badge variant={artwork.available ? 'default' : 'secondary'}>
-                    {artwork.available ? 'Disponible' : 'Indisponible'}
-                  </Badge>
+                  <span className="text-sm comfort-text-muted">
+                    Votre note: {getUserRating(artwork.id) > 0 ? getUserRating(artwork.id) : 'Non noté'}
+                  </span>
                 </div>
-              </CardContent>
+
+                {/* Interactive Rating */}
+                <div className="pt-4 border-t border-charcoal-200">
+                  <p className="text-sm comfort-text-muted mb-3">Donnez votre avis :</p>
+                  <StarRating
+                    rating={getUserRating(artwork.id)}
+                    interactive={true}
+                    onRatingChange={handleRating}
+                    size="lg"
+                  />
+                  {getUserRating(artwork.id) > 0 && (
+                    <p className="text-xs text-green-600 mt-2">
+                      ✓ Merci pour votre évaluation !
+                    </p>
+                  )}
+                </div>
+              </div>
             </Card>
-
-            {/* Materials */}
-            {artwork.materials && artwork.materials.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Matériaux</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {artwork.materials.map((material: string, index: number) => (
-                      <Badge key={index} variant="secondary">
-                        {material}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Tags */}
-            {artwork.tags && artwork.tags.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tags</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {artwork.tags.map((tag: string, index: number) => (
-                      <Badge key={index} variant="outline">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </div>
         </div>
 
-        <Separator className="my-12" />
+        {/* Comments Section */}
+        <div className="mt-16 max-w-4xl mx-auto">
+          {/* Comment Form */}
+          <CommentForm
+            artworkId={artwork.id}
+            artworkTitle={artwork.title}
+            onSubmit={handleCommentSubmit}
+            className="mb-8"
+          />
 
-        {/* Reviews Section */}
-        <div className="mb-12">
-          <ReviewSection artworkId={artwork.id} artworkTitle={artwork.title} />
-        </div>
-
-        {/* Contact Section */}
-        <div id="contact-section" className="bg-muted/50 p-8 rounded-lg">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2">Intéressé par cette œuvre ?</h2>
-            <p className="text-muted-foreground">
-              Contactez-moi pour plus d'informations ou pour discuter d'une commande personnalisée
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Mail className="w-8 h-8 mx-auto mb-3 text-primary" />
-                <h3 className="font-semibold mb-2">Email</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Envoyez-moi un message
-                </p>
-                <Button variant="outline" size="sm" onClick={handleContact}>
-                  Contacter
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Phone className="w-8 h-8 mx-auto mb-3 text-primary" />
-                <h3 className="font-semibold mb-2">Téléphone</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Appelez-moi directement
-                </p>
-                <Button variant="outline" size="sm" onClick={handleContact}>
-                  Appeler
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6 text-center">
-                <MapPin className="w-8 h-8 mx-auto mb-3 text-primary" />
-                <h3 className="font-semibold mb-2">Atelier</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Visitez mon atelier
-                </p>
-                <Button variant="outline" size="sm" onClick={handleContact}>
-                  Visiter
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center mt-8">
-            <Button size="lg" onClick={handleContact}>
-              <Mail className="w-4 h-4 mr-2" />
-              Me contacter maintenant
-            </Button>
-          </div>
+          {/* Comments Display */}
+          <CommentsDisplay
+            comments={comments}
+            onLikeComment={handleLikeComment}
+            onDislikeComment={handleDislikeComment}
+            onReply={handleReply}
+            onReport={handleReport}
+            onDelete={handleDelete}
+          />
         </div>
       </div>
     </div>

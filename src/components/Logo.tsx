@@ -9,43 +9,20 @@ const Logo: FC<LogoProps> = ({ className = '', size = 'md' }) => {
   const sizeClasses = {
     sm: 'w-8 h-8',
     md: 'w-12 h-12',
-    lg: 'w-16 h-16'
+    lg: 'w-20 h-20',
+    xl: 'w-24 h-24'
   };
 
   return (
-    <div className={`${sizeClasses[size]} ${className}`}>
-      <svg
-        viewBox="0 0 100 100"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full"
-      >
-        {/* Main A structure with artistic flourishes */}
-        <path
-          d="M20 80 L50 20 L80 80 M35 60 L65 60"
-          stroke="currentColor"
-          strokeWidth="4"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-        />
-        {/* Artistic flourish extending from the right */}
-        <path
-          d="M80 80 Q90 70 95 50 Q100 30 90 20"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          fill="none"
-        />
-        {/* Additional artistic stroke */}
-        <path
-          d="M75 75 Q85 65 88 55"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          fill="none"
-        />
-      </svg>
+    <div className={`${sizeClasses[size]} ${className} group cursor-pointer`}>
+      <img
+        src="/logo3.png"
+        alt="Omhind Fatima Douirani - Artiste Logo"
+        className="w-full h-full object-contain transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-lg"
+        loading="lazy"
+        draggable="false"
+        onContextMenu={(e) => e.preventDefault()}
+      />
     </div>
   );
 };
