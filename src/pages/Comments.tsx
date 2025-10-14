@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MessageCircle, User, Heart, Reply, Flag, Edit, Trash2, Star, Filter, SortAsc, MoreVertical, Send, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { MessageCircle, User, Reply, Flag, Edit, Trash2, Star, Filter, SortAsc, MoreVertical, Send, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

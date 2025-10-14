@@ -11,7 +11,6 @@ import ArtisticFooter from "@/components/ArtisticFooter";
 import Index from "./pages/Index";
 import ArtworkDetail from "./pages/ArtworkDetail";
 import AdminDashboard from "./pages/AdminDashboard";
-import Favorites from "./pages/Favorites";
 import Voting from "./pages/Voting";
 import Comments from "./pages/Comments";
 import NotFound from "./pages/NotFound";
@@ -27,22 +26,25 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <div className="min-h-screen flex flex-col">
-                <ArtisticNavbar />
-                <main className="flex-1">
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/artwork/:id" element={<ArtworkDetail />} />
-                    <Route path="/admin" element={<AdminDashboard />} />
-                    <Route path="/favorites" element={<Favorites />} />
-                    <Route path="/voting" element={<Voting />} />
-                    <Route path="/comments" element={<Comments />} />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </main>
-                <ArtisticFooter />
-              </div>
+              <Routes>
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="*" element={
+                  <div className="min-h-screen flex flex-col">
+                    <ArtisticNavbar />
+                    <main className="flex-1">
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/artwork/:id" element={<ArtworkDetail />} />
+                        <Route path="/voting" element={<Voting />} />
+                        <Route path="/comments" element={<Comments />} />
+                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                    <ArtisticFooter />
+                  </div>
+                } />
+              </Routes>
             </BrowserRouter>
           </RatingProvider>
         </ReviewProvider>

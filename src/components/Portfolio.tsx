@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Heart, Share2, MessageCircle, Star, Tag, Eye, Palette, Calendar, Sparkles, Euro, Phone, Mail, ShoppingCart } from 'lucide-react';
+import { Share2, MessageCircle, Star, Tag, Eye, Palette, Calendar, Sparkles, Euro, Phone, Mail, ShoppingCart } from 'lucide-react';
 import RatingDisplay from './RatingDisplay';
 import ProtectedImage from './ProtectedImage';
 import { useArtwork } from '@/contexts/ArtworkContext';
@@ -31,7 +31,7 @@ const Portfolio: React.FC = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const portfolioRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
-  const { artworks } = useArtwork();
+  const { artworks, refreshArtworks } = useArtwork();
   const { getArtworkRating } = useReview();
 
   useEffect(() => {
@@ -72,14 +72,14 @@ const Portfolio: React.FC = () => {
 
   const handleWhatsAppContact = (artwork: any) => {
     const message = `Bonjour ! Je suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist}. Pourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?`;
-    const whatsappUrl = `https://wa.me/33123456789?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/212666672756?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleEmailContact = (artwork: any) => {
     const subject = `Demande d'information - ${artwork.title}`;
     const body = `Bonjour,\n\nJe suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist}.\n\nPourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?\n\nCordialement,`;
-    const mailtoUrl = `mailto:contact@oumhind-art.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const mailtoUrl = `mailto:omhind53@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(mailtoUrl);
   };
 
@@ -167,12 +167,6 @@ const Portfolio: React.FC = () => {
                   </span>
                 </div>
 
-                {/* Heart Icon */}
-                <div className="absolute bottom-4 right-4">
-                  <button className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-all duration-300 hover:scale-110">
-                    <Heart className="w-5 h-5 text-gray-600 hover:text-red-500 transition-colors" />
-                  </button>
-                </div>
 
                 {/* Floating Sparkles */}
                 {hoveredId === artwork.id && (

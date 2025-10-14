@@ -1,24 +1,18 @@
 import express from 'express';
+import { RatingModel } from '../models/rating.model.js';
+import { LogModel } from '../models/log.model.js';
 
 const router = express.Router();
 
-// GET ratings by artwork ID
+// GET average rating for artwork
 router.get('/artwork/:artworkId', async (req, res) => {
   try {
     const { artworkId } = req.params;
-    
-    // TODO: Replace with actual database query
-    const ratings = [];
-    const averageRating = 0;
-    const totalRatings = 0;
+    const ratingData = await RatingModel.getAverageForArtwork(artworkId);
     
     res.json({
       success: true,
-      data: {
-        ratings,
-        average: averageRating,
-        total: totalRatings,
-      },
+      data: ratingData,
     });
   } catch (error) {
     res.status(500).json({
@@ -28,19 +22,35 @@ router.get('/artwork/:artworkId', async (req, res) => {
   }
 });
 
-// POST submit rating
+// GET all ratings for artwork
+router.get('/artwork/:artworkId/all', async (req, res) => {
+  try {
+    const { artworkId } = req.params;
+    const ratings = await RatingModel.getByArtwork(artworkId);
+    
+    res.json({
+      success: true,
+      data: ratings,
+      count: ratings.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// POST new rating
 router.post('/', async (req, res) => {
   try {
-    const ratingData = req.body;
+    const ratingData = {
+      artworkId: parseInt(req.body.artworkId),
+      rating: parseInt(req.body.rating),
+      ipAddress: req.ip || req.connection.remoteAddress
+    };
     
-    // Validation
-    if (!ratingData.artworkId || !ratingData.rating) {
-      return res.status(400).json({
-        success: false,
-        error: 'Artwork ID and rating are required',
-      });
-    }
-    
+    // Validate rating
     if (ratingData.rating < 1 || ratingData.rating > 5) {
       return res.status(400).json({
         success: false,
@@ -48,35 +58,35 @@ router.post('/', async (req, res) => {
       });
     }
     
-    // TODO: Save to database
+    const newRating = await RatingModel.create(ratingData);
+    
+    // Get updated average
+    const averageData = await RatingModel.getAverageForArtwork(ratingData.artworkId);
+    
+    // Log the rating
+    await LogModel.create({
+      level: 'info',
+      category: 'user',
+      message: `New rating submitted for artwork ${ratingData.artworkId}`,
+      details: { rating: ratingData.rating, artworkId: ratingData.artworkId }
+    });
     
     res.status(201).json({
       success: true,
-      data: ratingData,
+      data: {
+        rating: newRating,
+        average: averageData
+      },
       message: 'Rating submitted successfully',
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
+    await LogModel.create({
+      level: 'error',
+      category: 'user',
+      message: 'Failed to submit rating',
+      details: { error: error.message }
     });
-  }
-});
-
-// PUT update rating
-router.put('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const ratingData = req.body;
     
-    // TODO: Update in database
-    
-    res.json({
-      success: true,
-      data: ratingData,
-      message: 'Rating updated successfully',
-    });
-  } catch (error) {
     res.status(500).json({
       success: false,
       error: error.message,
@@ -85,4 +95,3 @@ router.put('/:id', async (req, res) => {
 });
 
 export default router;
-

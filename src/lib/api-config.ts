@@ -1,6 +1,6 @@
 // API Configuration
 export const API_CONFIG = {
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -40,9 +40,16 @@ export const API_ENDPOINTS = {
     purchase: '/contact/purchase',
   },
   
+  // Auth endpoints
+  auth: {
+    login: '/auth/login',
+    verify: '/auth/verify',
+    forgotPassword: '/auth/forgot-password',
+    resetPassword: '/auth/reset-password',
+  },
+  
   // Admin endpoints
   admin: {
-    login: '/admin/login',
     verify: '/admin/verify',
     logout: '/admin/logout',
   },

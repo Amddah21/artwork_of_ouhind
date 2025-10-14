@@ -1,28 +1,98 @@
 import express from 'express';
+import { ContactModel } from '../models/contact.model.js';
+import { LogModel } from '../models/log.model.js';
 
 const router = express.Router();
 
-// POST general contact message
-router.post('/', async (req, res) => {
+// GET all contact messages
+router.get('/', async (req, res) => {
   try {
-    const contactData = req.body;
+    const filters = {
+      isRead: req.query.isRead === 'true' ? true : req.query.isRead === 'false' ? false : undefined
+    };
     
-    // Validation
-    if (!contactData.name || !contactData.email || !contactData.message) {
-      return res.status(400).json({
-        success: false,
-        error: 'Name, email, and message are required',
-      });
-    }
-    
-    // TODO: Send email or save to database
-    console.log('Contact form submission:', contactData);
+    const messages = await ContactModel.getAll(filters);
     
     res.json({
       success: true,
+      data: messages,
+      count: messages.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// GET single message
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const message = await ContactModel.getById(id);
+    
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        error: 'Message not found',
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: message,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// POST new contact message
+router.post('/', async (req, res) => {
+  try {
+    const messageData = {
+      name: req.body.name,
+      email: req.body.email,
+      subject: req.body.subject,
+      message: req.body.message,
+      phone: req.body.phone
+    };
+    
+    // Basic validation
+    if (!messageData.name || !messageData.email || !messageData.subject || !messageData.message) {
+      return res.status(400).json({
+        success: false,
+        error: 'Name, email, subject, and message are required',
+      });
+    }
+    
+    const newMessage = await ContactModel.create(messageData);
+    
+    // Log the contact
+    await LogModel.create({
+      level: 'info',
+      category: 'user',
+      message: `New contact message from ${messageData.name}`,
+      details: { messageId: newMessage.id, subject: messageData.subject }
+    });
+    
+    res.status(201).json({
+      success: true,
+      data: newMessage,
       message: 'Message sent successfully',
     });
   } catch (error) {
+    await LogModel.create({
+      level: 'error',
+      category: 'user',
+      message: 'Failed to send contact message',
+      details: { error: error.message }
+    });
+    
     res.status(500).json({
       success: false,
       error: error.message,
@@ -30,25 +100,23 @@ router.post('/', async (req, res) => {
   }
 });
 
-// POST artwork inquiry
-router.post('/inquiry', async (req, res) => {
+// PATCH mark message as read
+router.patch('/:id/read', async (req, res) => {
   try {
-    const inquiryData = req.body;
+    const { id } = req.params;
+    const message = await ContactModel.markAsRead(id);
     
-    // Validation
-    if (!inquiryData.artworkId || !inquiryData.email) {
-      return res.status(400).json({
+    if (!message) {
+      return res.status(404).json({
         success: false,
-        error: 'Artwork ID and email are required',
+        error: 'Message not found',
       });
     }
     
-    // TODO: Send email notification
-    console.log('Artwork inquiry:', inquiryData);
-    
     res.json({
       success: true,
-      message: 'Inquiry sent successfully',
+      data: message,
+      message: 'Message marked as read',
     });
   } catch (error) {
     res.status(500).json({
@@ -58,25 +126,23 @@ router.post('/inquiry', async (req, res) => {
   }
 });
 
-// POST purchase request
-router.post('/purchase', async (req, res) => {
+// DELETE message
+router.delete('/:id', async (req, res) => {
   try {
-    const purchaseData = req.body;
+    const { id } = req.params;
+    await ContactModel.delete(id);
     
-    // Validation
-    if (!purchaseData.artworkId || !purchaseData.email || !purchaseData.name) {
-      return res.status(400).json({
-        success: false,
-        error: 'Artwork ID, email, and name are required',
-      });
-    }
-    
-    // TODO: Process purchase request, send notifications
-    console.log('Purchase request:', purchaseData);
+    // Log the deletion
+    await LogModel.create({
+      level: 'warning',
+      category: 'user',
+      message: `Contact message deleted`,
+      details: { messageId: id }
+    });
     
     res.json({
       success: true,
-      message: 'Purchase request received successfully',
+      message: 'Message deleted successfully',
     });
   } catch (error) {
     res.status(500).json({
@@ -87,4 +153,3 @@ router.post('/purchase', async (req, res) => {
 });
 
 export default router;
-

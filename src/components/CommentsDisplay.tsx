@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Reply, Flag, MoreVertical, User, Calendar, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Reply, Flag, MoreVertical, User, Calendar, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';

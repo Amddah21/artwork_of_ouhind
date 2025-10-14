@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
-import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, Download, Heart, Share2, MessageCircle, Star } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, Download, Share2, MessageCircle, Star } from 'lucide-react';
 import RatingDisplay from './RatingDisplay';
 import ProtectedImage from './ProtectedImage';
 
@@ -42,7 +42,6 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
   const [zoomLevel, setZoomLevel] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
 
   const allImages = [artwork.image, ...(artwork.additionalImages || [])];
@@ -80,9 +79,6 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
     link.click();
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-  };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -128,14 +124,6 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
               </div>
 
               <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleLike}
-                  className={`painterly-card ${isLiked ? 'text-red-500' : ''}`}
-                >
-                  <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-                </Button>
                 <Button
                   variant="outline"
                   size="sm"
@@ -333,17 +321,6 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                 </div>
               )}
 
-              {/* Price */}
-              {artwork.price && (
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3 font-body">
-                    Prix
-                  </h3>
-                  <div className="text-2xl font-bold text-gradient">
-                    {artwork.price.toLocaleString()} €
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Action Buttons */}
@@ -369,17 +346,6 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                 </Button>
               )}
               
-              <Button 
-                variant="outline" 
-                className="w-full hover-ink-flow painterly-card"
-                style={{ 
-                  borderColor: 'hsl(330, 20%, 88%)',
-                  color: 'hsl(240, 10%, 15%)'
-                }}
-              >
-                <Star className="w-4 h-4 mr-2" />
-                Ajouter aux Favoris
-              </Button>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Share2, Eye, ShoppingCart, MessageCircle, Flag, Palette, Calendar, Tag, Maximize, ZoomIn, RotateCcw, Star, Phone, Mail, Euro } from 'lucide-react';
+import { ArrowLeft, Share2, Eye, ShoppingCart, MessageCircle, Flag, Palette, Calendar, Tag, Maximize, ZoomIn, RotateCcw, Star, Phone, Mail, Euro } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -42,34 +42,162 @@ const ArtworkDetail: React.FC = () => {
   const { addRating, getAverageRating, getRatingCount, getUserRating } = useRating();
 
   // Sample artwork data - in real app, this would come from API
-  const artwork: Artwork = {
-    id: id || '1',
-    title: 'Rêve Aquarelle',
-    artist: 'Oum Hind F. Douirani',
-    year: 2023,
-    medium: 'Aquarelle sur papier',
-    dimensions: '100 x 110 cm',
-    category: 'Tableaux',
-    support: 'Papier',
-    reference: 'OHD-2023-001',
-    price: '45 000 MAD',
-    priceEur: '4 200 €',
-    description: 'Une œuvre impressionniste qui capture l\'essence des rêves à travers la fluidité de l\'aquarelle. Les couches mesurées et les éclaboussures de couleurs créent une composition où l\'émotion se mêle à la matière.',
-    story: 'Cette œuvre naît d\'une nuit d\'insomnie où les rêves se mélangent à la réalité. L\'artiste a cherché à capturer cette fluidité entre le conscient et l\'inconscient, utilisant la transparence de l\'aquarelle pour créer des couches de sens et d\'émotion.',
-    imageUrl: '/artwork1.JPG',
-    thumbnailUrl: '/artwork1.JPG',
-    views: 2432,
-    isAvailable: true,
-    tags: ['Impressionniste', 'Aquarelle', 'Rêves', 'Fluidité'],
-    rating: 4.8,
-    reviews: 24
+  const getArtworkData = (artworkId: string): Artwork => {
+    const artworks = {
+      '1': {
+        id: '1',
+        title: 'Rêve Aquarelle',
+        artist: 'Oum Hind F. Douirani',
+        year: 2023,
+        medium: 'Aquarelle sur papier',
+        dimensions: '100 x 110 cm',
+        category: 'Tableaux',
+        support: 'Papier',
+        reference: 'OHD-2023-001',
+        price: '45 000 MAD',
+        priceEur: '4 200 €',
+        description: 'Une œuvre impressionniste qui capture l\'essence des rêves à travers la fluidité de l\'aquarelle. Les couches mesurées et les éclaboussures de couleurs créent une composition où l\'émotion se mêle à la matière.',
+        story: 'Cette œuvre naît d\'une nuit d\'insomnie où les rêves se mélangent à la réalité. L\'artiste a cherché à capturer cette fluidité entre le conscient et l\'inconscient, utilisant la transparence de l\'aquarelle pour créer des couches de sens et d\'émotion.',
+        imageUrl: '/artwork1.JPG',
+        thumbnailUrl: '/artwork1.JPG',
+        views: 2432,
+        isAvailable: true,
+        tags: ['Impressionniste', 'Aquarelle', 'Rêves', 'Fluidité'],
+        rating: 4.8,
+        reviews: 24
+      },
+      '7': {
+        id: '7',
+        title: 'Racines Silencieuses',
+        artist: 'Oum Hind F. Douirani',
+        year: 2025,
+        medium: 'Techniques mixtes sur papier',
+        dimensions: '60 x 80 cm',
+        category: 'Abstrait',
+        support: 'Papier',
+        reference: 'OHD-2025-001',
+        price: 'Valeur à discuter',
+        priceEur: 'Valeur à discuter',
+        description: 'Une exploration des textures naturelles et du silence intérieur. Une œuvre abstraite capturant l\'essence des racines et des formations géologiques à travers des techniques mixtes.',
+        story: 'Inspirée par la nature et le cycle de la vie, cette œuvre représente le lien invisible entre la terre et l\'esprit. Les textures complexes évoquent les réseaux de racines qui se développent sous la surface, créant un dialogue entre le visible et l\'invisible.',
+        imageUrl: '/artwork4.JPG',
+        thumbnailUrl: '/artwork4.JPG',
+        views: 1856,
+        isAvailable: true,
+        tags: ['Abstrait', 'Texture', 'Nature', 'Racines'],
+        rating: 4.9,
+        reviews: 18
+      },
+      '8': {
+        id: '8',
+        title: 'Expression de l\'Âme',
+        artist: 'Oum Hind F. Douirani',
+        year: 2025,
+        medium: 'Techniques mixtes sur toile',
+        dimensions: '70 x 90 cm',
+        category: 'Abstrait',
+        support: 'Toile',
+        reference: 'OHD-2025-002',
+        price: 'Valeur à discuter',
+        priceEur: 'Valeur à discuter',
+        description: 'L\'art est l\'expression de l\'âme à travers la couleur et la forme. Une œuvre qui explore les profondeurs de l\'émotion artistique et la connexion entre l\'artiste et l\'univers.',
+        story: 'Cette œuvre incarne la philosophie artistique de l\'artiste : "L\'art est l\'expression de l\'âme à travers la couleur et la forme." Chaque coup de pinceau révèle une émotion, chaque couleur exprime une pensée, créant un dialogue intime entre l\'artiste et le spectateur.',
+        imageUrl: '/artwork5.JPG',
+        thumbnailUrl: '/artwork5.JPG',
+        views: 2156,
+        isAvailable: true,
+        tags: ['Abstrait', 'Couleur', 'Forme', 'Âme'],
+        rating: 4.8,
+        reviews: 22
+      },
+      '9': {
+        id: '9',
+        title: 'Textures Organiques',
+        artist: 'Oum Hind F. Douirani',
+        year: 2025,
+        medium: 'Techniques mixtes sur papier',
+        dimensions: '80 x 100 cm',
+        category: 'Abstrait',
+        support: 'Papier',
+        reference: 'OHD-2025-003',
+        price: 'Valeur à discuter',
+        priceEur: 'Valeur à discuter',
+        description: 'Une exploration des textures naturelles et des formations géologiques. Cette œuvre abstraite en noir et blanc révèle la complexité des structures organiques et l\'interaction entre la lumière et l\'ombre.',
+        story: 'Cette œuvre explore les profondeurs des textures naturelles, évoquant les formations géologiques et les processus d\'érosion. Le jeu entre le noir et le blanc révèle la complexité des structures organiques, créant un dialogue entre le visible et l\'invisible, entre la matière et l\'esprit.',
+        imageUrl: '/artwork6.JPG',
+        thumbnailUrl: '/artwork6.JPG',
+        views: 1876,
+        isAvailable: true,
+        tags: ['Abstrait', 'Texture', 'Organique', 'Géologie'],
+        rating: 4.7,
+        reviews: 19
+      },
+      '10': {
+        id: '10',
+        title: 'Galerie d\'Art',
+        artist: 'Oum Hind F. Douirani',
+        year: 2025,
+        medium: 'Photographie numérique',
+        dimensions: '60 x 80 cm',
+        category: 'Photographie',
+        support: 'Impression',
+        reference: 'OHD-2025-004',
+        price: 'Valeur à discuter',
+        priceEur: 'Valeur à discuter',
+        description: 'Une vue intérieure d\'une galerie d\'art élégante, capturant l\'atmosphère sophistiquée et l\'éclairage naturel qui met en valeur les œuvres exposées.',
+        story: 'Cette photographie capture l\'essence d\'un espace d\'exposition professionnel, où la lumière naturelle danse sur les murs blancs et révèle la beauté des œuvres d\'art. L\'architecture minimaliste et l\'éclairage subtil créent une atmosphère contemplative parfaite pour l\'appréciation artistique.',
+        imageUrl: '/slider2.JPG',
+        thumbnailUrl: '/slider2.JPG',
+        views: 2345,
+        isAvailable: true,
+        tags: ['Galerie', 'Architecture', 'Éclairage', 'Exposition'],
+        rating: 4.9,
+        reviews: 28
+      }
+    };
+    
+    return artworks[artworkId as keyof typeof artworks] || artworks['1'];
   };
 
-  const multipleViews = [
-    { url: '/artwork1.JPG', alt: 'Vue principale' },
-    { url: '/artwork2.JPG', alt: 'Détail texture' },
-    { url: '/artwork3.JPG', alt: 'Vue rapprochée' }
-  ];
+  const artwork: Artwork = getArtworkData(id || '1');
+
+  const getMultipleViews = (artworkId: string) => {
+    if (artworkId === '7') {
+      return [
+        { url: '/artwork4.JPG', alt: 'Vue principale' },
+        { url: '/artwork1.JPG', alt: 'Détail texture' },
+        { url: '/artwork2.JPG', alt: 'Vue rapprochée' }
+      ];
+    }
+    if (artworkId === '8') {
+      return [
+        { url: '/artwork5.JPG', alt: 'Vue principale' },
+        { url: '/artwork1.JPG', alt: 'Détail texture' },
+        { url: '/artwork3.JPG', alt: 'Vue rapprochée' }
+      ];
+    }
+    if (artworkId === '9') {
+      return [
+        { url: '/artwork6.JPG', alt: 'Vue principale' },
+        { url: '/artwork4.JPG', alt: 'Détail texture' },
+        { url: '/artwork2.JPG', alt: 'Vue rapprochée' }
+      ];
+    }
+    if (artworkId === '10') {
+      return [
+        { url: '/slider2.JPG', alt: 'Vue principale' },
+        { url: '/gallery-interior-1.jpg', alt: 'Vue rapprochée' },
+        { url: '/gallery-interior-2.jpg', alt: 'Détail architecture' }
+      ];
+    }
+    return [
+      { url: '/artwork1.JPG', alt: 'Vue principale' },
+      { url: '/artwork2.JPG', alt: 'Détail texture' },
+      { url: '/artwork3.JPG', alt: 'Vue rapprochée' }
+    ];
+  };
+
+  const multipleViews = getMultipleViews(id || '1');
 
   const handleBack = () => {
     navigate(-1);
@@ -137,14 +265,14 @@ const ArtworkDetail: React.FC = () => {
 
   const handleWhatsAppContact = () => {
     const message = `Bonjour ! Je suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist}. Pourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?`;
-    const whatsappUrl = `https://wa.me/33123456789?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/212666672756?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleEmailContact = () => {
     const subject = `Demande d'information - ${artwork.title}`;
     const body = `Bonjour,\n\nJe suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist}.\n\nDimensions: ${artwork.dimensions}\nAnnée: ${artwork.year}\nMédium: ${artwork.medium}\n\nPourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique et des modalités d'acquisition ?\n\nCordialement,`;
-    const mailtoUrl = `mailto:contact@oumhind-art.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const mailtoUrl = `mailto:omhind53@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(mailtoUrl);
   };
 
@@ -329,18 +457,10 @@ const ArtworkDetail: React.FC = () => {
               </div>
             </div>
 
-            {/* Price and Availability */}
+            {/* Contact Information */}
             <Card className="comfort-card p-6">
               <div className="text-center space-y-4">
-                <div>
-                  <p className="text-3xl font-bold font-display" style={{color: '#7A6B5A'}}>
-                    {artwork.price}
-                  </p>
-                  <p className="comfort-text-muted font-body">
-                    {artwork.priceEur}
-                  </p>
-                </div>
-                
+                {/* Availability Status */}
                 <Badge 
                   className={`px-4 py-2 ${
                     artwork.isAvailable 
@@ -350,6 +470,18 @@ const ArtworkDetail: React.FC = () => {
                 >
                   {artwork.isAvailable ? 'Disponible' : 'Vendu'}
                 </Badge>
+
+                {/* Contact Information Display */}
+                <div className="space-y-3 py-4">
+                  <div className="flex items-center justify-center space-x-2">
+                    <Phone className="w-5 h-5" style={{ color: 'hsl(38, 95%, 60%)' }} />
+                    <span className="font-semibold comfort-text">WhatsApp: +212 666 67 27 56</span>
+                  </div>
+                  <div className="flex items-center justify-center space-x-2">
+                    <Mail className="w-5 h-5" style={{ color: 'hsl(38, 95%, 60%)' }} />
+                    <span className="font-semibold comfort-text">Email: omhind53@gmail.com</span>
+                  </div>
+                </div>
 
                 {/* Art Value Display */}
                 <div className="flex items-center space-x-2 py-4 border-t border-gray-200">
@@ -394,17 +526,6 @@ const ArtworkDetail: React.FC = () => {
                         borderColor: 'hsl(330, 20%, 88%)',
                         color: 'hsl(240, 10%, 15%)'
                       }}
-                    >
-                      <Heart className="w-4 h-4 mr-2" />
-                      Favoris
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="hover-ink-flow painterly-card"
-                      style={{ 
-                        borderColor: 'hsl(330, 20%, 88%)',
-                        color: 'hsl(240, 10%, 15%)'
-                      }}
                       onClick={handleShare}
                     >
                       <Share2 className="w-4 h-4 mr-2" />
@@ -419,7 +540,7 @@ const ArtworkDetail: React.FC = () => {
                     Modalités d'Acquisition
                   </h4>
                   <ul className="text-sm space-y-1 font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
-                    <li>• Prix à discuter selon la valeur artistique</li>
+                    <li>• Valeur artistique à discuter en privé</li>
                     <li>• Paiement en espèces uniquement</li>
                     <li>• Certificat d'authenticité inclus</li>
                     <li>• Livraison ou retrait à l'atelier</li>

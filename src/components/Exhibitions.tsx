@@ -207,7 +207,7 @@ const Exhibitions = () => {
         {/* Summary Stats */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           <div className="text-center p-6 comfort-card rounded-lg">
-            <div className="text-3xl font-bold font-display mb-2" style={{color: '#7A6B5A'}}>15+</div>
+            <div className="text-3xl font-bold font-display mb-2" style={{color: '#7A6B5A'}}>40+</div>
             <div className="text-sm comfort-text-muted font-body">Années d'activité</div>
           </div>
           <div className="text-center p-6 comfort-card rounded-lg">

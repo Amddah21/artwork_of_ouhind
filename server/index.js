@@ -1,11 +1,19 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import artworkRoutes from './routes/artwork.routes.js';
 import reviewRoutes from './routes/review.routes.js';
 import ratingRoutes from './routes/rating.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import { initializeDatabase } from './database/db.js';
+import { initializeTables } from './database/init.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -16,6 +24,9 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files (uploaded images)
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -34,6 +45,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -52,11 +64,35 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on http://localhost:${PORT}`);
-  console.log(`📡 API available at http://localhost:${PORT}/api`);
-});
+// Initialize database and start server
+async function startServer() {
+  try {
+    // Initialize database
+    console.log('🔄 Initializing database...');
+    await initializeDatabase();
+    await initializeTables();
+    console.log('✅ Database ready');
+    
+    // Start server
+    app.listen(PORT, () => {
+      console.log('');
+      console.log('🎨 =====================================');
+      console.log('   ArtSpark Studio Canvas Backend');
+      console.log('   =====================================');
+      console.log(`   ✅ Server running: http://localhost:${PORT}`);
+      console.log(`   📡 API endpoint: http://localhost:${PORT}/api`);
+      console.log(`   🗄️  Database: SQLite (artspark.db)`);
+      console.log(`   📁 Uploads: ${path.join(__dirname, '../public/uploads')}`);
+      console.log('   =====================================');
+      console.log('');
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 export default app;
 

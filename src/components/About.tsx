@@ -1,4 +1,4 @@
-import { Palette, Heart, Star, Award, Globe, Users, User } from "lucide-react";
+import { Palette, Star, Award, Globe, Users, User } from "lucide-react";
 import Logo from "./Logo";
 
 const About = () => {
@@ -61,7 +61,7 @@ const About = () => {
               
               <div className="group flex flex-col sm:flex-row items-start gap-3 md:gap-4 lg:gap-6 p-3 md:p-4 lg:p-6 rounded-2xl hover:bg-card/60 transition-all duration-500 border border-transparent hover:border-accent/20 hover:shadow-elegant">
                 <div className="icon-badge group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                  <Heart className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
+                  <Star className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
                 </div>
                 <div className="flex-1 text-center sm:text-left">
                   <h3 className="font-bold text-foreground mb-1 md:mb-2 lg:mb-3 text-sm md:text-base lg:text-lg xl:text-xl">Dialogue Visuel & Interactif</h3>
@@ -117,7 +117,7 @@ const About = () => {
             
             <div className="grid grid-cols-2 gap-2 md:gap-3 lg:gap-4 xl:gap-6">
               <div className="stat-card group p-3 md:p-4 lg:p-6">
-                <div className="stat-number group-hover:scale-110 transition-transform duration-300 text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl">15+</div>
+                <div className="stat-number group-hover:scale-110 transition-transform duration-300 text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl">40+</div>
                 <div className="text-muted-foreground font-semibold text-xs md:text-sm lg:text-base xl:text-lg">Années de Carrière</div>
                 <div className="w-full h-1 bg-gradient-to-r from-accent to-primary rounded-full mt-1 md:mt-2 lg:mt-3 opacity-60"></div>
               </div>

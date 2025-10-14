@@ -1,77 +1,23 @@
 import express from 'express';
+import { LogModel } from '../models/log.model.js';
+import { ArtworkModel } from '../models/artwork.model.js';
+import { ReviewModel } from '../models/review.model.js';
+import { ContactModel } from '../models/contact.model.js';
 
 const router = express.Router();
 
-// POST admin login
-router.post('/login', async (req, res) => {
+// GET dashboard statistics
+router.get('/stats', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    
-    // Validation
-    if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        error: 'Username and password are required',
-      });
-    }
-    
-    // TODO: Replace with actual authentication logic
-    // Check against database, hash password, etc.
-    const validUsername = process.env.ADMIN_USERNAME || 'admin';
-    const validPassword = process.env.ADMIN_PASSWORD || 'admin123';
-    
-    if (username === validUsername && password === validPassword) {
-      // TODO: Generate JWT token
-      const token = 'demo-token-' + Date.now();
-      
-      res.json({
-        success: true,
-        data: {
-          token,
-          user: {
-            username,
-            role: 'admin',
-          },
-        },
-        message: 'Login successful',
-      });
-    } else {
-      res.status(401).json({
-        success: false,
-        error: 'Invalid credentials',
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-});
-
-// POST verify token
-router.post('/verify', async (req, res) => {
-  try {
-    const { token } = req.body;
-    
-    if (!token) {
-      return res.status(400).json({
-        success: false,
-        error: 'Token is required',
-      });
-    }
-    
-    // TODO: Verify JWT token
+    const stats = await LogModel.getStatistics();
+    const artworkStats = await ArtworkModel.getStatistics();
     
     res.json({
       success: true,
       data: {
-        valid: true,
-        user: {
-          username: 'admin',
-          role: 'admin',
-        },
-      },
+        ...stats,
+        artworks: artworkStats
+      }
     });
   } catch (error) {
     res.status(500).json({
@@ -81,14 +27,112 @@ router.post('/verify', async (req, res) => {
   }
 });
 
-// POST logout
-router.post('/logout', async (req, res) => {
+// GET activity logs
+router.get('/logs', async (req, res) => {
   try {
-    // TODO: Invalidate token if using session-based auth
+    const filters = {
+      level: req.query.level,
+      category: req.query.category,
+      search: req.query.search,
+      limit: req.query.limit ? parseInt(req.query.limit) : 100
+    };
+    
+    const logs = await LogModel.getAll(filters);
     
     res.json({
       success: true,
-      message: 'Logout successful',
+      data: logs,
+      count: logs.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// GET pending reviews
+router.get('/reviews/pending', async (req, res) => {
+  try {
+    const pendingReviews = await ReviewModel.getAll({ approved: false });
+    
+    res.json({
+      success: true,
+      data: pendingReviews,
+      count: pendingReviews.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// GET unread messages
+router.get('/messages/unread', async (req, res) => {
+  try {
+    const unreadMessages = await ContactModel.getAll({ isRead: false });
+    
+    res.json({
+      success: true,
+      data: unreadMessages,
+      count: unreadMessages.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// POST manual log entry (for testing)
+router.post('/logs', async (req, res) => {
+  try {
+    const logData = {
+      level: req.body.level || 'info',
+      category: req.body.category || 'system',
+      message: req.body.message,
+      details: req.body.details,
+      ipAddress: req.ip || req.connection.remoteAddress,
+      userAgent: req.get('user-agent')
+    };
+    
+    const newLog = await LogModel.create(logData);
+    
+    res.status(201).json({
+      success: true,
+      data: newLog,
+      message: 'Log entry created',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// Dashboard overview
+router.get('/overview', async (req, res) => {
+  try {
+    const stats = await LogModel.getStatistics();
+    const artworkStats = await ArtworkModel.getStatistics();
+    const pendingReviews = await ReviewModel.getAll({ approved: false });
+    const unreadMessages = await ContactModel.getAll({ isRead: false });
+    const recentLogs = await LogModel.getAll({ limit: 10 });
+    
+    res.json({
+      success: true,
+      data: {
+        statistics: stats,
+        artworks: artworkStats,
+        pendingReviewsCount: pendingReviews.length,
+        unreadMessagesCount: unreadMessages.length,
+        recentActivity: recentLogs
+      }
     });
   } catch (error) {
     res.status(500).json({
@@ -99,4 +143,3 @@ router.post('/logout', async (req, res) => {
 });
 
 export default router;
-

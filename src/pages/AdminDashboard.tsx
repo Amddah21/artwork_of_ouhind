@@ -4,16 +4,13 @@ import {
   BarChart3, 
   Users, 
   Eye, 
-  EyeOff, 
   Activity, 
   Shield, 
-  Clock, 
   AlertCircle,
   CheckCircle,
   Info,
   XCircle,
   RefreshCw,
-  Download,
   Filter,
   Search,
   Upload,
@@ -26,11 +23,9 @@ import {
   Palette,
   Calendar,
   Tag,
-  FileText,
   Maximize,
   ZoomIn,
   RotateCcw,
-  Heart,
   Share2,
   MessageCircle
 } from 'lucide-react';
@@ -42,6 +37,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
+import { useArtwork } from '@/contexts/ArtworkContext';
+import { API_CONFIG, API_ENDPOINTS } from '@/lib/api-config';
 
 // Types
 interface LogEntry {
@@ -86,6 +83,7 @@ interface Artwork {
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { refreshArtworks } = useArtwork();
   
   // Logs state
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -124,7 +122,6 @@ const AdminDashboard: React.FC = () => {
     dimensions: '',
     category: '',
     tags: '',
-    price: '',
     story: '',
     isAvailable: true
   });
@@ -242,14 +239,28 @@ const AdminDashboard: React.FC = () => {
     });
   };
 
-  // Artwork management functions
-  const generateSampleArtworks = (): Artwork[] => {
-    return [];
-  };
-
-  // Initialize artworks
+  // Load artworks from API
   useEffect(() => {
-    setArtworks(generateSampleArtworks());
+    const loadArtworks = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.getAll}`);
+        if (response.ok) {
+          const data = await response.json();
+          setArtworks(data.artworks || []);
+        } else {
+          console.error('Failed to load artworks');
+          setArtworks([]);
+        }
+      } catch (error) {
+        console.error('Error loading artworks:', error);
+        setArtworks([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadArtworks();
   }, []);
 
   const handleFileUpload = (file: File) => {
@@ -291,7 +302,6 @@ const AdminDashboard: React.FC = () => {
       dimensions: '',
       category: '',
       tags: '',
-      price: '',
       story: '',
       isAvailable: true
     });
@@ -300,37 +310,57 @@ const AdminDashboard: React.FC = () => {
     setEditingArtwork(null);
   };
 
-  const handleSubmit = () => {
-    if (!formData.title || !formData.description || !imagePreview) {
+  const handleSubmit = async () => {
+    if (!formData.title || !formData.description || !uploadedImage) {
       alert('Please fill in all required fields and upload an image.');
       return;
     }
 
-    const newArtwork: Artwork = {
-      id: editingArtwork?.id || Date.now().toString(),
-      title: formData.title,
-      description: formData.description,
-      year: formData.year,
-      medium: formData.medium,
-      dimensions: formData.dimensions,
-      category: formData.category,
-      tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-      price: formData.price ? parseFloat(formData.price) : undefined,
-      story: formData.story,
-      isAvailable: formData.isAvailable,
-      imageUrl: imagePreview,
-      createdAt: editingArtwork?.createdAt || new Date(),
-      updatedAt: new Date()
-    };
+    try {
+      setIsLoading(true);
+      
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append('year', formData.year.toString());
+      formDataToSend.append('medium', formData.medium);
+      formDataToSend.append('dimensions', formData.dimensions);
+      formDataToSend.append('category', formData.category);
+      formDataToSend.append('tags', formData.tags);
+      formDataToSend.append('story', formData.story);
+      formDataToSend.append('isAvailable', formData.isAvailable.toString());
+      formDataToSend.append('image', uploadedImage);
 
-    if (editingArtwork) {
-      setArtworks(prev => prev.map(art => art.id === editingArtwork.id ? newArtwork : art));
-    } else {
-      setArtworks(prev => [...prev, newArtwork]);
+      const url = editingArtwork ? `${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.update(editingArtwork.id)}` : `${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.create}`;
+      const method = editingArtwork ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        body: formDataToSend,
+      });
+
+      if (response.ok) {
+        // Reload artworks from API
+        const loadResponse = await fetch(`${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.getAll}`);
+        if (loadResponse.ok) {
+          const data = await loadResponse.json();
+          setArtworks(data.artworks || []);
+        }
+        
+        // Also refresh the artwork context for the gallery
+        await refreshArtworks();
+        
+        setIsUploadModalOpen(false);
+        resetForm();
+      } else {
+        alert('Failed to save artwork. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error saving artwork:', error);
+      alert('Error saving artwork. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsUploadModalOpen(false);
-    resetForm();
   };
 
   const handleEdit = (artwork: Artwork) => {
@@ -343,7 +373,6 @@ const AdminDashboard: React.FC = () => {
       dimensions: artwork.dimensions,
       category: artwork.category,
       tags: artwork.tags.join(', '),
-      price: artwork.price?.toString() || '',
       story: artwork.story || '',
       isAvailable: artwork.isAvailable
     });
@@ -351,9 +380,30 @@ const AdminDashboard: React.FC = () => {
     setIsUploadModalOpen(true);
   };
 
-  const handleDelete = (artworkId: string) => {
+  const handleDelete = async (artworkId: string) => {
     if (window.confirm('Are you sure you want to delete this artwork?')) {
-      setArtworks(prev => prev.filter(art => art.id !== artworkId));
+      try {
+        setIsLoading(true);
+        const response = await fetch(`${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.delete(artworkId)}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          // Reload artworks from API
+          const loadResponse = await fetch(`${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.getAll}`);
+          if (loadResponse.ok) {
+            const data = await loadResponse.json();
+            setArtworks(data.artworks || []);
+          }
+        } else {
+          alert('Failed to delete artwork. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error deleting artwork:', error);
+        alert('Error deleting artwork. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -389,16 +439,51 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      {/* Custom Admin Header */}
       <div className="bg-primary text-primary-foreground py-6" style={{backgroundColor: '#222222'}}>
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold comfort-text" style={{color: '#F8F8F8'}}>Tableau de Bord Admin</h1>
-              <p className="text-primary-foreground/80 mt-2 comfort-text-muted" style={{color: '#7A6B5A'}}>
-                Surveillez l'activité de votre galerie et les logs système
-              </p>
+            <div className="flex items-center gap-4">
+              <div>
+                <h1 className="text-3xl font-bold comfort-text" style={{color: '#F8F8F8'}}>Tableau de Bord Admin</h1>
+                <p className="text-primary-foreground/80 mt-2 comfort-text-muted" style={{color: '#7A6B5A'}}>
+                  Surveillez l'activité de votre galerie et les logs système
+                </p>
+              </div>
             </div>
+            
+            {/* Navigation Links */}
+            <div className="hidden md:flex items-center gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/')}
+                className="text-white hover:text-accent hover:bg-white/10"
+              >
+                Accueil
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/')}
+                className="text-white hover:text-accent hover:bg-white/10"
+              >
+                Galerie
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/')}
+                className="text-white hover:text-accent hover:bg-white/10"
+              >
+                À Propos
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/')}
+                className="text-white hover:text-accent hover:bg-white/10"
+              >
+                Contact
+              </Button>
+            </div>
+            
             <div className="flex gap-2">
               <Button
                 variant="secondary"
@@ -604,11 +689,6 @@ const AdminDashboard: React.FC = () => {
                         <Tag className="w-3 h-3" />
                         <span className="font-body">{artwork.category}</span>
                       </div>
-                      {artwork.price && (
-                        <div className="text-sm font-semibold text-foreground font-body">
-                          €{artwork.price.toLocaleString()}
-                        </div>
-                      )}
                     </div>
                     {artwork.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-3">
@@ -979,16 +1059,6 @@ const AdminDashboard: React.FC = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
-                      <Label htmlFor="price">Price (€)</Label>
-                      <Input
-                        id="price"
-                        type="number"
-                        value={formData.price}
-                        onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
-                        placeholder="450"
-                      />
-                    </div>
                   </div>
 
                   <div>
@@ -1001,15 +1071,20 @@ const AdminDashboard: React.FC = () => {
                     />
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="isAvailable"
-                      checked={formData.isAvailable}
-                      onChange={(e) => setFormData(prev => ({ ...prev, isAvailable: e.target.checked }))}
-                      className="rounded"
-                    />
-                    <Label htmlFor="isAvailable">Disponible à la vente</Label>
+                  <div>
+                    <Label htmlFor="availability">Statut de disponibilité</Label>
+                    <Select
+                      value={formData.isAvailable ? 'available' : 'unavailable'}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, isAvailable: value === 'available' }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner le statut" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="available">Disponible</SelectItem>
+                        <SelectItem value="unavailable">Indisponible</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>
@@ -1198,12 +1273,6 @@ const AdminDashboard: React.FC = () => {
                   <div className="animate-fade-in-scroll" style={{ animationDelay: '400ms' }}>
                     <div className="p-6 bg-gradient-to-r from-accent/10 to-transparent rounded-lg border border-accent/20">
                       <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <p className="text-sm text-muted-foreground font-body">Price</p>
-                          <p className="text-2xl font-bold font-display" style={{color: '#D4AF37'}}>
-                            {selectedArtwork.price ? `€${selectedArtwork.price.toLocaleString()}` : 'Price on Request'}
-                          </p>
-                        </div>
                         <div className="text-right">
                           <Badge 
                             variant={selectedArtwork.isAvailable ? "default" : "secondary"}
@@ -1225,7 +1294,7 @@ const AdminDashboard: React.FC = () => {
                           {selectedArtwork.isAvailable ? 'Faire une demande' : 'Indisponible'}
                         </Button>
                         <Button variant="outline" className="font-body">
-                          <Heart className="w-4 h-4 mr-2" />
+                          <Save className="w-4 h-4 mr-2" />
                           Save
                         </Button>
                         <Button variant="outline" className="font-body">

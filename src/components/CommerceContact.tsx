@@ -6,27 +6,27 @@ import { Phone, Mail, MessageCircle, Instagram, Facebook, MapPin, Clock, Euro, P
 const CommerceContact: React.FC = () => {
   const handleWhatsAppContact = () => {
     const message = "Bonjour ! Je souhaite obtenir des informations sur vos œuvres d'art disponibles à la vente.";
-    const whatsappUrl = `https://wa.me/33123456789?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/212666672756?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleEmailContact = () => {
     const subject = "Demande d'information - Œuvres d'art";
     const body = "Bonjour,\n\nJe suis intéressé(e) par vos œuvres d'art. Pourriez-vous me donner plus d'informations sur les pièces disponibles et les modalités d'achat ?\n\nCordialement,";
-    const mailtoUrl = `mailto:contact@oumhind-art.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const mailtoUrl = `mailto:omhind53@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(mailtoUrl);
   };
 
   const handleInstagramContact = () => {
-    window.open('https://instagram.com/oumhind_art', '_blank');
+    window.open('https://instagram.com/fatydouirani', '_blank');
   };
 
   const handleFacebookContact = () => {
-    window.open('https://facebook.com/oumhind.art', '_blank');
+    window.open('https://facebook.com/faty oumhind douirani', '_blank');
   };
 
   return (
-    <section className="py-20 watercolor-bg canvas-texture">
+    <section id="contact" className="py-20 watercolor-bg canvas-texture">
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -89,7 +89,7 @@ const CommerceContact: React.FC = () => {
                     Email
                   </h4>
                   <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
-                    contact@oumhind-art.com
+                    omhind53@gmail.com
                   </p>
                 </div>
                 <Button 
@@ -151,6 +151,121 @@ const CommerceContact: React.FC = () => {
             </div>
           </div>
 
+          {/* Contact Information */}
+          <div className="space-y-8">
+            <h3 className="text-2xl font-display font-semibold mb-6" style={{ color: 'hsl(240, 10%, 15%)' }}>
+              Informations de Contact
+            </h3>
+
+            {/* Contact Details Card */}
+            <Card className="painterly-card p-6">
+              <div className="space-y-4">
+                
+                {/* QR Code Section */}
+                <div className="text-center mb-6 p-4 bg-gradient-to-r from-accent/5 to-transparent rounded-lg border border-accent/10">
+                  <h4 className="text-lg font-semibold font-body mb-3" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                    Scan QR Code
+                  </h4>
+                  <div className="inline-block p-4 bg-white rounded-lg shadow-md">
+                    {/* QR Code for Canva */}
+                    <img 
+                      src="/qr-code-canva.png" 
+                      alt="QR Code - Scan to access Canva portfolio"
+                      className="w-32 h-32 rounded border border-gray-200"
+                      onError={(e) => {
+                        // Fallback if image doesn't exist yet
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
+                    {/* Fallback placeholder */}
+                    <div className="w-32 h-32 bg-black flex items-center justify-center rounded hidden">
+                      <div className="text-white text-xs text-center">
+                        QR CODE
+                        <br />
+                        <span className="text-xs opacity-75">Canva Portfolio</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2 font-body">
+                    Scan to access Canva portfolio
+                  </p>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                      Adresse
+                    </h4>
+                    <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                      BP 2595 RABAT CENTRAL/RABAT
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
+                    <Phone className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                      Téléphone
+                    </h4>
+                    <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                      +212-666 67 27 56
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                    <Mail className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                      Email
+                    </h4>
+                    <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                      omhind53@gmail.com
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+                    <Instagram className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                      Instagram
+                    </h4>
+                    <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                      @fatydouirani
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
+                    <Facebook className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                      Facebook
+                    </h4>
+                    <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                      faty oumhind douirani
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
+
           {/* Purchase Information */}
           <div className="space-y-8">
             <h3 className="text-2xl font-display font-semibold mb-6" style={{ color: 'hsl(240, 10%, 15%)' }}>
@@ -186,8 +301,9 @@ const CommerceContact: React.FC = () => {
                 </h4>
               </div>
               <ul className="space-y-2 text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
-                <li>• Retrait possible à l'atelier (Paris)</li>
-                <li>• Livraison en région parisienne</li>
+                <li>• Retrait possible à l'atelier (Rabat)</li>
+                <li>• BP 2595 RABAT CENTRAL/RABAT</li>
+                <li>• Livraison au Maroc</li>
                 <li>• Frais de livraison à discuter</li>
                 <li>• Emballage professionnel inclus</li>
               </ul>

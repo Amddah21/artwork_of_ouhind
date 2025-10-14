@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, ZoomIn, ZoomOut, RotateCw, Heart, Share2 } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCw, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -207,13 +207,6 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
                     {/* Actions */}
                     <div className="space-y-3 pt-4 border-t">
                       <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          className="flex-1"
-                        >
-                          <Heart className="w-4 h-4 mr-2" />
-                          Favoris
-                        </Button>
                         <Button
                           variant="outline"
                           className="flex-1"

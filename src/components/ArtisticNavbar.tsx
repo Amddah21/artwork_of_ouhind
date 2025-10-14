@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Menu, X, Palette, Home, Grid3X3, User, Mail, Settings, Calendar, Heart, Brush, Sparkles } from 'lucide-react';
+import { Menu, X, Palette, Home, Grid3X3, User, Mail, Settings, Calendar, Brush, Sparkles, LogIn } from 'lucide-react';
 import Logo from './Logo';
+import LoginForm from './LoginForm';
 
 const ArtisticNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -19,19 +21,33 @@ const ArtisticNavbar: React.FC = () => {
   }, []);
 
   const navigationItems = [
-    { id: 'accueil', label: 'Accueil', icon: Home, href: '#hero' },
-    { id: 'galerie', label: 'Galerie', icon: Grid3X3, href: '#portfolio' },
-    { id: 'about', label: 'À Propos', icon: User, href: '#about' },
-    { id: 'exhibitions', label: 'Expositions', icon: Calendar, href: '#exhibitions' },
-    { id: 'favorites', label: 'Favoris', icon: Heart, href: '/favorites' },
-    { id: 'contact', label: 'Contact', icon: Mail, href: '#contact' }
+    { id: 'accueil', label: 'Accueil', icon: Home, href: 'hero' },
+    { id: 'galerie', label: 'Galerie', icon: Grid3X3, href: 'portfolio' },
+    { id: 'about', label: 'À Propos', icon: User, href: 'about' },
+    { id: 'exhibitions', label: 'Expositions', icon: Calendar, href: 'exhibitions' },
+    { id: 'contact', label: 'Contact', icon: Mail, href: 'contact' }
   ];
 
   const handleNavClick = (href: string) => {
-    if (href.startsWith('#')) {
+    if (href.startsWith('/')) {
+      // External route - let React Router handle it
+      window.location.href = href;
+    } else if (href.startsWith('#')) {
+      // Hash link
       const element = document.querySelector(href);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Section ID
+      const element = document.getElementById(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      } else if (href === 'hero' || href === 'accueil') {
+        // Scroll to top for hero/home
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        console.warn(`Element with id "${href}" not found`);
       }
     }
     setIsMenuOpen(false);
@@ -91,6 +107,17 @@ const ArtisticNavbar: React.FC = () => {
                   </Button>
                 );
               })}
+              
+              {/* Sign In Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowLoginForm(true)}
+                className="ml-4 bg-gradient-to-r from-yellow-50 to-pink-50 border-yellow-200 hover:from-yellow-100 hover:to-pink-100 hover:border-yellow-300 transition-all duration-300 hover:scale-105 group painterly-card"
+              >
+                <LogIn className="w-4 h-4 mr-2 group-hover:translate-x-0.5 transition-transform duration-300" />
+                <span className="font-body font-medium">Sign In</span>
+              </Button>
             </div>
 
             {/* Mobile Menu Button */}
@@ -167,6 +194,17 @@ const ArtisticNavbar: React.FC = () => {
                     </Button>
                   );
                 })}
+                
+                {/* Mobile Sign In Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowLoginForm(true)}
+                  className="w-full justify-start mt-3 bg-gradient-to-r from-yellow-50 to-pink-50 border-yellow-200 hover:from-yellow-100 hover:to-pink-100 hover:border-yellow-300 transition-all duration-300 painterly-card"
+                >
+                  <LogIn className="w-5 h-5 mr-3" />
+                  <span className="font-body font-medium">Sign In</span>
+                </Button>
               </nav>
 
               {/* Mobile Menu Footer */}
@@ -176,9 +214,6 @@ const ArtisticNavbar: React.FC = () => {
                     Suivez mon travail artistique
                   </p>
                   <div className="flex justify-center space-x-4">
-                    <Button variant="outline" size="sm" className="painterly-card">
-                      <Heart className="w-4 h-4" />
-                    </Button>
                     <Button variant="outline" size="sm" className="painterly-card">
                       <Mail className="w-4 h-4" />
                     </Button>
@@ -191,6 +226,17 @@ const ArtisticNavbar: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Login Form Modal */}
+      {showLoginForm && (
+        <LoginForm
+          onClose={() => setShowLoginForm(false)}
+          onSuccess={() => {
+            setShowLoginForm(false);
+            window.location.href = '/admin';
+          }}
+        />
       )}
 
     </>

@@ -1,4 +1,5 @@
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import { API_CONFIG, API_ENDPOINTS } from '@/lib/api-config';
 
 interface Artwork {
   id: number;
@@ -17,6 +18,8 @@ interface Artwork {
 
 interface ArtworkContextType {
   artworks: Artwork[];
+  isLoading: boolean;
+  refreshArtworks: () => Promise<void>;
 }
 
 const ArtworkContext = createContext<ArtworkContextType | undefined>(undefined);
@@ -110,12 +113,106 @@ const defaultArtworks: Artwork[] = [
     tags: ["encre", "calligraphie"],
     materials: ["Encre", "Papier"],
     technique: "Encre sur papier"
+  },
+  {
+    id: 7,
+    title: "Racines Silencieuses",
+    category: "Abstrait",
+    image: "/artwork4.JPG",
+    size: "60x80 cm",
+    year: "2025",
+    available: true,
+    description: "Une exploration des textures naturelles et du silence intérieur. Une œuvre abstraite capturant l'essence des racines et des formations géologiques.",
+    featured: true,
+    tags: ["abstrait", "texture", "nature", "racines"],
+    materials: ["Techniques mixtes", "Papier"],
+    technique: "Techniques mixtes sur papier"
+  },
+  {
+    id: 8,
+    title: "Expression de l'Âme",
+    category: "Abstrait",
+    image: "/artwork5.JPG",
+    size: "70x90 cm",
+    year: "2025",
+    available: true,
+    description: "L'art est l'expression de l'âme à travers la couleur et la forme. Une œuvre qui explore les profondeurs de l'émotion artistique.",
+    featured: true,
+    tags: ["abstrait", "couleur", "forme", "âme"],
+    materials: ["Techniques mixtes", "Toile"],
+    technique: "Techniques mixtes sur toile"
+  },
+  {
+    id: 9,
+    title: "Textures Organiques",
+    category: "Abstrait",
+    image: "/artwork6.JPG",
+    size: "80x100 cm",
+    year: "2025",
+    available: true,
+    description: "Une exploration des textures naturelles et des formations géologiques. Cette œuvre abstraite en noir et blanc révèle la complexité des structures organiques.",
+    featured: true,
+    tags: ["abstrait", "texture", "organique", "géologie"],
+    materials: ["Techniques mixtes", "Papier"],
+    technique: "Techniques mixtes sur papier"
+  },
+  {
+    id: 10,
+    title: "Galerie d'Art",
+    category: "Photographie",
+    image: "/slider2.JPG",
+    size: "60x80 cm",
+    year: "2025",
+    available: true,
+    description: "Une vue intérieure d'une galerie d'art élégante, capturant l'atmosphère sophistiquée et l'éclairage naturel qui met en valeur les œuvres exposées.",
+    featured: true,
+    tags: ["galerie", "architecture", "éclairage", "exposition"],
+    materials: ["Photographie", "Impression"],
+    technique: "Photographie numérique"
   }
 ];
 
 export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
+  const [artworks, setArtworks] = useState<Artwork[]>(defaultArtworks);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const refreshArtworks = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.getAll}`);
+      if (response.ok) {
+        const data = await response.json();
+        // Transform API data to match our interface
+        const transformedArtworks = data.artworks?.map((artwork: any) => ({
+          id: artwork.id,
+          title: artwork.title,
+          category: artwork.category,
+          image: artwork.imageUrl || artwork.thumbnailUrl,
+          size: artwork.dimensions,
+          year: artwork.year.toString(),
+          available: artwork.isAvailable,
+          description: artwork.description,
+          featured: false,
+          tags: artwork.tags || [],
+          materials: [artwork.medium],
+          technique: artwork.medium
+        })) || [];
+        setArtworks(transformedArtworks);
+      }
+    } catch (error) {
+      console.error('Error loading artworks:', error);
+      // Keep default artworks if API fails
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshArtworks();
+  }, []);
+
   return (
-    <ArtworkContext.Provider value={{ artworks: defaultArtworks }}>
+    <ArtworkContext.Provider value={{ artworks, isLoading, refreshArtworks }}>
       {children}
     </ArtworkContext.Provider>
   );

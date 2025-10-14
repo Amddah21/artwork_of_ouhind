@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from './ui/button';
-import { ArrowRight, Palette, Award, Users, Globe, Brush, Sparkles, Heart } from 'lucide-react';
+import { ArrowRight, Palette, Award, Users, Globe, Brush, Sparkles } from 'lucide-react';
 import Logo from './Logo';
 
 const Hero: React.FC = () => {
@@ -11,8 +11,19 @@ const Hero: React.FC = () => {
     setIsLoaded(true);
   }, []);
 
+  const handleScrollDown = () => {
+    const portfolioSection = document.getElementById('portfolio');
+    if (portfolioSection) {
+      portfolioSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Fallback: scroll down by viewport height
+      window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+    }
+  };
+
   return (
     <section 
+      id="hero"
       ref={heroRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden watercolor-bg canvas-texture"
     >
@@ -118,8 +129,8 @@ const Hero: React.FC = () => {
               isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '0.9s' }}>
               {[
-                { number: "15+", label: "Années d'Expérience", icon: Award },
-                { number: "200+", label: "Œuvres Créées", icon: Heart },
+                { number: "40+", label: "Années d'Expérience", icon: Award },
+                { number: "200+", label: "Œuvres Créées", icon: Palette },
                 { number: "50+", label: "Expositions", icon: Globe }
               ].map((stat, index) => {
                 const IconComponent = stat.icon;
@@ -153,7 +164,7 @@ const Hero: React.FC = () => {
               <div className="relative rounded-3xl overflow-hidden painterly-shadow">
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 via-pink-400/10 to-transparent rounded-3xl" />
                 <img
-                  src="/src/assets/hero-artwork.jpg"
+                  src="/slider.JPG"
                   alt="Artwork by Oum Hind F. Douirani"
                   className="w-full h-96 object-cover transition-transform duration-700 hover:scale-105"
                 />
@@ -190,10 +201,28 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* Scroll indicator with artistic animation */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 rounded-full flex justify-center" style={{ borderColor: 'hsl(38, 95%, 60%)' }}>
-          <div className="w-1 h-3 rounded-full mt-2 animate-pulse" style={{ backgroundColor: 'hsl(38, 95%, 60%)' }} />
+      {/* Scroll indicator with artistic animation - Enhanced for mobile */}
+      <div 
+        className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-10 mobile-scroll-indicator cursor-pointer"
+        onClick={handleScrollDown}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleScrollDown();
+          }
+        }}
+        aria-label="Scroll down to portfolio section"
+      >
+        <div className="w-8 h-12 sm:w-6 sm:h-10 border-3 sm:border-2 rounded-full flex justify-center bg-white/30 backdrop-blur-sm shadow-xl transition-all duration-300 hover:bg-white/40 hover:scale-105" style={{ borderColor: 'hsl(38, 95%, 60%)' }}>
+          <div className="w-2 h-4 sm:w-1 sm:h-3 rounded-full mt-2 animate-pulse shadow-sm" style={{ backgroundColor: 'hsl(38, 95%, 60%)' }} />
+        </div>
+        {/* Additional visual cue for mobile */}
+        <div className="mt-2 text-center">
+          <span className="text-xs sm:text-sm font-medium opacity-90 drop-shadow-sm" style={{ color: 'hsl(38, 95%, 60%)' }}>
+            Scroll
+          </span>
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from './ui/button';
-import { Heart, Mail, MapPin, Phone, Instagram, Facebook, Twitter, Palette, Brush, Sparkles, Award, Globe } from 'lucide-react';
+import { Mail, MapPin, Phone, Instagram, Facebook, Twitter, Palette, Brush, Sparkles, Award, Globe } from 'lucide-react';
 import Logo from './Logo';
 
 const ArtisticFooter: React.FC = () => {
@@ -21,8 +21,8 @@ const ArtisticFooter: React.FC = () => {
       { label: 'CGV', href: '#' }
     ],
     social: [
-      { label: 'Instagram', href: '#', icon: Instagram },
-      { label: 'Facebook', href: '#', icon: Facebook },
+      { label: 'Instagram', href: 'https://instagram.com/fatydouirani', icon: Instagram },
+      { label: 'Facebook', href: 'https://facebook.com/faty oumhind douirani', icon: Facebook },
       { label: 'Twitter', href: '#', icon: Twitter }
     ]
   };
@@ -31,19 +31,19 @@ const ArtisticFooter: React.FC = () => {
     {
       icon: Mail,
       label: 'Email',
-      value: 'contact@oumhind-art.com',
-      href: 'mailto:contact@oumhind-art.com'
+      value: 'omhind53@gmail.com',
+      href: 'mailto:omhind53@gmail.com'
     },
     {
       icon: Phone,
       label: 'Téléphone',
-      value: '+33 1 23 45 67 89',
-      href: 'tel:+33123456789'
+      value: '+212-666 67 27 56',
+      href: 'tel:+212666672756'
     },
     {
       icon: MapPin,
       label: 'Adresse',
-      value: 'Paris, France',
+      value: 'BP 2595 RABAT CENTRAL/RABAT',
       href: '#'
     }
   ];
@@ -107,6 +107,7 @@ const ArtisticFooter: React.FC = () => {
                         borderColor: 'hsl(330, 20%, 88%)',
                         color: 'hsl(240, 10%, 15%)'
                       }}
+                      onClick={() => window.open(social.href, '_blank')}
                     >
                       <IconComponent className="w-4 h-4" />
                     </Button>
@@ -233,7 +234,7 @@ const ArtisticFooter: React.FC = () => {
               
               <div className="flex items-center space-x-4">
                 <span className="text-gray-600 font-body">Fait avec</span>
-                <Heart className="w-4 h-4 text-red-500 animate-pulse" />
+                <Sparkles className="w-4 h-4 text-yellow-500 animate-pulse" />
                 <span className="text-gray-600 font-body">par Digital Teams</span>
                 <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
                   <span className="text-white text-xs font-bold">DT</span>

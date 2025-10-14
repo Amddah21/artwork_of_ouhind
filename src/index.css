@@ -1,11 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800;0,6..96,900;1,6..96,400;1,6..96,500;1,6..96,600;1,6..96,700;1,6..96,800;1,6..96,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Amatic+SC:wght@400;700&display=swap');
+@import './styles/image-protection.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import image protection styles */
-@import './styles/image-protection.css';
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
@@ -1605,6 +1603,53 @@ All colors MUST be HSL.
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+    }
+
+    /* Mobile scroll indicator enhancements */
+    .mobile-scroll-indicator {
+      position: relative;
+      z-index: 50;
+    }
+
+    .mobile-scroll-indicator::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+      }
+    }
+
+    /* Enhanced mobile scroll indicator touch interaction */
+    .mobile-scroll-indicator:active {
+      transform: scale(0.95);
+      transition: transform 0.1s ease;
+    }
+
+    /* Make scroll indicator more prominent on mobile */
+    @media (max-width: 768px) {
+      .mobile-scroll-indicator {
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+      }
+      
+      .mobile-scroll-indicator div {
+        background: rgba(255, 255, 255, 0.4) !important;
+        border-width: 3px !important;
+      }
     }
 
     .mobile-zoom-button {
