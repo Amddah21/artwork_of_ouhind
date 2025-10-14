@@ -4,6 +4,62 @@ export class ArtworkModel {
   // Get all artworks
   static async getAll(filters = {}) {
     const pool = await getDatabase();
+    
+    // Check if this is a mock database
+    if (pool.query && typeof pool.query === 'function' && pool.query.toString().includes('Mock query')) {
+      // Return mock data for demo
+      const mockArtworks = [
+        {
+          id: 1,
+          title: 'Rêve Aquarelle',
+          description: 'Une œuvre délicate capturant l\'essence des rêves à travers des couleurs fluides et éthérées.',
+          year: 2023,
+          medium: 'Aquarelle sur papier Arches',
+          dimensions: '40 x 60 cm',
+          category: 'Aquarelle',
+          price: 450,
+          is_available: 1,
+          image_url: '/artwork1.JPG',
+          thumbnail_url: '/artwork1.JPG',
+          story: 'Cette pièce a été créée pendant une période de réflexion profonde sur les rêves et la réalité. Les couleurs fluides représentent la nature éphémère de nos pensées nocturnes.',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          tags: ['aquarelle', 'abstrait', 'coloré'],
+          multipleViews: ['/artwork1.JPG']
+        },
+        {
+          id: 2,
+          title: 'Portrait au Crayon',
+          description: 'Un portrait expressif capturant l\'émotion et la personnalité du sujet.',
+          year: 2023,
+          medium: 'Crayon graphite sur papier Bristol',
+          dimensions: '30 x 40 cm',
+          category: 'Portrait',
+          price: 320,
+          is_available: 1,
+          image_url: '/artwork2.JPG',
+          thumbnail_url: '/artwork2.JPG',
+          story: 'Ce portrait est le résultat de plusieurs heures d\'observation minutieuse, cherchant à capturer non seulement les traits physiques mais aussi l\'essence de la personne.',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          tags: ['portrait', 'réaliste', 'graphite'],
+          multipleViews: ['/artwork2.JPG']
+        }
+      ];
+      
+      // Apply filters
+      let filteredArtworks = mockArtworks;
+      if (filters.category) {
+        filteredArtworks = filteredArtworks.filter(artwork => artwork.category === filters.category);
+      }
+      if (filters.available !== undefined) {
+        filteredArtworks = filteredArtworks.filter(artwork => artwork.is_available === (filters.available ? 1 : 0));
+      }
+      
+      return filteredArtworks;
+    }
+    
+    // Real database logic
     let query = 'SELECT * FROM artworks';
     const params = [];
     let paramCount = 0;
@@ -47,7 +103,35 @@ export class ArtworkModel {
 
   // Get artwork by ID
   static async getById(id) {
-    const db = await getDatabase();
+    const pool = await getDatabase();
+    
+    // Check if this is a mock database
+    if (pool.query && typeof pool.query === 'function' && pool.query.toString().includes('Mock query')) {
+      // Return mock artwork for demo
+      const mockArtworks = [
+        {
+          id: 1,
+          title: 'Rêve Aquarelle',
+          description: 'Une œuvre délicate capturant l\'essence des rêves à travers des couleurs fluides et éthérées.',
+          year: 2023,
+          medium: 'Aquarelle sur papier Arches',
+          dimensions: '40 x 60 cm',
+          category: 'Aquarelle',
+          price: 450,
+          is_available: 1,
+          image_url: '/artwork1.JPG',
+          thumbnail_url: '/artwork1.JPG',
+          story: 'Cette pièce a été créée pendant une période de réflexion profonde sur les rêves et la réalité.',
+          tags: ['aquarelle', 'abstrait', 'coloré'],
+          multipleViews: ['/artwork1.JPG']
+        }
+      ];
+      
+      return mockArtworks.find(artwork => artwork.id == id) || null;
+    }
+    
+    // Real database logic
+    const db = pool;
     const artwork = await db.get('SELECT * FROM artworks WHERE id = ?', [id]);
     
     if (artwork) {
@@ -71,7 +155,36 @@ export class ArtworkModel {
 
   // Create new artwork
   static async create(artworkData) {
-    const db = await getDatabase();
+    const pool = await getDatabase();
+    
+    // Check if this is a mock database
+    if (pool.query && typeof pool.query === 'function' && pool.query.toString().includes('Mock query')) {
+      // Create mock artwork for demo
+      const mockArtwork = {
+        id: Date.now(), // Generate unique ID
+        title: artworkData.title,
+        description: artworkData.description,
+        year: artworkData.year,
+        medium: artworkData.medium,
+        dimensions: artworkData.dimensions,
+        category: artworkData.category,
+        price: artworkData.price || 0,
+        is_available: artworkData.isAvailable ? 1 : 0,
+        image_url: artworkData.imageUrl || '/artwork1.JPG',
+        thumbnail_url: artworkData.thumbnailUrl || artworkData.imageUrl || '/artwork1.JPG',
+        story: artworkData.story || '',
+        tags: artworkData.tags || [],
+        multipleViews: artworkData.multipleViews || [artworkData.imageUrl || '/artwork1.JPG'],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      console.log('Mock artwork created:', mockArtwork);
+      return mockArtwork;
+    }
+    
+    // Real database logic
+    const db = pool;
     
     const result = await db.run(
       `INSERT INTO artworks (title, description, year, medium, dimensions, category, price, is_available, image_url, thumbnail_url, story)

@@ -66,6 +66,14 @@ const Portfolio: React.FC = () => {
     setVisibleArtworks(prev => Math.min(prev + 8, filteredArtworks.length));
   };
 
+  const handleViewGallery = (category: string) => {
+    // Create gallery slug from category
+    const gallerySlug = category.toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+    navigate(`/gallery/${gallerySlug}`);
+  };
+
   const handleViewArtwork = (artwork: any) => {
     navigate(`/artwork/${artwork.id}`);
   };
@@ -112,7 +120,13 @@ const Portfolio: React.FC = () => {
             <Button
               key={category}
               variant={selectedCategory === category ? "default" : "outline"}
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => {
+                if (category === 'Tous') {
+                  setSelectedCategory(category);
+                } else {
+                  handleViewGallery(category);
+                }
+              }}
               className="hover-painterly-lift painterly-card"
               style={{
                 backgroundColor: selectedCategory === category ? 'hsl(38, 95%, 60%)' : 'transparent',
@@ -120,7 +134,7 @@ const Portfolio: React.FC = () => {
                 borderColor: 'hsl(330, 20%, 88%)'
               }}
             >
-              {category}
+              {category === 'Tous' ? category : `Voir ${category}`}
             </Button>
           ))}
         </div>

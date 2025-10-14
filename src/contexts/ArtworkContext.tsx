@@ -173,7 +173,7 @@ const defaultArtworks: Artwork[] = [
 ];
 
 export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
-  const [artworks, setArtworks] = useState<Artwork[]>(defaultArtworks);
+  const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const refreshArtworks = async () => {
@@ -182,26 +182,36 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       const response = await fetch(`${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.getAll}`);
       if (response.ok) {
         const data = await response.json();
+        console.log('API Response:', data);
         // Transform API data to match our interface
-        const transformedArtworks = data.artworks?.map((artwork: any) => ({
+        const transformedArtworks = (data.data || []).map((artwork: any) => ({
           id: artwork.id,
           title: artwork.title,
           category: artwork.category,
-          image: artwork.imageUrl || artwork.thumbnailUrl,
+          image: artwork.image_url || artwork.thumbnail_url,
           size: artwork.dimensions,
-          year: artwork.year.toString(),
-          available: artwork.isAvailable,
+          year: artwork.year?.toString() || new Date().getFullYear().toString(),
+          available: Boolean(artwork.is_available),
           description: artwork.description,
           featured: false,
           tags: artwork.tags || [],
           materials: [artwork.medium],
           technique: artwork.medium
-        })) || [];
-        setArtworks(transformedArtworks);
+        }));
+        
+        // If we got artworks from API, use them; otherwise keep defaults
+        if (transformedArtworks.length > 0) {
+          console.log('Setting transformed artworks:', transformedArtworks);
+          setArtworks(transformedArtworks);
+        } else {
+          console.log('No artworks from API, using defaults');
+          setArtworks(defaultArtworks);
+        }
       }
     } catch (error) {
       console.error('Error loading artworks:', error);
-      // Keep default artworks if API fails
+      // Use default artworks if API fails
+      setArtworks(defaultArtworks);
     } finally {
       setIsLoading(false);
     }

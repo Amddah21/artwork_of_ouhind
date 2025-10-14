@@ -10,6 +10,7 @@ import ArtisticNavbar from "@/components/ArtisticNavbar";
 import ArtisticFooter from "@/components/ArtisticFooter";
 import Index from "./pages/Index";
 import ArtworkDetail from "./pages/ArtworkDetail";
+import GalleryDetail from "./pages/GalleryDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import Voting from "./pages/Voting";
 import Comments from "./pages/Comments";
@@ -35,6 +36,7 @@ const App = () => (
                       <Routes>
                         <Route path="/" element={<Index />} />
                         <Route path="/artwork/:id" element={<ArtworkDetail />} />
+                        <Route path="/gallery/:galleryId" element={<GalleryDetail />} />
                         <Route path="/voting" element={<Voting />} />
                         <Route path="/comments" element={<Comments />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

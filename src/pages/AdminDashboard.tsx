@@ -247,7 +247,7 @@ const AdminDashboard: React.FC = () => {
         const response = await fetch(`${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.getAll}`);
         if (response.ok) {
           const data = await response.json();
-          setArtworks(data.artworks || []);
+          setArtworks(data.data || []);
         } else {
           console.error('Failed to load artworks');
           setArtworks([]);
@@ -311,8 +311,8 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.title || !formData.description || !uploadedImage) {
-      alert('Please fill in all required fields and upload an image.');
+    if (!formData.title || !formData.description) {
+      alert('Please fill in title and description.');
       return;
     }
 
@@ -329,22 +329,35 @@ const AdminDashboard: React.FC = () => {
       formDataToSend.append('tags', formData.tags);
       formDataToSend.append('story', formData.story);
       formDataToSend.append('isAvailable', formData.isAvailable.toString());
-      formDataToSend.append('image', uploadedImage);
+      if (uploadedImage) {
+        formDataToSend.append('image', uploadedImage);
+      }
+
+      // Debug: Log form data
+      console.log('Form data being sent:');
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(key, value);
+      }
 
       const url = editingArtwork ? `${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.update(editingArtwork.id)}` : `${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.create}`;
       const method = editingArtwork ? 'PUT' : 'POST';
+      
+      console.log('Sending request to:', url, 'with method:', method);
 
       const response = await fetch(url, {
         method,
         body: formDataToSend,
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
       if (response.ok) {
         // Reload artworks from API
         const loadResponse = await fetch(`${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.getAll}`);
         if (loadResponse.ok) {
           const data = await loadResponse.json();
-          setArtworks(data.artworks || []);
+          setArtworks(data.data || []);
         }
         
         // Also refresh the artwork context for the gallery
@@ -353,7 +366,9 @@ const AdminDashboard: React.FC = () => {
         setIsUploadModalOpen(false);
         resetForm();
       } else {
-        alert('Failed to save artwork. Please try again.');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Save artwork error:', errorData);
+        alert(`Failed to save artwork: ${errorData.error || 'Please try again.'}`);
       }
     } catch (error) {
       console.error('Error saving artwork:', error);

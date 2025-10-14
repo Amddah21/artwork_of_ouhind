@@ -21,6 +21,32 @@ const Hero: React.FC = () => {
     }
   };
 
+  const handleExploreGallery = () => {
+    // Add a small delay for visual feedback
+    setTimeout(() => {
+      const portfolioSection = document.getElementById('portfolio');
+      if (portfolioSection) {
+        portfolioSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Fallback: scroll down by viewport height
+        window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  const handleViewWorks = () => {
+    // Add a small delay for visual feedback
+    setTimeout(() => {
+      const portfolioSection = document.getElementById('portfolio');
+      if (portfolioSection) {
+        portfolioSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Fallback: scroll down by viewport height
+        window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   return (
     <section 
       id="hero"
@@ -96,7 +122,8 @@ const Hero: React.FC = () => {
             }`} style={{ animationDelay: '0.6s' }}>
               <Button 
                 size="lg" 
-                className="group hover-painterly-lift paint-splash relative overflow-hidden"
+                onClick={handleExploreGallery}
+                className="group hover-painterly-lift paint-splash relative overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95"
                 style={{ 
                   background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
                   color: 'hsl(45, 100%, 97%)',
@@ -112,7 +139,8 @@ const Hero: React.FC = () => {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="hover-ink-flow painterly-card"
+                onClick={handleViewWorks}
+                className="hover-ink-flow painterly-card transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
                 style={{ 
                   borderColor: 'hsl(330, 20%, 88%)',
                   color: 'hsl(240, 10%, 15%)',

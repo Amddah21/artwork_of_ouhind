@@ -5,6 +5,7 @@ A modern, responsive web application showcasing the artwork of Oum Hind F. Douir
 ## 🌟 Features
 
 ### 🖼️ **Gallery & Portfolio**
+
 - **Dynamic Artwork Display**: Beautiful masonry-style gallery layout
 - **Category Filtering**: Filter by Abstrait, Tableaux, Photographie, and more
 - **Artwork Details**: Comprehensive artwork information with stories and techniques
@@ -12,24 +13,28 @@ A modern, responsive web application showcasing the artwork of Oum Hind F. Douir
 - **Responsive Design**: Optimized for all devices
 
 ### 🎨 **Artwork Management**
+
 - **Admin Dashboard**: Full CRUD operations for artwork management
 - **Image Upload**: Support for multiple image formats with preview
 - **Artwork Categories**: Organized by techniques and styles
 - **Availability Status**: Track artwork availability (Disponible/Indisponible)
 
 ### 🔐 **Authentication & Security**
+
 - **Admin Login**: Secure authentication system
 - **JWT Tokens**: Token-based authentication
 - **Password Reset**: Forgot password functionality
 - **Protected Routes**: Secure admin dashboard access
 
 ### 📱 **User Experience**
+
 - **Modern UI**: Clean, artistic design with watercolor effects
 - **Smooth Animations**: Framer Motion animations throughout
 - **Mobile Optimized**: Touch-friendly interface
 - **Accessibility**: ARIA labels and keyboard navigation
 
 ### 📞 **Contact & Commerce**
+
 - **WhatsApp Integration**: Direct messaging for inquiries
 - **Email Contact**: Professional email integration
 - **Artwork Inquiries**: Detailed inquiry forms
@@ -38,6 +43,7 @@ A modern, responsive web application showcasing the artwork of Oum Hind F. Douir
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js (v18 or higher)
 - npm or yarn
 - PostgreSQL (optional - uses mock database by default)
@@ -45,25 +51,28 @@ A modern, responsive web application showcasing the artwork of Oum Hind F. Douir
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/Amddah21/artspark-studio-canvas.git
    cd artspark-studio-canvas
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm run install:all
    ```
 
 3. **Start the development servers**
+
    ```bash
    # Option 1: Start both servers with one command
    npm run full-stack
-   
+
    # Option 2: Start servers individually
    npm run dev          # Frontend (port 8080)
    npm run server:start # Backend (port 3001)
-   
+
    # Option 3: Use the batch file (Windows)
    start-servers.bat
    ```
@@ -76,10 +85,12 @@ A modern, responsive web application showcasing the artwork of Oum Hind F. Douir
 ## 🎯 Admin Access
 
 ### Default Credentials
+
 - **Email**: `omhind53@gmail.com`
 - **Password**: `omhind53@`
 
 ### Admin Features
+
 - Add/Edit/Delete artworks
 - Upload images with preview
 - Manage artwork categories
@@ -108,6 +119,7 @@ artspark-studio-canvas/
 ## 🛠️ Technology Stack
 
 ### Frontend
+
 - **React 18** with TypeScript
 - **Vite** for build tooling
 - **Tailwind CSS** for styling
@@ -116,6 +128,7 @@ artspark-studio-canvas/
 - **Lucide React** for icons
 
 ### Backend
+
 - **Express.js** with ES6 modules
 - **PostgreSQL** with mock fallback
 - **JWT** for authentication
@@ -123,6 +136,7 @@ artspark-studio-canvas/
 - **bcrypt** for password hashing
 
 ### Development Tools
+
 - **ESLint** for code linting
 - **TypeScript** for type safety
 - **Nodemon** for development
@@ -147,7 +161,9 @@ artspark-studio-canvas/
 ## 🔧 Configuration
 
 ### Environment Variables
+
 Create a `.env` file in the server directory:
+
 ```env
 PORT=3001
 DATABASE_URL=your_postgresql_url
@@ -155,6 +171,7 @@ JWT_SECRET=your_jwt_secret
 ```
 
 ### API Configuration
+
 The frontend automatically proxies `/api/*` requests to the backend server.
 
 ## 📚 Documentation
