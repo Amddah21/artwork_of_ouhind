@@ -1,229 +1,187 @@
-# 🚀 Supabase Setup Guide for ArtSpark Studio Canvas
+# 🚀 Supabase Integration Setup Guide
 
-## ✅ Your Supabase Credentials
+## 📋 Overview
 
-I've received your Supabase credentials:
+Your project is now integrated with Supabase as the backend database! This guide will help you set up the database and get everything running.
 
-- **URL**: https://iczgbndbdsycfqanoajv.supabase.co
-- **Anon Key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
-- **Service Role Key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
+## 🔧 Setup Steps
 
-## 🔧 Configuration Steps
+### 1. **Database Setup**
 
-### Step 1: Create Environment File
+1. Go to your Supabase dashboard: https://supabase.com/dashboard
+2. Navigate to your project: `iczgbndbdsycfqanoajv`
+3. Go to **SQL Editor**
+4. Copy and paste the contents of `supabase-setup.sql` into the editor
+5. Click **Run** to execute the script
 
-Create `server/.env` with the following content:
+This will create:
 
-```env
-# Server Configuration
-PORT=3001
-NODE_ENV=development
+- `artworks` table with sample data
+- `users` table with admin user
+- Proper indexes and security policies
+- Auto-updating timestamps
 
-# Supabase Configuration
-SUPABASE_URL=https://iczgbndbdsycfqanoajv.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljemdibmRiZHN5Y2ZxYW5vYWp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzODIxNDEsImV4cCI6MjA3NTk1ODE0MX0.VrWaw2KzSki6oWOnXttq47ZDK5FEABsomL3g8tEg3GY
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljemdibmRiZHN5Y2ZxYW5vYWp2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDM4MjE0MSwiZXhwIjoyMDc1OTU4MTQxfQ.9wLM6AaITvJhdmyghfXyfDKa_gpUNc9dSanCEDc326Y
+### 2. **Admin Credentials**
 
-# Database Configuration
-# You'll need to get your database password from Supabase Dashboard
-DATABASE_URL=postgresql://postgres:YOUR_DB_PASSWORD@db.iczgbndbdsycfqanoajv.supabase.co:5432/postgres
+After running the setup script, you'll have:
 
-# File Upload Configuration
-MAX_FILE_SIZE=10485760
-UPLOAD_PATH=../public/uploads
+- **Email**: `admin@artiste.com`
+- **Password**: `admin123`
+- **Role**: `ADMIN`
 
-# CORS Configuration
-ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+### 3. **Project Configuration**
 
-# API Configuration
-API_PREFIX=/api
+The following files have been created/updated:
+
+#### **New Files:**
+
+- `src/lib/supabase.ts` - Supabase client configuration
+- `src/services/supabase-artwork-service.ts` - Artwork CRUD operations
+- `src/services/supabase-auth-service.ts` - Authentication service
+- `supabase-setup.sql` - Database setup script
+
+#### **Updated Files:**
+
+- `src/contexts/ArtworkContext.tsx` - Now uses Supabase instead of localStorage
+- `src/pages/AdminDashboard.tsx` - Updated for async operations
+
+## 🎯 Features
+
+### **Database Operations:**
+
+- ✅ **Create Artworks**: Add new artworks via admin dashboard
+- ✅ **Read Artworks**: Display all artworks in gallery
+- ✅ **Update Artworks**: Edit existing artworks
+- ✅ **Delete Artworks**: Remove artworks
+- ✅ **Search Artworks**: Search by title, description, technique
+- ✅ **Real-time Updates**: Changes reflect immediately
+
+### **Authentication:**
+
+- ✅ **Admin Login**: Secure authentication system
+- ✅ **Session Management**: Persistent login sessions
+- ✅ **JWT Tokens**: Secure token-based authentication
+
+### **Data Persistence:**
+
+- ✅ **Cloud Storage**: All data stored in Supabase
+- ✅ **Backup & Recovery**: Automatic backups
+- ✅ **Scalability**: Handles growth automatically
+
+## 🔄 How It Works
+
+### **Frontend → Supabase Flow:**
+
+1. **Admin Dashboard**: User adds/edits artwork
+2. **ArtworkContext**: Manages state and API calls
+3. **SupabaseService**: Handles database operations
+4. **Supabase Client**: Communicates with cloud database
+5. **Real-time Updates**: Changes appear immediately
+
+### **Data Flow:**
+
+```
+Admin Dashboard → ArtworkContext → SupabaseService → Supabase Database
+     ↑                                                      ↓
+     └────────────── Real-time Updates ←────────────────────┘
 ```
 
-### Step 2: Get Your Database Password
+## 🛡️ Security
 
-1. Go to your Supabase Dashboard: https://app.supabase.com/project/iczgbndbdsycfqanoajv
-2. Navigate to **Settings** → **Database**
-3. Look for **Connection string** or **Database password**
-4. Copy the password and replace `YOUR_DB_PASSWORD` in your `.env` file
+### **Row Level Security (RLS):**
 
-### Step 3: Install Dependencies
+- All tables have RLS enabled
+- Proper policies for read/write access
+- Secure authentication required for modifications
+
+### **API Security:**
+
+- JWT token authentication
+- Secure API endpoints
+- Input validation and sanitization
+
+## 🚀 Getting Started
+
+### **1. Run Database Setup:**
+
+```sql
+-- Copy and paste supabase-setup.sql into Supabase SQL Editor
+-- This creates tables, sample data, and security policies
+```
+
+### **2. Start Your Application:**
 
 ```bash
-cd server
-npm install
+npm run dev
 ```
 
-### Step 4: Set Up Database Schema
+### **3. Access Admin Dashboard:**
 
-You have two options:
+- Navigate to `/admin`
+- Login with: `admin@artiste.com` / `admin123`
+- Start adding your artworks!
 
-#### Option A: Use the Setup Script (Recommended)
+## 📊 Database Schema
 
-```bash
-cd server
-node setup-database.js
+### **artworks Table:**
+
+```sql
+- id (BIGSERIAL PRIMARY KEY)
+- titre (VARCHAR) - Artwork title
+- description (TEXT) - Artwork description
+- image_url (VARCHAR) - Image path/URL
+- technique (VARCHAR) - Art technique
+- dimensions (VARCHAR) - Size dimensions
+- annee (INTEGER) - Creation year
+- created_at (TIMESTAMP) - Creation date
+- updated_at (TIMESTAMP) - Last update date
 ```
 
-#### Option B: Manual Setup via Supabase Dashboard
+### **users Table:**
 
-1. Go to your Supabase Dashboard
-2. Navigate to **SQL Editor**
-3. Copy and paste the contents of `server/database/schema.sql`
-4. Run the SQL script
-
-### Step 5: Start the Server
-
-```bash
-cd server
-npm start
+```sql
+- id (BIGSERIAL PRIMARY KEY)
+- username (VARCHAR UNIQUE) - Username
+- email (VARCHAR UNIQUE) - Email address
+- password (VARCHAR) - Hashed password
+- role (VARCHAR) - User role (ADMIN)
+- created_at (TIMESTAMP) - Account creation date
 ```
 
-## 🎯 Expected Output
+## 🔧 Troubleshooting
 
-You should see:
+### **Common Issues:**
 
-```
-✅ Supabase PostgreSQL database connection established
-✅ Database tables initialized successfully
-📝 Inserting sample artworks...
-✅ Sample artworks inserted successfully
+#### **1. Connection Errors:**
 
-🎨 =====================================
-   ArtSpark Studio Canvas Backend
-   =====================================
-   ✅ Server running: http://localhost:3001
-   📡 API endpoint: http://localhost:3001/api
-   🗄️  Database: Supabase PostgreSQL
-   📁 Uploads: /path/to/public/uploads
-   =====================================
-```
+- Check your Supabase URL and keys
+- Verify database is running
+- Check network connectivity
 
-## 🔍 Test Your Setup
+#### **2. Authentication Issues:**
 
-1. **Health Check:**
+- Verify admin credentials
+- Check JWT token expiration
+- Ensure RLS policies are correct
 
-   ```
-   http://localhost:3001/health
-   ```
+#### **3. Data Not Loading:**
 
-2. **Get Artworks:**
+- Run the setup script again
+- Check browser console for errors
+- Verify table permissions
 
-   ```
-   http://localhost:3001/api/artworks
-   ```
+### **Debug Steps:**
 
-3. **Admin Dashboard:**
-   ```
-   http://localhost:5173/admin
-   ```
+1. Check browser console for errors
+2. Verify Supabase dashboard shows data
+3. Test API endpoints directly
+4. Check network tab for failed requests
 
-## 🎨 Supabase Features You Can Use
+## 🎨 Next Steps
 
-### 1. **Real-time Subscriptions**
+1. **Customize Artworks**: Add your own artworks through the admin dashboard
+2. **Update Branding**: Modify colors and styling to match your brand
+3. **Add Features**: Extend functionality as needed
+4. **Deploy**: Deploy to production when ready
 
-```javascript
-// Listen for new artworks in real-time
-const subscription = supabase
-  .channel('artworks')
-  .on(
-    'postgres_changes',
-    { event: 'INSERT', schema: 'public', table: 'artworks' },
-    (payload) => console.log('New artwork:', payload.new)
-  )
-  .subscribe();
-```
-
-### 2. **Row Level Security (RLS)**
-
-- Enable RLS on tables for security
-- Create policies for user access control
-
-### 3. **Storage for Images**
-
-- Store artwork images in Supabase Storage
-- Automatic CDN delivery
-- Image transformations
-
-### 4. **Authentication**
-
-- Built-in user authentication
-- Social logins (Google, GitHub, etc.)
-- JWT tokens
-
-### 5. **Edge Functions**
-
-- Serverless functions for complex operations
-- Global edge deployment
-
-## 🔧 Database Schema
-
-Your Supabase database will include these tables:
-
-- `artworks` - Main artwork data
-- `artwork_tags` - Tag relationships
-- `artwork_images` - Multiple images per artwork
-- `reviews` - User reviews with approval
-- `ratings` - User ratings and averages
-- `contact_messages` - Contact form data
-- `activity_logs` - System activity logs
-- `site_statistics` - Analytics data
-
-## 🚀 Next Steps
-
-1. **Start both servers:**
-
-   ```bash
-   # Terminal 1 - Backend
-   cd server && npm start
-
-   # Terminal 2 - Frontend
-   npm run dev
-   ```
-
-2. **Access your application:**
-
-   - Website: http://localhost:5173/
-   - Admin: http://localhost:5173/admin
-
-3. **Add your first artwork:**
-   - Go to admin dashboard
-   - Click "Ajouter une Œuvre"
-   - Upload image and fill details
-   - Save!
-
-## 🆘 Troubleshooting
-
-### Connection Issues
-
-- Verify your database password is correct
-- Check that SSL is enabled (it should be automatic)
-- Ensure your Supabase project is active
-
-### Schema Issues
-
-- Make sure you're using the updated schema with PostgreSQL syntax
-- Check the SQL Editor in Supabase Dashboard for any errors
-
-### CORS Issues
-
-- Verify `ALLOWED_ORIGINS` includes your frontend URL
-- Check that both servers are running
-
-## 📊 Supabase Dashboard
-
-Access your Supabase Dashboard at:
-https://app.supabase.com/project/iczgbndbdsycfqanoajv
-
-From here you can:
-
-- View your database tables
-- Run SQL queries
-- Monitor usage
-- Configure settings
-- Manage storage
-
----
-
-**Your ArtSpark Studio Canvas is now powered by Supabase! 🎨**
-
-Enjoy the benefits of a managed PostgreSQL database with real-time features, authentication, and storage!
+Your Supabase integration is now complete! 🎉✨

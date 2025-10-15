@@ -31,7 +31,7 @@ const Portfolio: React.FC = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const portfolioRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
-  const { artworks, refreshArtworks } = useArtwork();
+  const { artworks } = useArtwork();
   const { getArtworkRating } = useReview();
 
   useEffect(() => {

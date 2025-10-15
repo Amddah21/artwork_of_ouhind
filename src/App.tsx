@@ -11,9 +11,9 @@ import ArtisticFooter from "@/components/ArtisticFooter";
 import Index from "./pages/Index";
 import ArtworkDetail from "./pages/ArtworkDetail";
 import GalleryDetail from "./pages/GalleryDetail";
-import AdminDashboard from "./pages/AdminDashboard";
 import Voting from "./pages/Voting";
 import Comments from "./pages/Comments";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,7 +28,6 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <Routes>
-                <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="*" element={
                   <div className="min-h-screen flex flex-col">
                     <ArtisticNavbar />
@@ -39,6 +38,7 @@ const App = () => (
                         <Route path="/gallery/:galleryId" element={<GalleryDetail />} />
                         <Route path="/voting" element={<Voting />} />
                         <Route path="/comments" element={<Comments />} />
+                        <Route path="/admin" element={<AdminDashboard />} />
                         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>

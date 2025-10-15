@@ -1,5 +1,6 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { API_CONFIG, API_ENDPOINTS } from '@/lib/api-config';
+import { SupabaseArtworkService } from '@/services/supabase-artwork-service';
+import { Artwork as SupabaseArtwork } from '@/lib/supabase';
 
 interface Artwork {
   id: number;
@@ -19,6 +20,9 @@ interface Artwork {
 interface ArtworkContextType {
   artworks: Artwork[];
   isLoading: boolean;
+  addArtwork: (artwork: Omit<Artwork, 'id'>) => Promise<void>;
+  updateArtwork: (id: number, artwork: Omit<Artwork, 'id'>) => Promise<void>;
+  deleteArtwork: (id: number) => Promise<void>;
   refreshArtworks: () => Promise<void>;
 }
 
@@ -172,57 +176,107 @@ const defaultArtworks: Artwork[] = [
   }
 ];
 
+const STORAGE_KEY = 'artspark-artworks';
+
+// Helper function to convert Supabase artwork to local artwork format
+const convertSupabaseArtwork = (supabaseArtwork: SupabaseArtwork): Artwork => ({
+  id: supabaseArtwork.id,
+  title: supabaseArtwork.titre,
+  category: supabaseArtwork.technique || 'Mixte',
+  image: supabaseArtwork.image_url,
+  size: supabaseArtwork.dimensions || '',
+  year: supabaseArtwork.annee?.toString() || new Date().getFullYear().toString(),
+  available: true,
+  description: supabaseArtwork.description || '',
+  featured: false,
+  tags: [],
+  materials: [],
+  technique: supabaseArtwork.technique || ''
+});
+
+// Helper function to convert local artwork to Supabase format
+const convertToSupabaseArtwork = (artwork: Omit<Artwork, 'id'>) => ({
+  titre: artwork.title,
+  description: artwork.description,
+  image_url: artwork.image,
+  technique: artwork.technique || artwork.category,
+  dimensions: artwork.size,
+  annee: parseInt(artwork.year) || new Date().getFullYear()
+});
+
 export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const refreshArtworks = async () => {
+  // Load artworks from Supabase on mount
+  useEffect(() => {
+    loadArtworks();
+  }, []);
+
+  const loadArtworks = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_CONFIG.baseURL}${API_ENDPOINTS.artworks.getAll}`);
-      if (response.ok) {
-        const data = await response.json();
-        console.log('API Response:', data);
-        // Transform API data to match our interface
-        const transformedArtworks = (data.data || []).map((artwork: any) => ({
-          id: artwork.id,
-          title: artwork.title,
-          category: artwork.category,
-          image: artwork.image_url || artwork.thumbnail_url,
-          size: artwork.dimensions,
-          year: artwork.year?.toString() || new Date().getFullYear().toString(),
-          available: Boolean(artwork.is_available),
-          description: artwork.description,
-          featured: false,
-          tags: artwork.tags || [],
-          materials: [artwork.medium],
-          technique: artwork.medium
-        }));
-        
-        // If we got artworks from API, use them; otherwise keep defaults
-        if (transformedArtworks.length > 0) {
-          console.log('Setting transformed artworks:', transformedArtworks);
-          setArtworks(transformedArtworks);
-        } else {
-          console.log('No artworks from API, using defaults');
-          setArtworks(defaultArtworks);
-        }
-      }
+      const supabaseArtworks = await SupabaseArtworkService.getAllArtworks();
+      const convertedArtworks = supabaseArtworks.map(convertSupabaseArtwork);
+      setArtworks(convertedArtworks);
     } catch (error) {
-      console.error('Error loading artworks:', error);
-      // Use default artworks if API fails
+      console.error('Error loading artworks from Supabase:', error);
+      // Fallback to default artworks if Supabase fails
       setArtworks(defaultArtworks);
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    refreshArtworks();
-  }, []);
+  const addArtwork = async (artwork: Omit<Artwork, 'id'>) => {
+    try {
+      const supabaseArtwork = convertToSupabaseArtwork(artwork);
+      const createdArtwork = await SupabaseArtworkService.createArtwork(supabaseArtwork);
+      const convertedArtwork = convertSupabaseArtwork(createdArtwork);
+      setArtworks(prev => [...prev, convertedArtwork]);
+    } catch (error) {
+      console.error('Error adding artwork:', error);
+      throw error;
+    }
+  };
+
+  const updateArtwork = async (id: number, artwork: Omit<Artwork, 'id'>) => {
+    try {
+      const supabaseArtwork = convertToSupabaseArtwork(artwork);
+      const updatedArtwork = await SupabaseArtworkService.updateArtwork(id, supabaseArtwork);
+      const convertedArtwork = convertSupabaseArtwork(updatedArtwork);
+      setArtworks(prev => prev.map(a => 
+        a.id === id ? convertedArtwork : a
+      ));
+    } catch (error) {
+      console.error('Error updating artwork:', error);
+      throw error;
+    }
+  };
+
+  const deleteArtwork = async (id: number) => {
+    try {
+      await SupabaseArtworkService.deleteArtwork(id);
+      setArtworks(prev => prev.filter(a => a.id !== id));
+    } catch (error) {
+      console.error('Error deleting artwork:', error);
+      throw error;
+    }
+  };
+
+  const refreshArtworks = async () => {
+    await loadArtworks();
+  };
 
   return (
-    <ArtworkContext.Provider value={{ artworks, isLoading, refreshArtworks }}>
+    <ArtworkContext.Provider value={{ 
+      artworks, 
+      isLoading, 
+      addArtwork, 
+      updateArtwork, 
+      deleteArtwork,
+      refreshArtworks
+    }}>
       {children}
     </ArtworkContext.Provider>
   );
