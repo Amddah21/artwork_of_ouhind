@@ -1,6 +1,4 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { SupabaseArtworkService } from '@/services/supabase-artwork-service';
-import { Artwork as SupabaseArtwork } from '@/lib/supabase';
 
 interface Artwork {
   id: number;
@@ -178,37 +176,11 @@ const defaultArtworks: Artwork[] = [
 
 const STORAGE_KEY = 'artspark-artworks';
 
-// Helper function to convert Supabase artwork to local artwork format
-const convertSupabaseArtwork = (supabaseArtwork: SupabaseArtwork): Artwork => ({
-  id: supabaseArtwork.id,
-  title: supabaseArtwork.titre,
-  category: supabaseArtwork.technique || 'Mixte',
-  image: supabaseArtwork.image_url,
-  size: supabaseArtwork.dimensions || '',
-  year: supabaseArtwork.annee?.toString() || new Date().getFullYear().toString(),
-  available: true,
-  description: supabaseArtwork.description || '',
-  featured: false,
-  tags: [],
-  materials: [],
-  technique: supabaseArtwork.technique || ''
-});
-
-// Helper function to convert local artwork to Supabase format
-const convertToSupabaseArtwork = (artwork: Omit<Artwork, 'id'>) => ({
-  titre: artwork.title,
-  description: artwork.description,
-  image_url: artwork.image,
-  technique: artwork.technique || artwork.category,
-  dimensions: artwork.size,
-  annee: parseInt(artwork.year) || new Date().getFullYear()
-});
-
 export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load artworks from Supabase on mount
+  // Load artworks from localStorage on mount
   useEffect(() => {
     loadArtworks();
   }, []);
@@ -216,12 +188,15 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const loadArtworks = async () => {
     try {
       setIsLoading(true);
-      const supabaseArtworks = await SupabaseArtworkService.getAllArtworks();
-      const convertedArtworks = supabaseArtworks.map(convertSupabaseArtwork);
-      setArtworks(convertedArtworks);
+      const storedArtworks = localStorage.getItem(STORAGE_KEY);
+      if (storedArtworks) {
+        setArtworks(JSON.parse(storedArtworks));
+      } else {
+        setArtworks(defaultArtworks);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultArtworks));
+      }
     } catch (error) {
-      console.error('Error loading artworks from Supabase:', error);
-      // Fallback to default artworks if Supabase fails
+      console.error('Error loading artworks:', error);
       setArtworks(defaultArtworks);
     } finally {
       setIsLoading(false);
@@ -230,10 +205,13 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const addArtwork = async (artwork: Omit<Artwork, 'id'>) => {
     try {
-      const supabaseArtwork = convertToSupabaseArtwork(artwork);
-      const createdArtwork = await SupabaseArtworkService.createArtwork(supabaseArtwork);
-      const convertedArtwork = convertSupabaseArtwork(createdArtwork);
-      setArtworks(prev => [...prev, convertedArtwork]);
+      const newArtwork = {
+        ...artwork,
+        id: Math.max(...artworks.map(a => a.id), 0) + 1
+      };
+      const updatedArtworks = [...artworks, newArtwork];
+      setArtworks(updatedArtworks);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedArtworks));
     } catch (error) {
       console.error('Error adding artwork:', error);
       throw error;
@@ -242,12 +220,11 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const updateArtwork = async (id: number, artwork: Omit<Artwork, 'id'>) => {
     try {
-      const supabaseArtwork = convertToSupabaseArtwork(artwork);
-      const updatedArtwork = await SupabaseArtworkService.updateArtwork(id, supabaseArtwork);
-      const convertedArtwork = convertSupabaseArtwork(updatedArtwork);
-      setArtworks(prev => prev.map(a => 
-        a.id === id ? convertedArtwork : a
-      ));
+      const updatedArtworks = artworks.map(a => 
+        a.id === id ? { ...a, ...artwork } : a
+      );
+      setArtworks(updatedArtworks);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedArtworks));
     } catch (error) {
       console.error('Error updating artwork:', error);
       throw error;
@@ -256,8 +233,9 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteArtwork = async (id: number) => {
     try {
-      await SupabaseArtworkService.deleteArtwork(id);
-      setArtworks(prev => prev.filter(a => a.id !== id));
+      const updatedArtworks = artworks.filter(a => a.id !== id);
+      setArtworks(updatedArtworks);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedArtworks));
     } catch (error) {
       console.error('Error deleting artwork:', error);
       throw error;

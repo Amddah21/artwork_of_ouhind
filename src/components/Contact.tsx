@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import Logo from "./Logo";
+import QRCodeComponent from "./QRCode";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -89,6 +90,17 @@ const Contact = () => {
               </div>
             </div>
 
+            {/* QR Code Section - Added after contact info */}
+            <div className="flex justify-center py-6">
+              <QRCodeComponent
+                url="https://www.canva.com/design/DAGXYvuFYQk/o8_aNq9QEBN3zv82-k1aLg/view?utm_content=DAGXYvuFYQk&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hd762ab158a"
+                title="Portfolio Canva"
+                description="Scannez pour voir mon portfolio complet"
+                size={160}
+                className="animate-fade-in"
+              />
+            </div>
+
             <div className="bg-gradient-subtle p-8 rounded-xl shadow-elegant border border-border/30">
               <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
                 Processus de Commissions
@@ -112,6 +124,7 @@ const Contact = () => {
                 </li>
               </ol>
             </div>
+
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6 animate-scale-in">

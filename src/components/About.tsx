@@ -147,6 +147,7 @@ const About = () => {
                 <span className="text-xs md:text-sm font-medium text-foreground">Artiste Reconnue Internationalement</span>
               </div>
             </div>
+
           </div>
         </div>
       </div>
