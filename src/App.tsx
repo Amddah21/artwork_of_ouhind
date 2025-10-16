@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ArtworkProvider } from "@/contexts/ArtworkContext";
 import { ReviewProvider } from "@/contexts/ReviewContext";
 import { RatingProvider } from "@/contexts/RatingContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import ArtisticNavbar from "@/components/ArtisticNavbar";
 import ArtisticFooter from "@/components/ArtisticFooter";
 import Index from "./pages/Index";
@@ -21,12 +22,13 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <ArtworkProvider>
-        <ReviewProvider>
-          <RatingProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
+      <AuthProvider>
+        <ArtworkProvider>
+          <ReviewProvider>
+            <RatingProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
               <Routes>
                 <Route path="*" element={
                   <div className="min-h-screen flex flex-col">
@@ -48,9 +50,10 @@ const App = () => (
                 } />
               </Routes>
             </BrowserRouter>
-          </RatingProvider>
-        </ReviewProvider>
-      </ArtworkProvider>
+            </RatingProvider>
+          </ReviewProvider>
+        </ArtworkProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

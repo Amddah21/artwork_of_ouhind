@@ -224,6 +224,7 @@ const Hero: React.FC = () => {
                   <Logo size="sm" />
                 </div>
               </div>
+
             </div>
           </div>
         </div>

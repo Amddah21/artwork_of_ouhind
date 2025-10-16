@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Menu, X, Palette, Home, Grid3X3, User, Mail, Settings, Calendar, Brush, Sparkles } from 'lucide-react';
+import { Menu, X, Palette, Home, Grid3X3, User, Mail, Settings, Calendar, Brush, Sparkles, LogIn, LogOut } from 'lucide-react';
 import Logo from './Logo';
+import { useAuth } from '@/contexts/AuthContext';
+import LoginForm from './LoginForm';
 
 const ArtisticNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAdmin, isAuthenticated, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,8 +28,7 @@ const ArtisticNavbar: React.FC = () => {
     { id: 'galerie', label: 'Galerie', icon: Grid3X3, href: 'portfolio' },
     { id: 'about', label: 'À Propos', icon: User, href: 'about' },
     { id: 'exhibitions', label: 'Expositions', icon: Calendar, href: 'exhibitions' },
-    { id: 'contact', label: 'Contact', icon: Mail, href: 'contact' },
-    { id: 'admin', label: 'Admin', icon: Settings, href: '/admin' }
+    { id: 'contact', label: 'Contact', icon: Mail, href: 'contact' }
   ];
 
   const handleNavClick = (href: string) => {
@@ -117,18 +120,53 @@ const ArtisticNavbar: React.FC = () => {
                     onClick={() => handleNavClick(item.href)}
                     className={`group relative transition-all duration-300 px-3 py-2 rounded-lg ${
                       isActiveItem
-                        ? 'text-white bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg hover:from-blue-700 hover:to-indigo-700'
-                        : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50 hover:shadow-md'
+                        ? 'text-gray-800 bg-gradient-to-r from-gray-200 to-gray-300 shadow-lg hover:from-gray-300 hover:to-gray-400'
+                        : 'text-gray-700 hover:text-gray-800 hover:bg-gray-100 hover:shadow-md'
                     }`}
                   >
                     <IconComponent className={`w-4 h-4 mr-2 transition-transform group-hover:scale-110 ${
-                      isActiveItem ? 'text-white' : 'text-current'
+                      isActiveItem ? 'text-gray-800' : 'text-current'
                     }`} />
                     <span className="font-body font-medium">{item.label}</span>
                   </Button>
                 );
               })}
               
+              {/* LOGGING Button - Only for Admin Users */}
+              {isAdmin && (
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => navigate('/admin')}
+                  className="ml-2 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-800 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  LOGGING
+                </Button>
+              )}
+              
+              {/* Login/Logout Button */}
+              {!isAuthenticated ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowLoginForm(true)}
+                  className="ml-2 bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200 hover:from-gray-100 hover:to-gray-200 hover:border-gray-300 transition-all duration-300"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Connexion
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={signOut}
+                  className="ml-2 bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200 hover:from-gray-100 hover:to-gray-200 hover:border-gray-300 transition-all duration-300"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Déconnexion
+                </Button>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -197,17 +235,32 @@ const ArtisticNavbar: React.FC = () => {
                       onClick={() => handleNavClick(item.href)}
                       className={`w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 ${
                         isActiveItem
-                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
-                          : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                          ? 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 shadow-lg'
+                          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
                       }`}
                     >
                       <IconComponent className={`w-5 h-5 mr-3 ${
-                        isActiveItem ? 'text-white' : 'text-current'
+                        isActiveItem ? 'text-gray-800' : 'text-current'
                       }`} />
                       <span className="font-body font-medium">{item.label}</span>
                     </Button>
                   );
                 })}
+                
+                {/* LOGGING Button for Mobile - Only for Admin Users */}
+                {isAdmin && (
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      navigate('/admin');
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full justify-start bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg px-4 py-3"
+                  >
+                    <Settings className="w-5 h-5 mr-3" />
+                    <span className="font-body font-medium">LOGGING</span>
+                  </Button>
+                )}
                 
               </nav>
 
@@ -232,7 +285,13 @@ const ArtisticNavbar: React.FC = () => {
         </div>
       )}
 
-
+      {/* Login Form Modal */}
+      {showLoginForm && (
+        <LoginForm
+          onClose={() => setShowLoginForm(false)}
+          onSuccess={() => setShowLoginForm(false)}
+        />
+      )}
     </>
   );
 };

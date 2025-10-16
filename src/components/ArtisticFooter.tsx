@@ -160,6 +160,7 @@ const ArtisticFooter: React.FC = () => {
                   );
                 })}
               </div>
+              
             </div>
 
             {/* Legal Links */}
