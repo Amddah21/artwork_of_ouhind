@@ -11,6 +11,7 @@ import { Trash2, Edit, Plus, Eye, Upload, X, Image as ImageIcon, Camera, Grid3X3
 import { useToast } from '@/hooks/use-toast';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import TestArtworkCreation from '@/components/TestArtworkCreation';
+import SimpleTest from '@/components/SimpleTest';
 
 interface Artwork {
   id: number;
@@ -37,6 +38,7 @@ const AdminDashboard: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string>('');
   const [showTestForm, setShowTestForm] = useState(false);
+  const [showSimpleTest, setShowSimpleTest] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -584,6 +586,14 @@ const AdminDashboard: React.FC = () => {
             >
               {showTestForm ? 'Masquer' : 'Afficher'} Test Simple
             </Button>
+            
+            <Button 
+              onClick={() => setShowSimpleTest(!showSimpleTest)} 
+              variant="outline"
+              className="border-green-300 text-green-700 hover:bg-green-50"
+            >
+              {showSimpleTest ? 'Masquer' : 'Afficher'} Test Direct
+            </Button>
           </div>
         )}
 
@@ -591,6 +601,13 @@ const AdminDashboard: React.FC = () => {
         {showTestForm && (
           <div className="mb-6">
             <TestArtworkCreation />
+          </div>
+        )}
+
+        {/* Simple Test */}
+        {showSimpleTest && (
+          <div className="mb-6">
+            <SimpleTest />
           </div>
         )}
 
