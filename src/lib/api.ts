@@ -40,9 +40,11 @@ export interface ValidateTokenResponse {
 // API Service Class
 export class ApiService {
   private baseUrl: string
+  public defaults: { baseURL: string }
 
   constructor(baseUrl: string = API_BASE_URL) {
     this.baseUrl = baseUrl
+    this.defaults = { baseURL: baseUrl }
   }
 
   // Generic API call method
@@ -111,7 +113,31 @@ export class ApiService {
     })
   }
 
-  // Add more API methods as needed
+  // Generic HTTP methods
+  async get(endpoint: string) {
+    return this.apiCall(endpoint, { method: 'GET' })
+  }
+
+  async post(endpoint: string, data?: any, options?: RequestInit) {
+    return this.apiCall(endpoint, {
+      method: 'POST',
+      body: data ? JSON.stringify(data) : undefined,
+      ...options,
+    })
+  }
+
+  async put(endpoint: string, data?: any) {
+    return this.apiCall(endpoint, {
+      method: 'PUT',
+      body: data ? JSON.stringify(data) : undefined,
+    })
+  }
+
+  async delete(endpoint: string) {
+    return this.apiCall(endpoint, { method: 'DELETE' })
+  }
+
+  // Artwork specific methods
   async getArtworks() {
     return this.apiCall(API_ENDPOINTS.artworks, {
       method: 'GET',

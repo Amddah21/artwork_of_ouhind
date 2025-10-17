@@ -117,11 +117,26 @@ export class SpringArtworkService {
   static async deleteArtwork(id: number): Promise<void> {
     try {
       console.log(`🎨 [SpringArtworkService] Deleting artwork ${id}...`)
-      await apiService.delete(`/artworks/${id}`)
-      console.log(`🎨 [SpringArtworkService] Artwork ${id} deleted successfully`)
-    } catch (error) {
+      const response = await apiService.delete(`/artworks/${id}`)
+      console.log(`🎨 [SpringArtworkService] Artwork ${id} deleted successfully:`, response)
+    } catch (error: any) {
       console.error(`🎨 [SpringArtworkService] Error deleting artwork ${id}:`, error)
-      throw new Error('Failed to delete artwork')
+      
+      // Provide more detailed error information
+      let errorMessage = 'Failed to delete artwork'
+      if (error.message) {
+        errorMessage = error.message
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else if (error.status === 404) {
+        errorMessage = 'Artwork not found'
+      } else if (error.status === 403) {
+        errorMessage = 'Access denied - Admin privileges required'
+      } else if (error.status === 401) {
+        errorMessage = 'Authentication required'
+      }
+      
+      throw new Error(errorMessage)
     }
   }
 

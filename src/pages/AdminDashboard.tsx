@@ -209,10 +209,29 @@ const AdminDashboard: React.FC = () => {
           title: "Succès",
           description: "Œuvre supprimée avec succès",
         });
-      } catch (error) {
+      } catch (error: any) {
+        console.error('Delete error:', error);
+        
+        // Provide more specific error messages
+        let errorMessage = "Erreur lors de la suppression de l'œuvre";
+        
+        if (error.message) {
+          if (error.message.includes('404') || error.message.includes('not found')) {
+            errorMessage = "L'œuvre n'a pas été trouvée";
+          } else if (error.message.includes('403') || error.message.includes('Access denied')) {
+            errorMessage = "Accès refusé - Privilèges administrateur requis";
+          } else if (error.message.includes('401') || error.message.includes('Authentication')) {
+            errorMessage = "Authentification requise - Veuillez vous reconnecter";
+          } else if (error.message.includes('Failed to delete')) {
+            errorMessage = "Impossible de supprimer l'œuvre - Vérifiez votre connexion";
+          } else {
+            errorMessage = error.message;
+          }
+        }
+        
         toast({
-          title: "Erreur",
-          description: "Erreur lors de la suppression de l'œuvre",
+          title: "Erreur de suppression",
+          description: errorMessage,
           variant: "destructive",
         });
       }
