@@ -62,11 +62,26 @@ export class SpringArtworkService {
     try {
       console.log('🎨 [SpringArtworkService] Creating artwork:', artwork)
       const response = await apiService.post('/artworks', artwork)
-      console.log('🎨 [SpringArtworkService] Artwork created successfully:', response.data)
-      return response.data
-    } catch (error) {
+      console.log('🎨 [SpringArtworkService] Artwork created successfully:', response)
+      return response
+    } catch (error: any) {
       console.error('🎨 [SpringArtworkService] Error creating artwork:', error)
-      throw new Error('Failed to create artwork')
+      
+      // Provide more detailed error information
+      let errorMessage = 'Failed to create artwork'
+      if (error.message) {
+        errorMessage = error.message
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else if (error.status === 400) {
+        errorMessage = 'Invalid artwork data - check required fields'
+      } else if (error.status === 403) {
+        errorMessage = 'Access denied - Admin privileges required'
+      } else if (error.status === 401) {
+        errorMessage = 'Authentication required'
+      }
+      
+      throw new Error(errorMessage)
     }
   }
 

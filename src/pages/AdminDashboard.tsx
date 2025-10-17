@@ -159,6 +159,7 @@ const AdminDashboard: React.FC = () => {
     };
 
     try {
+      console.log('🎨 [AdminDashboard] Submitting artwork:', artworkData);
       if (editingId) {
         await updateArtwork(editingId, artworkData);
         toast({
@@ -173,10 +174,18 @@ const AdminDashboard: React.FC = () => {
         });
       }
       resetForm();
-    } catch (error) {
+    } catch (error: any) {
+      console.error('❌ [AdminDashboard] Error saving artwork:', error);
+      
+      // Provide more specific error message
+      let errorMessage = "Erreur lors de la sauvegarde de l'œuvre";
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
-        title: "Erreur",
-        description: "Erreur lors de la sauvegarde de l'œuvre",
+        title: "Erreur de sauvegarde",
+        description: errorMessage,
         variant: "destructive",
       });
     }
