@@ -181,7 +181,7 @@ const STORAGE_KEY = 'artspark-artworks';
 const convertSpringArtwork = (springArtwork: SpringArtwork): Artwork => ({
   id: springArtwork.id,
   title: springArtwork.title,
-  category: springArtwork.category || springArtwork.technique || 'Mixte',
+  category: springArtwork.category || 'Mixte',
   image: springArtwork.imageUrl,
   size: springArtwork.dimensions || '',
   year: springArtwork.year?.toString() || new Date().getFullYear().toString(),
@@ -197,11 +197,12 @@ const convertSpringArtwork = (springArtwork: SpringArtwork): Artwork => ({
 const convertToSpringArtwork = (artwork: Omit<Artwork, 'id'>) => ({
   title: artwork.title,
   description: artwork.description,
+  category: artwork.category,
+  price: 0, // Default price, should be set by admin
   imageUrl: artwork.image,
-  technique: artwork.technique || artwork.category,
+  technique: artwork.technique,
   dimensions: artwork.size,
   year: parseInt(artwork.year) || new Date().getFullYear(),
-  category: artwork.category,
   available: artwork.available,
   featured: artwork.featured,
   tags: artwork.tags,

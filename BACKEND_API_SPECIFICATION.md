@@ -147,65 +147,76 @@ GET /artworks
 GET /artworks/{id}
 ```
 
-#### **2.3 Créer une nouvelle œuvre**
+#### **2.3 Créer une nouvelle œuvre (Admin)**
 ```http
 POST /artworks
+Authorization: Bearer {token}
 Content-Type: application/json
 
 {
-  "title": "Nouvelle Œuvre",
-  "description": "Description de l'œuvre",
-  "imageUrl": "/nouvelle-oeuvre.jpg",
-  "technique": "Peinture à l'huile",
-  "dimensions": "100x80 cm",
-  "year": 2024,
-  "category": "Figuratif",
-  "available": true,
-  "featured": false,
-  "tags": ["figuratif", "portrait"],
-  "materials": ["Huile", "Toile"]
+  "title": "Titre de l'œuvre",
+  "description": "Description",
+  "category": "Peinture",
+  "price": 500.00,
+  "imageUrl": "image.jpg"
 }
 ```
 
-#### **2.4 Modifier une œuvre**
+#### **2.4 Upload d'image (Admin)**
+```http
+POST /artworks/upload
+Authorization: Bearer {token}
+Content-Type: multipart/form-data
+
+file: {fichier image}
+```
+
+#### **2.5 Modifier une œuvre (Admin)**
 ```http
 PUT /artworks/{id}
+Authorization: Bearer {token}
 Content-Type: application/json
 
 {
-  "title": "Titre modifié",
-  "description": "Description modifiée"
+  "title": "Nouveau titre",
+  "description": "Nouvelle description"
 }
 ```
 
-#### **2.5 Supprimer une œuvre**
+#### **2.6 Supprimer une œuvre (Admin)**
 ```http
 DELETE /artworks/{id}
+Authorization: Bearer {token}
 ```
 
-#### **2.6 Rechercher des œuvres**
+#### **2.7 Rechercher des œuvres**
 ```http
 GET /artworks/search?q={query}
 ```
 
-#### **2.7 Filtrer par technique**
+#### **2.8 Filtrer par technique**
 ```http
 GET /artworks/technique/{technique}
 ```
 
-#### **2.8 Filtrer par année**
+#### **2.9 Filtrer par année**
 ```http
 GET /artworks/year/{year}
 ```
 
-#### **2.9 Récupérer les œuvres mises en avant**
+#### **2.10 Récupérer les œuvres mises en avant**
 ```http
 GET /artworks/featured
 ```
 
-#### **2.10 Filtrer par catégorie**
+#### **2.11 Filtrer par catégorie**
 ```http
 GET /artworks/category/{category}
+```
+
+#### **2.12 Récupération des images**
+```http
+GET /artworks/images/{fileName}
 ```
 
 ### **Modèle Artwork :**

@@ -5,10 +5,11 @@ export interface Artwork {
   title: string
   description: string
   imageUrl: string
+  category: string
+  price: number
   technique?: string
   dimensions?: string
   year?: number
-  category?: string
   available?: boolean
   featured?: boolean
   tags?: string[]
@@ -20,15 +21,9 @@ export interface Artwork {
 export interface CreateArtworkRequest {
   title: string
   description: string
+  category: string
+  price: number
   imageUrl: string
-  technique?: string
-  dimensions?: string
-  year?: number
-  category?: string
-  available?: boolean
-  featured?: boolean
-  tags?: string[]
-  materials?: string[]
 }
 
 export interface UpdateArtworkRequest {
@@ -72,7 +67,7 @@ export class SpringArtworkService {
     }
   }
 
-  // Create new artwork
+  // Create new artwork (Admin only)
   static async createArtwork(artwork: CreateArtworkRequest): Promise<Artwork> {
     try {
       console.log('🎨 [SpringArtworkService] Creating artwork:', artwork)
@@ -85,7 +80,27 @@ export class SpringArtworkService {
     }
   }
 
-  // Update artwork
+  // Upload image (Admin only)
+  static async uploadImage(file: File): Promise<{ imageUrl: string }> {
+    try {
+      console.log('🎨 [SpringArtworkService] Uploading image:', file.name)
+      const formData = new FormData()
+      formData.append('file', file)
+      
+      const response = await apiService.post('/artworks/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      console.log('🎨 [SpringArtworkService] Image uploaded successfully:', response.data)
+      return response.data
+    } catch (error) {
+      console.error('🎨 [SpringArtworkService] Error uploading image:', error)
+      throw new Error('Failed to upload image')
+    }
+  }
+
+  // Update artwork (Admin only)
   static async updateArtwork(id: number, artwork: UpdateArtworkRequest): Promise<Artwork> {
     try {
       console.log(`🎨 [SpringArtworkService] Updating artwork ${id}:`, artwork)
@@ -98,7 +113,7 @@ export class SpringArtworkService {
     }
   }
 
-  // Delete artwork
+  // Delete artwork (Admin only)
   static async deleteArtwork(id: number): Promise<void> {
     try {
       console.log(`🎨 [SpringArtworkService] Deleting artwork ${id}...`)
@@ -173,5 +188,10 @@ export class SpringArtworkService {
       console.error('🎨 [SpringArtworkService] Error fetching artworks by category:', error)
       throw new Error('Failed to fetch artworks by category')
     }
+  }
+
+  // Get image URL
+  static getImageUrl(fileName: string): string {
+    return `${apiService.defaults.baseURL}/artworks/images/${fileName}`
   }
 }
