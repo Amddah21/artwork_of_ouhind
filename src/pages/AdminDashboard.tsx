@@ -14,6 +14,7 @@ import TestArtworkCreation from '@/components/TestArtworkCreation';
 import SimpleTest from '@/components/SimpleTest';
 import DebugTest from '@/components/DebugTest';
 import BackendTest from '@/components/BackendTest';
+import TestRealFlow from '@/components/TestRealFlow';
 
 interface Artwork {
   id: number;
@@ -43,6 +44,7 @@ const AdminDashboard: React.FC = () => {
   const [showSimpleTest, setShowSimpleTest] = useState(false);
   const [showDebugTest, setShowDebugTest] = useState(false);
   const [showBackendTest, setShowBackendTest] = useState(false);
+  const [showRealFlowTest, setShowRealFlowTest] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -614,6 +616,14 @@ const AdminDashboard: React.FC = () => {
             >
               {showBackendTest ? 'Masquer' : 'Afficher'} Test Backend
             </Button>
+            
+            <Button 
+              onClick={() => setShowRealFlowTest(!showRealFlowTest)} 
+              variant="outline"
+              className="border-orange-300 text-orange-700 hover:bg-orange-50"
+            >
+              {showRealFlowTest ? 'Masquer' : 'Afficher'} Test Flux Réel
+            </Button>
           </div>
         )}
 
@@ -642,6 +652,13 @@ const AdminDashboard: React.FC = () => {
         {showBackendTest && (
           <div className="mb-6">
             <BackendTest />
+          </div>
+        )}
+
+        {/* Real Flow Test */}
+        {showRealFlowTest && (
+          <div className="mb-6">
+            <TestRealFlow />
           </div>
         )}
 
