@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Trash2, Edit, Plus, Eye, Upload, X, Image as ImageIcon, Camera, Grid3X3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useArtwork } from '@/contexts/ArtworkContext';
+import TestArtworkCreation from '@/components/TestArtworkCreation';
 
 interface Artwork {
   id: number;
@@ -35,6 +36,7 @@ const AdminDashboard: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string>('');
+  const [showTestForm, setShowTestForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -566,14 +568,29 @@ const AdminDashboard: React.FC = () => {
 
         {/* Add Button */}
         {!isAdding && (
-          <div className="mb-6">
-                  <Button 
-                    onClick={() => setIsAdding(true)} 
-                    className="w-full sm:w-auto bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold py-3 px-6 shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
+          <div className="mb-6 flex gap-4">
+            <Button 
+              onClick={() => setIsAdding(true)} 
+              className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold py-3 px-6 shadow-lg hover:shadow-xl transition-all duration-300"
+            >
               <Plus className="h-4 w-4 mr-2" />
               Ajouter une nouvelle œuvre
             </Button>
+            
+            <Button 
+              onClick={() => setShowTestForm(!showTestForm)} 
+              variant="outline"
+              className="border-blue-300 text-blue-700 hover:bg-blue-50"
+            >
+              {showTestForm ? 'Masquer' : 'Afficher'} Test Simple
+            </Button>
+          </div>
+        )}
+
+        {/* Test Form */}
+        {showTestForm && (
+          <div className="mb-6">
+            <TestArtworkCreation />
           </div>
         )}
 
