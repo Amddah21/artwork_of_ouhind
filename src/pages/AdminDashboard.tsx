@@ -15,6 +15,7 @@ import SimpleTest from '@/components/SimpleTest';
 import DebugTest from '@/components/DebugTest';
 import BackendTest from '@/components/BackendTest';
 import TestRealFlow from '@/components/TestRealFlow';
+import NetworkTest from '@/components/NetworkTest';
 
 interface Artwork {
   id: number;
@@ -45,6 +46,7 @@ const AdminDashboard: React.FC = () => {
   const [showDebugTest, setShowDebugTest] = useState(false);
   const [showBackendTest, setShowBackendTest] = useState(false);
   const [showRealFlowTest, setShowRealFlowTest] = useState(false);
+  const [showNetworkTest, setShowNetworkTest] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -624,6 +626,14 @@ const AdminDashboard: React.FC = () => {
             >
               {showRealFlowTest ? 'Masquer' : 'Afficher'} Test Flux Réel
             </Button>
+            
+            <Button 
+              onClick={() => setShowNetworkTest(!showNetworkTest)} 
+              variant="outline"
+              className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
+            >
+              {showNetworkTest ? 'Masquer' : 'Afficher'} Test Réseau
+            </Button>
           </div>
         )}
 
@@ -659,6 +669,13 @@ const AdminDashboard: React.FC = () => {
         {showRealFlowTest && (
           <div className="mb-6">
             <TestRealFlow />
+          </div>
+        )}
+
+        {/* Network Test */}
+        {showNetworkTest && (
+          <div className="mb-6">
+            <NetworkTest />
           </div>
         )}
 
