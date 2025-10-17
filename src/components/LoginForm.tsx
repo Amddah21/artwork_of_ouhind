@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -17,8 +18,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, isAdmin } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,10 +30,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
       await signIn(email, password);
       toast({
         title: "Connexion réussie",
-        description: "Vous êtes maintenant connecté en tant qu'administrateur.",
+        description: "Redirection vers l'interface administrateur...",
       });
-      onSuccess?.();
+      
+      // Fermer le formulaire
       onClose();
+      
+      // Rediriger automatiquement vers l'interface admin
+      navigate('/admin');
+      
+      // Appeler le callback de succès si fourni
+      onSuccess?.();
     } catch (error) {
       toast({
         title: "Erreur de connexion",
@@ -57,7 +66,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
           </Button>
           <CardTitle>Connexion Administrateur</CardTitle>
           <CardDescription>
-            Connectez-vous pour accéder au panneau d'administration
+            Connectez-vous pour accéder au panneau d'administration. Vous serez automatiquement redirigé vers l'interface admin après connexion.
           </CardDescription>
         </CardHeader>
         <CardContent>
