@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import TestArtworkCreation from '@/components/TestArtworkCreation';
 import SimpleTest from '@/components/SimpleTest';
+import DebugTest from '@/components/DebugTest';
 
 interface Artwork {
   id: number;
@@ -39,6 +40,7 @@ const AdminDashboard: React.FC = () => {
   const [previewImage, setPreviewImage] = useState<string>('');
   const [showTestForm, setShowTestForm] = useState(false);
   const [showSimpleTest, setShowSimpleTest] = useState(false);
+  const [showDebugTest, setShowDebugTest] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -594,6 +596,14 @@ const AdminDashboard: React.FC = () => {
             >
               {showSimpleTest ? 'Masquer' : 'Afficher'} Test Direct
             </Button>
+            
+            <Button 
+              onClick={() => setShowDebugTest(!showDebugTest)} 
+              variant="outline"
+              className="border-purple-300 text-purple-700 hover:bg-purple-50"
+            >
+              {showDebugTest ? 'Masquer' : 'Afficher'} Debug
+            </Button>
           </div>
         )}
 
@@ -608,6 +618,13 @@ const AdminDashboard: React.FC = () => {
         {showSimpleTest && (
           <div className="mb-6">
             <SimpleTest />
+          </div>
+        )}
+
+        {/* Debug Test */}
+        {showDebugTest && (
+          <div className="mb-6">
+            <DebugTest />
           </div>
         )}
 
