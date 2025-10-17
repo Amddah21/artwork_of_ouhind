@@ -221,13 +221,17 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const loadArtworks = async () => {
     try {
       setIsLoading(true);
+      console.log('🎨 [ArtworkContext] Loading artworks from Spring Boot backend...');
       const springArtworks = await SpringArtworkService.getAllArtworks();
+      console.log('🎨 [ArtworkContext] Received artworks from backend:', springArtworks);
       const convertedArtworks = springArtworks.map(convertSpringArtwork);
       setArtworks(convertedArtworks);
+      console.log('🎨 [ArtworkContext] Converted artworks:', convertedArtworks);
     } catch (error) {
-      console.error('Error loading artworks from Spring Boot:', error);
-      // Fallback to default artworks if Spring Boot fails
-      setArtworks(defaultArtworks);
+      console.error('❌ [ArtworkContext] Error loading artworks from Spring Boot:', error);
+      // Don't use fallback - show empty state instead
+      setArtworks([]);
+      console.log('🎨 [ArtworkContext] Set artworks to empty array - backend not available');
     } finally {
       setIsLoading(false);
     }
@@ -235,36 +239,49 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const addArtwork = async (artwork: Omit<Artwork, 'id'>) => {
     try {
+      console.log('🎨 [ArtworkContext] Adding artwork:', artwork);
       const springArtwork = convertToSpringArtwork(artwork);
+      console.log('🎨 [ArtworkContext] Converted to Spring format:', springArtwork);
       const createdArtwork = await SpringArtworkService.createArtwork(springArtwork);
+      console.log('🎨 [ArtworkContext] Created artwork from backend:', createdArtwork);
       const convertedArtwork = convertSpringArtwork(createdArtwork);
+      console.log('🎨 [ArtworkContext] Converted back to local format:', convertedArtwork);
       setArtworks(prev => [...prev, convertedArtwork]);
+      console.log('🎨 [ArtworkContext] Updated local state with new artwork');
     } catch (error) {
-      console.error('Error adding artwork:', error);
+      console.error('❌ [ArtworkContext] Error adding artwork:', error);
       throw error;
     }
   };
 
   const updateArtwork = async (id: number, artwork: Omit<Artwork, 'id'>) => {
     try {
+      console.log(`🎨 [ArtworkContext] Updating artwork ${id}:`, artwork);
       const springArtwork = convertToSpringArtwork(artwork);
+      console.log(`🎨 [ArtworkContext] Converted to Spring format:`, springArtwork);
       const updatedArtwork = await SpringArtworkService.updateArtwork(id, springArtwork);
+      console.log(`🎨 [ArtworkContext] Updated artwork from backend:`, updatedArtwork);
       const convertedArtwork = convertSpringArtwork(updatedArtwork);
+      console.log(`🎨 [ArtworkContext] Converted back to local format:`, convertedArtwork);
       setArtworks(prev => prev.map(a => 
         a.id === id ? convertedArtwork : a
       ));
+      console.log(`🎨 [ArtworkContext] Updated local state for artwork ${id}`);
     } catch (error) {
-      console.error('Error updating artwork:', error);
+      console.error(`❌ [ArtworkContext] Error updating artwork ${id}:`, error);
       throw error;
     }
   };
 
   const deleteArtwork = async (id: number) => {
     try {
+      console.log(`🎨 [ArtworkContext] Deleting artwork ${id}...`);
       await SpringArtworkService.deleteArtwork(id);
+      console.log(`🎨 [ArtworkContext] Successfully deleted artwork ${id} from backend`);
       setArtworks(prev => prev.filter(a => a.id !== id));
+      console.log(`🎨 [ArtworkContext] Removed artwork ${id} from local state`);
     } catch (error) {
-      console.error('Error deleting artwork:', error);
+      console.error(`❌ [ArtworkContext] Error deleting artwork ${id}:`, error);
       throw error;
     }
   };
