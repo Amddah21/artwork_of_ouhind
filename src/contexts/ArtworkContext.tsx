@@ -1,6 +1,5 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { SupabaseArtworkService } from '@/services/supabase-artwork-service';
-import { Artwork as SupabaseArtwork } from '@/lib/supabase';
+import { SpringArtworkService, Artwork as SpringArtwork } from '@/services/spring-artwork-service';
 
 interface Artwork {
   id: number;
@@ -178,37 +177,42 @@ const defaultArtworks: Artwork[] = [
 
 const STORAGE_KEY = 'artspark-artworks';
 
-// Helper function to convert Supabase artwork to local artwork format
-const convertSupabaseArtwork = (supabaseArtwork: SupabaseArtwork): Artwork => ({
-  id: supabaseArtwork.id,
-  title: supabaseArtwork.titre,
-  category: supabaseArtwork.technique || 'Mixte',
-  image: supabaseArtwork.image_url,
-  size: supabaseArtwork.dimensions || '',
-  year: supabaseArtwork.annee?.toString() || new Date().getFullYear().toString(),
-  available: true,
-  description: supabaseArtwork.description || '',
-  featured: false,
-  tags: [],
-  materials: [],
-  technique: supabaseArtwork.technique || ''
+// Helper function to convert Spring Boot artwork to local artwork format
+const convertSpringArtwork = (springArtwork: SpringArtwork): Artwork => ({
+  id: springArtwork.id,
+  title: springArtwork.title,
+  category: springArtwork.category || springArtwork.technique || 'Mixte',
+  image: springArtwork.imageUrl,
+  size: springArtwork.dimensions || '',
+  year: springArtwork.year?.toString() || new Date().getFullYear().toString(),
+  available: springArtwork.available ?? true,
+  description: springArtwork.description || '',
+  featured: springArtwork.featured ?? false,
+  tags: springArtwork.tags || [],
+  materials: springArtwork.materials || [],
+  technique: springArtwork.technique || ''
 });
 
-// Helper function to convert local artwork to Supabase format
-const convertToSupabaseArtwork = (artwork: Omit<Artwork, 'id'>) => ({
-  titre: artwork.title,
+// Helper function to convert local artwork to Spring Boot format
+const convertToSpringArtwork = (artwork: Omit<Artwork, 'id'>) => ({
+  title: artwork.title,
   description: artwork.description,
-  image_url: artwork.image,
+  imageUrl: artwork.image,
   technique: artwork.technique || artwork.category,
   dimensions: artwork.size,
-  annee: parseInt(artwork.year) || new Date().getFullYear()
+  year: parseInt(artwork.year) || new Date().getFullYear(),
+  category: artwork.category,
+  available: artwork.available,
+  featured: artwork.featured,
+  tags: artwork.tags,
+  materials: artwork.materials
 });
 
 export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load artworks from Supabase on mount
+  // Load artworks from Spring Boot on mount
   useEffect(() => {
     loadArtworks();
   }, []);
@@ -216,12 +220,12 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const loadArtworks = async () => {
     try {
       setIsLoading(true);
-      const supabaseArtworks = await SupabaseArtworkService.getAllArtworks();
-      const convertedArtworks = supabaseArtworks.map(convertSupabaseArtwork);
+      const springArtworks = await SpringArtworkService.getAllArtworks();
+      const convertedArtworks = springArtworks.map(convertSpringArtwork);
       setArtworks(convertedArtworks);
     } catch (error) {
-      console.error('Error loading artworks from Supabase:', error);
-      // Fallback to default artworks if Supabase fails
+      console.error('Error loading artworks from Spring Boot:', error);
+      // Fallback to default artworks if Spring Boot fails
       setArtworks(defaultArtworks);
     } finally {
       setIsLoading(false);
@@ -230,9 +234,9 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const addArtwork = async (artwork: Omit<Artwork, 'id'>) => {
     try {
-      const supabaseArtwork = convertToSupabaseArtwork(artwork);
-      const createdArtwork = await SupabaseArtworkService.createArtwork(supabaseArtwork);
-      const convertedArtwork = convertSupabaseArtwork(createdArtwork);
+      const springArtwork = convertToSpringArtwork(artwork);
+      const createdArtwork = await SpringArtworkService.createArtwork(springArtwork);
+      const convertedArtwork = convertSpringArtwork(createdArtwork);
       setArtworks(prev => [...prev, convertedArtwork]);
     } catch (error) {
       console.error('Error adding artwork:', error);
@@ -242,9 +246,9 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const updateArtwork = async (id: number, artwork: Omit<Artwork, 'id'>) => {
     try {
-      const supabaseArtwork = convertToSupabaseArtwork(artwork);
-      const updatedArtwork = await SupabaseArtworkService.updateArtwork(id, supabaseArtwork);
-      const convertedArtwork = convertSupabaseArtwork(updatedArtwork);
+      const springArtwork = convertToSpringArtwork(artwork);
+      const updatedArtwork = await SpringArtworkService.updateArtwork(id, springArtwork);
+      const convertedArtwork = convertSpringArtwork(updatedArtwork);
       setArtworks(prev => prev.map(a => 
         a.id === id ? convertedArtwork : a
       ));
@@ -256,7 +260,7 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteArtwork = async (id: number) => {
     try {
-      await SupabaseArtworkService.deleteArtwork(id);
+      await SpringArtworkService.deleteArtwork(id);
       setArtworks(prev => prev.filter(a => a.id !== id));
     } catch (error) {
       console.error('Error deleting artwork:', error);

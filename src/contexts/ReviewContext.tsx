@@ -1,7 +1,8 @@
 import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import { SpringReviewService, Review as SpringReview, ReviewStats } from '@/services/spring-review-service';
 
 export interface Review {
-  id: string;
+  id: number;
   artworkId: number;
   userName: string;
   userEmail: string;
@@ -18,43 +19,44 @@ interface ReviewState {
 
 type ReviewAction =
   | { type: 'ADD_REVIEW'; payload: Review }
-  | { type: 'DELETE_REVIEW'; payload: string }
-  | { type: 'MARK_HELPFUL'; payload: string }
+  | { type: 'DELETE_REVIEW'; payload: number }
+  | { type: 'MARK_HELPFUL'; payload: number }
   | { type: 'LOAD_REVIEWS'; payload: Review[] };
 
 interface ReviewContextType {
   state: ReviewState;
   dispatch: React.Dispatch<ReviewAction>;
-  addReview: (review: Omit<Review, 'id' | 'date' | 'helpful' | 'verified'>) => void;
-  deleteReview: (id: string) => void;
-  markHelpful: (id: string) => void;
+  addReview: (review: Omit<Review, 'id' | 'date' | 'helpful' | 'verified'>) => Promise<void>;
+  deleteReview: (id: number) => Promise<void>;
+  markHelpful: (id: number) => Promise<void>;
   getArtworkReviews: (artworkId: number) => Review[];
   getArtworkRating: (artworkId: number) => { average: number; count: number; distribution: number[] };
+  loadReviews: () => Promise<void>;
 }
 
 const ReviewContext = createContext<ReviewContextType | null>(null);
 
-// Load reviews from localStorage
-const loadReviewsFromStorage = (): Review[] => {
-  try {
-    const stored = localStorage.getItem('artwork-reviews');
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error('Error loading reviews:', error);
-  }
-  return [];
-};
+// Helper function to convert Spring Boot review to local review format
+const convertSpringReview = (springReview: SpringReview): Review => ({
+  id: springReview.id,
+  artworkId: springReview.artworkId,
+  userName: springReview.userName,
+  userEmail: springReview.userEmail,
+  rating: springReview.rating,
+  comment: springReview.comment,
+  date: springReview.createdAt,
+  helpful: springReview.helpful,
+  verified: springReview.verified
+});
 
-// Save reviews to localStorage
-const saveReviewsToStorage = (reviews: Review[]) => {
-  try {
-    localStorage.setItem('artwork-reviews', JSON.stringify(reviews));
-  } catch (error) {
-    console.error('Error saving reviews:', error);
-  }
-};
+// Helper function to convert local review to Spring Boot format
+const convertToSpringReview = (review: Omit<Review, 'id' | 'date' | 'helpful' | 'verified'>) => ({
+  artworkId: review.artworkId,
+  userName: review.userName,
+  userEmail: review.userEmail,
+  rating: review.rating,
+  comment: review.comment
+});
 
 const reviewReducer = (state: ReviewState, action: ReviewAction): ReviewState => {
   switch (action.type) {
@@ -87,33 +89,65 @@ const reviewReducer = (state: ReviewState, action: ReviewAction): ReviewState =>
 
 export const ReviewProvider = ({ children }: { children: ReactNode }) => {
   const initialState: ReviewState = {
-    reviews: loadReviewsFromStorage()
+    reviews: []
   };
 
   const [state, dispatch] = useReducer(reviewReducer, initialState);
 
-  // Save reviews to localStorage whenever they change
+  // Load reviews from Spring Boot on mount
   useEffect(() => {
-    saveReviewsToStorage(state.reviews);
-  }, [state.reviews]);
+    loadReviews();
+  }, []);
 
-  const addReview = (review: Omit<Review, 'id' | 'date' | 'helpful' | 'verified'>) => {
-    const newReview: Review = {
-      ...review,
-      id: Date.now().toString(),
-      date: new Date().toISOString(),
-      helpful: 0,
-      verified: false // You can add logic to verify purchases
-    };
-    dispatch({ type: 'ADD_REVIEW', payload: newReview });
+  const loadReviews = async () => {
+    try {
+      console.log('💬 [ReviewContext] Loading reviews from Spring Boot...');
+      const springReviews = await SpringReviewService.getAllReviews();
+      const convertedReviews = springReviews.map(convertSpringReview);
+      dispatch({ type: 'LOAD_REVIEWS', payload: convertedReviews });
+      console.log('💬 [ReviewContext] Reviews loaded successfully:', convertedReviews.length);
+    } catch (error) {
+      console.error('💬 [ReviewContext] Error loading reviews:', error);
+    }
   };
 
-  const deleteReview = (id: string) => {
-    dispatch({ type: 'DELETE_REVIEW', payload: id });
+  const addReview = async (review: Omit<Review, 'id' | 'date' | 'helpful' | 'verified'>) => {
+    try {
+      console.log('💬 [ReviewContext] Adding review:', review);
+      const springReview = convertToSpringReview(review);
+      const createdReview = await SpringReviewService.createReview(springReview);
+      const convertedReview = convertSpringReview(createdReview);
+      dispatch({ type: 'ADD_REVIEW', payload: convertedReview });
+      console.log('💬 [ReviewContext] Review added successfully:', convertedReview);
+    } catch (error) {
+      console.error('💬 [ReviewContext] Error adding review:', error);
+      throw error;
+    }
   };
 
-  const markHelpful = (id: string) => {
-    dispatch({ type: 'MARK_HELPFUL', payload: id });
+  const deleteReview = async (id: number) => {
+    try {
+      console.log(`💬 [ReviewContext] Deleting review ${id}...`);
+      await SpringReviewService.deleteReview(id);
+      dispatch({ type: 'DELETE_REVIEW', payload: id });
+      console.log(`💬 [ReviewContext] Review ${id} deleted successfully`);
+    } catch (error) {
+      console.error(`💬 [ReviewContext] Error deleting review ${id}:`, error);
+      throw error;
+    }
+  };
+
+  const markHelpful = async (id: number) => {
+    try {
+      console.log(`💬 [ReviewContext] Marking review ${id} as helpful...`);
+      const updatedReview = await SpringReviewService.markHelpful(id);
+      const convertedReview = convertSpringReview(updatedReview);
+      dispatch({ type: 'MARK_HELPFUL', payload: id });
+      console.log(`💬 [ReviewContext] Review ${id} marked as helpful`);
+    } catch (error) {
+      console.error(`💬 [ReviewContext] Error marking review ${id} as helpful:`, error);
+      throw error;
+    }
   };
 
   const getArtworkReviews = (artworkId: number): Review[] => {
@@ -150,7 +184,8 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
       deleteReview,
       markHelpful,
       getArtworkReviews,
-      getArtworkRating
+      getArtworkRating,
+      loadReviews
     }}>
       {children}
     </ReviewContext.Provider>
