@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
-import { SpringArtworkService } from '@/services/spring-artwork-service';
+import { apiService } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 
 const TestArtworkCreation: React.FC = () => {
@@ -25,7 +25,8 @@ const TestArtworkCreation: React.FC = () => {
     try {
       console.log('🧪 [Test] Submitting artwork data:', formData);
       
-      const result = await SpringArtworkService.createArtwork(formData);
+      // Appel direct à l'API avec les champs exacts du backend
+      const result = await apiService.post('/artworks', formData);
       console.log('🧪 [Test] Artwork created successfully:', result);
       
       toast({
@@ -58,7 +59,7 @@ const TestArtworkCreation: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">Test Création Œuvre</h2>
+      <h2 className="text-2xl font-bold mb-4">Test Création Œuvre (API Directe)</h2>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -67,7 +68,7 @@ const TestArtworkCreation: React.FC = () => {
             id="titre"
             value={formData.titre}
             onChange={(e) => setFormData({...formData, titre: e.target.value})}
-            placeholder="Titre de l'œuvre"
+            placeholder="Mon Tableau"
             required
           />
         </div>
@@ -89,7 +90,7 @@ const TestArtworkCreation: React.FC = () => {
             id="technique"
             value={formData.technique}
             onChange={(e) => setFormData({...formData, technique: e.target.value})}
-            placeholder="ex: Acrylique sur toile"
+            placeholder="Huile sur toile"
           />
         </div>
 
@@ -99,7 +100,7 @@ const TestArtworkCreation: React.FC = () => {
             id="dimensions"
             value={formData.dimensions}
             onChange={(e) => setFormData({...formData, dimensions: e.target.value})}
-            placeholder="ex: 100x80 cm"
+            placeholder="100x80 cm"
           />
         </div>
 
@@ -121,7 +122,7 @@ const TestArtworkCreation: React.FC = () => {
             id="imageUrl"
             value={formData.imageUrl}
             onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-            placeholder="/test.jpg"
+            placeholder="/api/artworks/images/mon-tableau.jpg"
           />
         </div>
 
