@@ -13,6 +13,7 @@ import { useArtwork } from '@/contexts/ArtworkContext';
 import TestArtworkCreation from '@/components/TestArtworkCreation';
 import SimpleTest from '@/components/SimpleTest';
 import DebugTest from '@/components/DebugTest';
+import BackendTest from '@/components/BackendTest';
 
 interface Artwork {
   id: number;
@@ -41,6 +42,7 @@ const AdminDashboard: React.FC = () => {
   const [showTestForm, setShowTestForm] = useState(false);
   const [showSimpleTest, setShowSimpleTest] = useState(false);
   const [showDebugTest, setShowDebugTest] = useState(false);
+  const [showBackendTest, setShowBackendTest] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -604,6 +606,14 @@ const AdminDashboard: React.FC = () => {
             >
               {showDebugTest ? 'Masquer' : 'Afficher'} Debug
             </Button>
+            
+            <Button 
+              onClick={() => setShowBackendTest(!showBackendTest)} 
+              variant="outline"
+              className="border-red-300 text-red-700 hover:bg-red-50"
+            >
+              {showBackendTest ? 'Masquer' : 'Afficher'} Test Backend
+            </Button>
           </div>
         )}
 
@@ -625,6 +635,13 @@ const AdminDashboard: React.FC = () => {
         {showDebugTest && (
           <div className="mb-6">
             <DebugTest />
+          </div>
+        )}
+
+        {/* Backend Test */}
+        {showBackendTest && (
+          <div className="mb-6">
+            <BackendTest />
           </div>
         )}
 
