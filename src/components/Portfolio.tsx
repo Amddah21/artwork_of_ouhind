@@ -181,7 +181,6 @@ const Portfolio: React.FC = () => {
                   </span>
                 </div>
 
-
                 {/* Floating Sparkles */}
                 {hoveredId === artwork.id && (
                   <div className="absolute inset-0 pointer-events-none">

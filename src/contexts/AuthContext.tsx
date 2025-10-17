@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { SupabaseAuthService } from '@/services/supabase-auth-service';
-import { supabase } from '@/lib/supabase';
+import { SpringAuthService } from '@/services/spring-auth-service';
 
 interface User {
-  id: string;
+  id: number;
+  username: string;
   email: string;
-  role?: string;
+  role: string;
 }
 
 interface AuthContextType {
@@ -32,43 +32,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
+    // Get initial session from Spring Boot backend
     const getInitialSession = async () => {
       try {
-        const session = await SupabaseAuthService.getSession();
+        const session = await SpringAuthService.getSession();
         if (session?.user) {
-          // Get user role from user_profiles table
-          const { data: userProfile, error } = await supabase
-            .from('user_profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-          
-          // Fallback: if user profile doesn't exist, create it
-          if (error && error.code === 'PGRST116') {
-            // User profile doesn't exist, create it
-            const { data: newProfile } = await supabase
-              .from('user_profiles')
-              .insert({
-                id: session.user.id,
-                email: session.user.email || '',
-                role: session.user.email === 'admin@artiste.com' ? 'admin' : 'user'
-              })
-              .select()
-              .single();
-            
-            setUser({
-              id: session.user.id,
-              email: session.user.email || '',
-              role: newProfile?.role || 'user'
-            });
-          } else {
-            setUser({
-              id: session.user.id,
-              email: session.user.email || '',
-              role: userProfile?.role || 'user'
-            });
-          }
+          setUser(session.user);
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
@@ -79,69 +48,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     getInitialSession();
 
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    // Set up auth state change listener
+    const unsubscribe = SpringAuthService.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
-        // Get user role from user_profiles table
-        const { data: userProfile, error } = await supabase
-          .from('user_profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-        
-        // Fallback: if user profile doesn't exist, create it
-        if (error && error.code === 'PGRST116') {
-          // User profile doesn't exist, create it
-          const { data: newProfile } = await supabase
-            .from('user_profiles')
-            .insert({
-              id: session.user.id,
-              email: session.user.email || '',
-              role: session.user.email === 'admin@artiste.com' ? 'admin' : 'user'
-            })
-            .select()
-            .single();
-          
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            role: newProfile?.role || 'user'
-          });
-        } else {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            role: userProfile?.role || 'user'
-          });
-        }
+        setUser(session.user);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
       }
       setIsLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    await SupabaseAuthService.signIn(email, password);
+    await SpringAuthService.signIn(email, password);
   };
 
   const signOut = async () => {
-    await SupabaseAuthService.signOut();
+    await SpringAuthService.signOut();
+    setUser(null);
   };
 
-  const value: AuthContextType = {
-    user,
-    isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin',
-    isLoading,
-    signIn,
-    signOut,
-  };
+  const isAuthenticated = !!user;
+  const isAdmin = user?.role === 'ADMIN' || user?.role === 'admin';
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, isAuthenticated, isAdmin, isLoading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
