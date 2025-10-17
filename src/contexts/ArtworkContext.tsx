@@ -180,33 +180,27 @@ const STORAGE_KEY = 'artspark-artworks';
 // Helper function to convert Spring Boot artwork to local artwork format
 const convertSpringArtwork = (springArtwork: SpringArtwork): Artwork => ({
   id: springArtwork.id,
-  title: springArtwork.title,
-  category: springArtwork.category || 'Mixte',
+  title: springArtwork.titre,
+  category: springArtwork.technique || 'Mixte',
   image: springArtwork.imageUrl,
   size: springArtwork.dimensions || '',
-  year: springArtwork.year?.toString() || new Date().getFullYear().toString(),
-  available: springArtwork.available ?? true,
+  year: springArtwork.annee?.toString() || new Date().getFullYear().toString(),
+  available: true,
   description: springArtwork.description || '',
-  featured: springArtwork.featured ?? false,
-  tags: springArtwork.tags || [],
-  materials: springArtwork.materials || [],
+  featured: false,
+  tags: [],
+  materials: [],
   technique: springArtwork.technique || ''
 });
 
 // Helper function to convert local artwork to Spring Boot format
 const convertToSpringArtwork = (artwork: Omit<Artwork, 'id'>) => ({
-  title: artwork.title,
+  titre: artwork.title,
   description: artwork.description,
-  category: artwork.category,
-  price: 0, // Default price, should be set by admin
-  imageUrl: artwork.image,
-  technique: artwork.technique,
+  technique: artwork.technique || artwork.category,
   dimensions: artwork.size,
-  year: parseInt(artwork.year) || new Date().getFullYear(),
-  available: artwork.available,
-  featured: artwork.featured,
-  tags: artwork.tags,
-  materials: artwork.materials
+  annee: parseInt(artwork.year) || new Date().getFullYear(),
+  imageUrl: artwork.image
 });
 
 export const ArtworkProvider = ({ children }: { children: ReactNode }) => {

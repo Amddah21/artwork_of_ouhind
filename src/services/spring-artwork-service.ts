@@ -2,42 +2,32 @@ import { apiService } from '@/lib/api'
 
 export interface Artwork {
   id: number
-  title: string
+  titre: string
   description: string
   imageUrl: string
-  category: string
-  price: number
   technique?: string
   dimensions?: string
-  year?: number
-  available?: boolean
-  featured?: boolean
-  tags?: string[]
-  materials?: string[]
+  annee?: number
   createdAt?: string
   updatedAt?: string
 }
 
 export interface CreateArtworkRequest {
-  title: string
+  titre: string
   description: string
-  category: string
-  price: number
+  technique?: string
+  dimensions?: string
+  annee?: number
   imageUrl: string
 }
 
 export interface UpdateArtworkRequest {
-  title?: string
+  titre?: string
   description?: string
-  imageUrl?: string
   technique?: string
   dimensions?: string
-  year?: number
-  category?: string
-  available?: boolean
-  featured?: boolean
-  tags?: string[]
-  materials?: string[]
+  annee?: number
+  imageUrl?: string
 }
 
 export class SpringArtworkService {
