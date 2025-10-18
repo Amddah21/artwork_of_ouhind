@@ -270,14 +270,6 @@ const ArtisticNavbar: React.FC = () => {
                   <p className="text-xs text-gray-500 font-body mb-3">
                     Suivez mon travail artistique
                   </p>
-                  <div className="flex justify-center space-x-4">
-                    <Button variant="outline" size="sm" className="painterly-card">
-                      <Mail className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" className="painterly-card">
-                      <Settings className="w-4 h-4" />
-                    </Button>
-                  </div>
                 </div>
               </div>
             </div>
