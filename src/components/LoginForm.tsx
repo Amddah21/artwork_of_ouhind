@@ -18,7 +18,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
   const [password, setPassword] = useState('admin123');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showCreateAdmin, setShowCreateAdmin] = useState(false);
   const { signIn, isAdmin } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -46,31 +45,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
     }
   };
 
-  const handleCreateAdmin = async () => {
-    setIsLoading(true);
-    try {
-      const { SpringAuthService } = await import('@/services/spring-auth-service');
-      const result = await SpringAuthService.createAdmin();
-      
-      toast({
-        title: "Admin créé avec succès",
-        description: `Utilisateur: ${result.username}, Email: ${result.email}`,
-      });
-      
-      // Pré-remplir les champs avec les nouvelles credentials
-      setEmail(result.email);
-      setPassword('admin123'); // Mot de passe par défaut
-      
-    } catch (error: any) {
-      toast({
-        title: "Erreur de création",
-        description: error.message || "Impossible de créer l'administrateur",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -133,29 +107,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
               {isLoading ? 'Connexion...' : 'Se connecter'}
             </Button>
             
-            <div className="flex gap-2">
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="flex-1"
-                onClick={() => setShowCreateAdmin(!showCreateAdmin)}
-                disabled={isLoading}
-              >
-                {showCreateAdmin ? 'Masquer' : 'Créer Admin'}
-              </Button>
-              
-              {showCreateAdmin && (
-                <Button 
-                  type="button" 
-                  variant="secondary" 
-                  className="flex-1"
-                  onClick={handleCreateAdmin}
-                  disabled={isLoading}
-                >
-                  Créer
-                </Button>
-              )}
-            </div>
           </form>
         </CardContent>
       </Card>
