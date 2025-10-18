@@ -38,8 +38,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Check if Supabase is properly configured
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.log('Supabase not configured, using localStorage fallback for auth');
-      // Load user from localStorage on mount
+      // Fallback to localStorage for development
+      console.log('Supabase not configured, using localStorage fallback');
       const loadUser = () => {
         try {
           const storedUser = localStorage.getItem('artspark-auth');
@@ -100,7 +100,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      setUser(data);
+      if (data) {
+        setUser({
+          id: data.id,
+          email: data.email,
+          role: data.role || 'user'
+        });
+      }
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
@@ -132,7 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(regularUser);
           localStorage.setItem('artspark-auth', JSON.stringify(regularUser));
         } else {
-          throw new Error('Login Failed');
+          throw new Error('Login Failed'); // Changed from 'Email and password are required'
         }
         return;
       }
@@ -143,22 +149,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (error) {
-        throw new Error('Login Failed');
+        throw new Error('Login Failed'); // Changed from 'error.message'
       }
     } catch (error) {
-      console.error('Error signing in:', error);
+      console.error('Sign in error:', error);
       throw error;
     }
   };
 
   const signUp = async (email: string, password: string) => {
     try {
-      // Check if Supabase is properly configured
       if (!supabaseUrl || !supabaseAnonKey) {
-        // Fallback to localStorage for development - accept any credentials
-        console.log('Supabase not configured, using localStorage fallback for signup');
-        
-        // Create user profile
+        console.log('Supabase not configured, using localStorage fallback for signUp');
+        // For development, just create a local user
         const newUser: Profile = {
           id: Date.now().toString(),
           email: email,
@@ -178,16 +181,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error(error.message);
       }
     } catch (error) {
-      console.error('Error signing up:', error);
+      console.error('Sign up error:', error);
       throw error;
     }
   };
 
   const signOut = async () => {
     try {
-      // Check if Supabase is properly configured
       if (!supabaseUrl || !supabaseAnonKey) {
-        // Fallback to localStorage for development
+        console.log('Supabase not configured, clearing localStorage');
         setUser(null);
         localStorage.removeItem('artspark-auth');
         return;
@@ -197,8 +199,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         throw new Error(error.message);
       }
+      setUser(null);
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('Sign out error:', error);
       throw error;
     }
   };
@@ -213,9 +216,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signOut,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
