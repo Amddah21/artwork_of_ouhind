@@ -79,7 +79,7 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(true);
       
       // Check if Supabase is properly configured
-      if (supabaseUrl && supabaseAnonKey && supabaseUrl !== 'https://your-project.supabase.co' && supabaseAnonKey !== 'your-anon-key') {
+      if (supabaseUrl && supabaseAnonKey) {
         const { data: artworksData, error: artworksError } = await supabase
           .from('artworks')
           .select('*')
@@ -132,7 +132,7 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const addArtwork = async (artwork: Omit<Artwork, 'id' | 'created_at' | 'updated_at' | 'views' | 'images'>, images?: string[]) => {
     // Check if Supabase is properly configured
-    if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
+    if (!supabaseUrl || !supabaseAnonKey) {
       // Fallback to localStorage for development
       console.log('Supabase not configured, using localStorage fallback for addArtwork');
       const newArtwork: Artwork = {
@@ -224,7 +224,7 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const deleteArtwork = async (id: string) => {
     try {
       // Check if Supabase is properly configured
-      if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
+      if (!supabaseUrl || !supabaseAnonKey) {
         // Fallback to localStorage for development
         console.log('Supabase not configured, using localStorage fallback for deleteArtwork');
         const storedArtworks = localStorage.getItem('artspark-artworks');
