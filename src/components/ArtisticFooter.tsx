@@ -1,57 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from './ui/button';
 import { Mail, MapPin, Phone, Instagram, Facebook, Twitter, Palette, Brush, Sparkles, Award, Globe } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 import Logo from './Logo';
 
 const ArtisticFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
-  const { toast } = useToast();
-  const [email, setEmail] = useState('');
-  const [isSubscribing, setIsSubscribing] = useState(false);
-
-  const handleNewsletterSubscription = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!email || !email.includes('@')) {
-      toast({
-        title: "Email invalide",
-        description: "Veuillez entrer une adresse email valide.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubscribing(true);
-    
-    try {
-      // Simulate API call - replace with actual newsletter service
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Store subscription in localStorage for demo purposes
-      const subscriptions = JSON.parse(localStorage.getItem('newsletter-subscriptions') || '[]');
-      if (!subscriptions.includes(email)) {
-        subscriptions.push(email);
-        localStorage.setItem('newsletter-subscriptions', JSON.stringify(subscriptions));
-      }
-      
-      toast({
-        title: "Inscription réussie !",
-        description: "Merci de vous être abonné à notre newsletter. Vous recevrez nos dernières nouvelles.",
-        variant: "success",
-      });
-      
-      setEmail('');
-    } catch (error) {
-      toast({
-        title: "Erreur d'inscription",
-        description: "Une erreur s'est produite. Veuillez réessayer plus tard.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubscribing(false);
-    }
-  };
 
   const footerLinks = {
     navigation: [
@@ -242,47 +195,6 @@ const ArtisticFooter: React.FC = () => {
           </div>
         </div>
 
-        {/* Newsletter Section */}
-        <div className="border-t border-gray-200 bg-gradient-to-r from-yellow-50 to-pink-50">
-          <div className="container mx-auto px-6 py-12">
-            <div className="max-w-2xl mx-auto text-center">
-              <h3 className="text-2xl font-display font-semibold text-gray-900 mb-4">
-                Restez Informé
-              </h3>
-              <p className="text-gray-700 mb-6 font-body">
-                Recevez les dernières nouvelles sur mes expositions et nouvelles créations.
-              </p>
-              <form onSubmit={handleNewsletterSubscription} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <input
-                  type="email"
-                  placeholder="Votre adresse email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 px-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent font-body"
-                  required
-                />
-                <Button 
-                  type="submit"
-                  disabled={isSubscribing}
-                  className="hover-painterly-lift paint-splash"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
-                    color: 'hsl(45, 100%, 97%)'
-                  }}
-                >
-                  {isSubscribing ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Inscription...
-                    </>
-                  ) : (
-                    "S'abonner"
-                  )}
-                </Button>
-              </form>
-            </div>
-          </div>
-        </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 bg-white/50 backdrop-blur-sm">
