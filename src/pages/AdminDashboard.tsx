@@ -252,12 +252,27 @@ const AdminDashboard: React.FC = () => {
     } catch (error: any) {
       console.error('Error saving artwork:', error);
       
-      // If we get here, it's a real error (not localStorage fallback)
-      toast({
-        title: "Erreur",
-        description: "Erreur lors de la sauvegarde de l'œuvre. Vérifiez votre connexion.",
-        variant: "destructive",
-      });
+      // Only show error if it's a real error (not localStorage fallback)
+      // Check if Supabase is configured to determine if this is a real error
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (supabaseUrl && supabaseKey && supabaseUrl !== 'https://your-project.supabase.co' && supabaseKey !== 'your-anon-key') {
+        // Supabase is configured, so this is a real error
+        toast({
+          title: "Erreur",
+          description: "Erreur lors de la sauvegarde de l'œuvre. Vérifiez votre connexion.",
+          variant: "destructive",
+        });
+      } else {
+        // Supabase not configured, localStorage fallback should work
+        // If we get here, there's a real problem with localStorage
+        toast({
+          title: "Erreur",
+          description: "Erreur lors de la sauvegarde locale. Vérifiez votre navigateur.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }

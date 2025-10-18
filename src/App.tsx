@@ -10,7 +10,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ArtisticNavbar from "@/components/ArtisticNavbar";
 import ArtisticFooter from "@/components/ArtisticFooter";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import DebugEnv from "@/components/DebugEnv";
 import Index from "./pages/Index";
 import ArtworkDetail from "./pages/ArtworkDetail";
 import GalleryDetail from "./pages/GalleryDetail";
@@ -32,7 +31,6 @@ const App = () => (
               <Sonner />
               <BrowserRouter>
                 <div className="min-h-screen flex flex-col">
-                  <DebugEnv />
                   <ArtisticNavbar />
                   <main className="flex-1">
                     <Routes>
