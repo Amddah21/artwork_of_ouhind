@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Share2, Eye, ShoppingCart, MessageCircle, Flag, Palette, Calendar, Tag, Maximize, ZoomIn, RotateCcw, Star, Phone, Mail, Euro } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,28 +8,40 @@ import StarRating from '@/components/StarRating';
 import CommentForm from '@/components/CommentForm';
 import CommentsDisplay from '@/components/CommentsDisplay';
 import { useRating } from '@/contexts/RatingContext';
+import { useArtwork } from '@/contexts/ArtworkContext';
 
 interface Artwork {
   id: string;
   title: string;
-  artist: string;
-  year: number;
-  medium: string;
-  dimensions: string;
   category: string;
-  support: string;
-  reference: string;
-  price: string;
-  priceEur: string;
+  image_url: string;
+  images?: Array<{
+    id: number;
+    artwork_id: string;
+    image_url: string;
+    display_order: number;
+    created_at: string;
+    updated_at: string;
+  }>;
+  size: string;
+  year: number;
+  available: boolean;
   description: string;
-  story: string;
-  imageUrl: string;
-  thumbnailUrl: string;
-  views: number;
-  isAvailable: boolean;
+  featured: boolean;
   tags: string[];
-  rating: number;
-  reviews: number;
+  materials: string[];
+  technique?: string;
+  artist_name?: string;
+  price_mad?: string;
+  price_eur?: string;
+  reference?: string;
+  support?: string;
+  medium?: string;
+  dimensions?: string;
+  story?: string;
+  views: number;
+  created_at: string;
+  updated_at: string;
 }
 
 const ArtworkDetail: React.FC = () => {
@@ -38,166 +50,67 @@ const ArtworkDetail: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
+  const [artwork, setArtwork] = useState<Artwork | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   const { addRating, getAverageRating, getRatingCount, getUserRating } = useRating();
+  const { artworks, incrementViews } = useArtwork();
 
-  // Sample artwork data - in real app, this would come from API
-  const getArtworkData = (artworkId: string): Artwork => {
-    const artworks = {
-      '1': {
-        id: '1',
-        title: 'Rêve Aquarelle',
-        artist: 'Oum Hind F. Douirani',
-        year: 2023,
-        medium: 'Aquarelle sur papier',
-        dimensions: '100 x 110 cm',
-        category: 'Tableaux',
-        support: 'Papier',
-        reference: 'OHD-2023-001',
-        price: '45 000 MAD',
-        priceEur: '4 200 €',
-        description: 'Une œuvre impressionniste qui capture l\'essence des rêves à travers la fluidité de l\'aquarelle. Les couches mesurées et les éclaboussures de couleurs créent une composition où l\'émotion se mêle à la matière.',
-        story: 'Cette œuvre naît d\'une nuit d\'insomnie où les rêves se mélangent à la réalité. L\'artiste a cherché à capturer cette fluidité entre le conscient et l\'inconscient, utilisant la transparence de l\'aquarelle pour créer des couches de sens et d\'émotion.',
-        imageUrl: '/artwork1.JPG',
-        thumbnailUrl: '/artwork1.JPG',
-        views: 2432,
-        isAvailable: true,
-        tags: ['Impressionniste', 'Aquarelle', 'Rêves', 'Fluidité'],
-        rating: 4.8,
-        reviews: 24
-      },
-      '7': {
-        id: '7',
-        title: 'Racines Silencieuses',
-        artist: 'Oum Hind F. Douirani',
-        year: 2025,
-        medium: 'Techniques mixtes sur papier',
-        dimensions: '60 x 80 cm',
-        category: 'Abstrait',
-        support: 'Papier',
-        reference: 'OHD-2025-001',
-        price: 'Valeur à discuter',
-        priceEur: 'Valeur à discuter',
-        description: 'Une exploration des textures naturelles et du silence intérieur. Une œuvre abstraite capturant l\'essence des racines et des formations géologiques à travers des techniques mixtes.',
-        story: 'Inspirée par la nature et le cycle de la vie, cette œuvre représente le lien invisible entre la terre et l\'esprit. Les textures complexes évoquent les réseaux de racines qui se développent sous la surface, créant un dialogue entre le visible et l\'invisible.',
-        imageUrl: '/artwork4.JPG',
-        thumbnailUrl: '/artwork4.JPG',
-        views: 1856,
-        isAvailable: true,
-        tags: ['Abstrait', 'Texture', 'Nature', 'Racines'],
-        rating: 4.9,
-        reviews: 18
-      },
-      '8': {
-        id: '8',
-        title: 'Expression de l\'Âme',
-        artist: 'Oum Hind F. Douirani',
-        year: 2025,
-        medium: 'Techniques mixtes sur toile',
-        dimensions: '70 x 90 cm',
-        category: 'Abstrait',
-        support: 'Toile',
-        reference: 'OHD-2025-002',
-        price: 'Valeur à discuter',
-        priceEur: 'Valeur à discuter',
-        description: 'L\'art est l\'expression de l\'âme à travers la couleur et la forme. Une œuvre qui explore les profondeurs de l\'émotion artistique et la connexion entre l\'artiste et l\'univers.',
-        story: 'Cette œuvre incarne la philosophie artistique de l\'artiste : "L\'art est l\'expression de l\'âme à travers la couleur et la forme." Chaque coup de pinceau révèle une émotion, chaque couleur exprime une pensée, créant un dialogue intime entre l\'artiste et le spectateur.',
-        imageUrl: '/artwork5.JPG',
-        thumbnailUrl: '/artwork5.JPG',
-        views: 2156,
-        isAvailable: true,
-        tags: ['Abstrait', 'Couleur', 'Forme', 'Âme'],
-        rating: 4.8,
-        reviews: 22
-      },
-      '9': {
-        id: '9',
-        title: 'Textures Organiques',
-        artist: 'Oum Hind F. Douirani',
-        year: 2025,
-        medium: 'Techniques mixtes sur papier',
-        dimensions: '80 x 100 cm',
-        category: 'Abstrait',
-        support: 'Papier',
-        reference: 'OHD-2025-003',
-        price: 'Valeur à discuter',
-        priceEur: 'Valeur à discuter',
-        description: 'Une exploration des textures naturelles et des formations géologiques. Cette œuvre abstraite en noir et blanc révèle la complexité des structures organiques et l\'interaction entre la lumière et l\'ombre.',
-        story: 'Cette œuvre explore les profondeurs des textures naturelles, évoquant les formations géologiques et les processus d\'érosion. Le jeu entre le noir et le blanc révèle la complexité des structures organiques, créant un dialogue entre le visible et l\'invisible, entre la matière et l\'esprit.',
-        imageUrl: '/artwork6.JPG',
-        thumbnailUrl: '/artwork6.JPG',
-        views: 1876,
-        isAvailable: true,
-        tags: ['Abstrait', 'Texture', 'Organique', 'Géologie'],
-        rating: 4.7,
-        reviews: 19
-      },
-      '10': {
-        id: '10',
-        title: 'Galerie d\'Art',
-        artist: 'Oum Hind F. Douirani',
-        year: 2025,
-        medium: 'Photographie numérique',
-        dimensions: '60 x 80 cm',
-        category: 'Photographie',
-        support: 'Impression',
-        reference: 'OHD-2025-004',
-        price: 'Valeur à discuter',
-        priceEur: 'Valeur à discuter',
-        description: 'Une vue intérieure d\'une galerie d\'art élégante, capturant l\'atmosphère sophistiquée et l\'éclairage naturel qui met en valeur les œuvres exposées.',
-        story: 'Cette photographie capture l\'essence d\'un espace d\'exposition professionnel, où la lumière naturelle danse sur les murs blancs et révèle la beauté des œuvres d\'art. L\'architecture minimaliste et l\'éclairage subtil créent une atmosphère contemplative parfaite pour l\'appréciation artistique.',
-        imageUrl: '/slider2.JPG',
-        thumbnailUrl: '/slider2.JPG',
-        views: 2345,
-        isAvailable: true,
-        tags: ['Galerie', 'Architecture', 'Éclairage', 'Exposition'],
-        rating: 4.9,
-        reviews: 28
+  // Find the artwork by ID from the context
+  useEffect(() => {
+    if (id && artworks.length > 0) {
+      const foundArtwork = artworks.find(art => art.id === id);
+      if (foundArtwork) {
+        setArtwork(foundArtwork);
+        // Increment views when viewing artwork
+        incrementViews(id);
+      } else {
+        // Artwork not found, redirect to gallery
+        navigate('/');
       }
-    };
-    
-    return artworks[artworkId as keyof typeof artworks] || artworks['1'];
+      setIsLoading(false);
+    }
+  }, [id, artworks, navigate, incrementViews]);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen watercolor-bg canvas-texture flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600 mx-auto mb-4"></div>
+          <p className="text-lg text-slate-600">Chargement de l'œuvre...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error if artwork not found
+  if (!artwork) {
+    return (
+      <div className="min-h-screen watercolor-bg canvas-texture flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-slate-800 mb-4">Œuvre non trouvée</h1>
+          <Button onClick={() => navigate('/')} className="hover-painterly-lift">
+            Retour à la galerie
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Get multiple views from artwork images
+  const getMultipleViews = () => {
+    if (artwork.images && artwork.images.length > 0) {
+      return artwork.images.map((img, index) => ({
+        url: img.image_url,
+        alt: `${artwork.title} - Vue ${index + 1}`
+      }));
+    }
+    // Fallback to single image
+    return [{ url: artwork.image_url, alt: artwork.title }];
   };
 
-  const artwork: Artwork = getArtworkData(id || '1');
-
-  const getMultipleViews = (artworkId: string) => {
-    if (artworkId === '7') {
-      return [
-        { url: '/artwork4.JPG', alt: 'Vue principale' },
-        { url: '/artwork1.JPG', alt: 'Détail texture' },
-        { url: '/artwork2.JPG', alt: 'Vue rapprochée' }
-      ];
-    }
-    if (artworkId === '8') {
-      return [
-        { url: '/artwork5.JPG', alt: 'Vue principale' },
-        { url: '/artwork1.JPG', alt: 'Détail texture' },
-        { url: '/artwork3.JPG', alt: 'Vue rapprochée' }
-      ];
-    }
-    if (artworkId === '9') {
-      return [
-        { url: '/artwork6.JPG', alt: 'Vue principale' },
-        { url: '/artwork4.JPG', alt: 'Détail texture' },
-        { url: '/artwork2.JPG', alt: 'Vue rapprochée' }
-      ];
-    }
-    if (artworkId === '10') {
-      return [
-        { url: '/slider2.JPG', alt: 'Vue principale' },
-        { url: '/gallery-interior-1.jpg', alt: 'Vue rapprochée' },
-        { url: '/gallery-interior-2.jpg', alt: 'Détail architecture' }
-      ];
-    }
-    return [
-      { url: '/artwork1.JPG', alt: 'Vue principale' },
-      { url: '/artwork2.JPG', alt: 'Détail texture' },
-      { url: '/artwork3.JPG', alt: 'Vue rapprochée' }
-    ];
-  };
-
-  const multipleViews = getMultipleViews(id || '1');
+  const multipleViews = getMultipleViews();
 
   const handleBack = () => {
     navigate(-1);
@@ -264,14 +177,14 @@ const ArtworkDetail: React.FC = () => {
   };
 
   const handleWhatsAppContact = () => {
-    const message = `Bonjour ! Je suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist}. Pourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?`;
+    const message = `Bonjour ! Je suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist_name || 'Oum Hind F. Douirani'}. Pourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?`;
     const whatsappUrl = `https://wa.me/212666672756?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleEmailContact = () => {
     const subject = `Demande d'information - ${artwork.title}`;
-    const body = `Bonjour,\n\nJe suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist}.\n\nDimensions: ${artwork.dimensions}\nAnnée: ${artwork.year}\nMédium: ${artwork.medium}\n\nPourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique et des modalités d'acquisition ?\n\nCordialement,`;
+    const body = `Bonjour,\n\nJe suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist_name || 'Oum Hind F. Douirani'}.\n\nDimensions: ${artwork.dimensions || artwork.size}\nAnnée: ${artwork.year}\nMédium: ${artwork.medium || artwork.technique}\n\nPourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique et des modalités d'acquisition ?\n\nCordialement,`;
     const mailtoUrl = `mailto:omhind53@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(mailtoUrl);
   };
@@ -320,7 +233,7 @@ const ArtworkDetail: React.FC = () => {
             <div className="relative group">
               <Card className="comfort-card overflow-hidden aspect-[4/3]">
                 <img
-                  src={multipleViews[currentImageIndex]?.url || artwork.imageUrl}
+                  src={multipleViews[currentImageIndex]?.url || artwork.image_url}
                   alt={artwork.title}
                   className={`w-full h-full object-cover transition-all duration-500 ${isZoomed ? 'scale-150' : 'group-hover:scale-105'}`}
                 />
@@ -377,7 +290,7 @@ const ArtworkDetail: React.FC = () => {
                 {artwork.title}
               </h1>
               <p className="text-xl comfort-text-muted font-body">
-                par <span className="font-semibold" style={{color: '#7A6B5A'}}>{artwork.artist}</span>
+                par <span className="font-semibold" style={{color: '#7A6B5A'}}>{artwork.artist_name || 'Oum Hind F. Douirani'}</span>
               </p>
             </div>
 
@@ -390,7 +303,7 @@ const ArtworkDetail: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm comfort-text-muted font-body">Technique</p>
-                    <p className="font-semibold comfort-text">{artwork.medium}</p>
+                    <p className="font-semibold comfort-text">{artwork.technique || artwork.medium || 'Non spécifié'}</p>
                   </div>
                 </div>
               </Card>
@@ -402,7 +315,7 @@ const ArtworkDetail: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm comfort-text-muted font-body">Dimensions</p>
-                    <p className="font-semibold comfort-text">{artwork.dimensions}</p>
+                    <p className="font-semibold comfort-text">{artwork.dimensions || artwork.size || 'Non spécifié'}</p>
                   </div>
                 </div>
               </Card>
@@ -426,36 +339,53 @@ const ArtworkDetail: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm comfort-text-muted font-body">Référence</p>
-                    <p className="font-semibold comfort-text">{artwork.reference}</p>
+                    <p className="font-semibold comfort-text">{artwork.reference || 'Non spécifié'}</p>
                   </div>
                 </div>
               </Card>
             </div>
 
             {/* Story Behind the Piece */}
+            {artwork.story && (
+              <Card className="comfort-card p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-1 h-20 rounded-full" style={{backgroundColor: '#7A6B5A'}}></div>
+                  <div>
+                    <h3 className="text-lg font-semibold comfort-text mb-3">Histoire de cette œuvre</h3>
+                    <p className="comfort-text-muted font-body leading-relaxed italic">
+                      {artwork.story}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Description */}
             <Card className="comfort-card p-6">
               <div className="flex items-start gap-4">
                 <div className="w-1 h-20 rounded-full" style={{backgroundColor: '#7A6B5A'}}></div>
                 <div>
-                  <h3 className="text-lg font-semibold comfort-text mb-3">Histoire de cette œuvre</h3>
-                  <p className="comfort-text-muted font-body leading-relaxed italic">
-                    {artwork.story}
+                  <h3 className="text-lg font-semibold comfort-text mb-3">Description</h3>
+                  <p className="comfort-text-muted font-body leading-relaxed">
+                    {artwork.description}
                   </p>
                 </div>
               </div>
             </Card>
 
             {/* Tags */}
-            <div>
-              <h3 className="text-lg font-semibold comfort-text mb-3">Tags</h3>
-              <div className="flex flex-wrap gap-2">
-                {artwork.tags.map((tag, index) => (
-                  <Badge key={index} variant="secondary" className="comfort-card">
-                    {tag}
-                  </Badge>
-                ))}
+            {artwork.tags && artwork.tags.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold comfort-text mb-3">Tags</h3>
+                <div className="flex flex-wrap gap-2">
+                  {artwork.tags.map((tag, index) => (
+                    <Badge key={index} variant="secondary" className="comfort-card">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Contact Information */}
             <Card className="comfort-card p-6">
@@ -463,12 +393,12 @@ const ArtworkDetail: React.FC = () => {
                 {/* Availability Status */}
                 <Badge 
                   className={`px-4 py-2 ${
-                    artwork.isAvailable 
+                    artwork.available 
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-red-100 text-red-800'
                   }`}
                 >
-                  {artwork.isAvailable ? 'Disponible' : 'Vendu'}
+                  {artwork.available ? 'Disponible' : 'Vendu'}
                 </Badge>
 
                 {/* Contact Information Display */}
@@ -558,10 +488,10 @@ const ArtworkDetail: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <StarRating
-                      rating={getAverageRating(artwork.id) || artwork.rating}
+                      rating={getAverageRating(artwork.id) || 4.5}
                       size="lg"
                       showCount={true}
-                      count={getRatingCount(artwork.id) || artwork.reviews}
+                      count={getRatingCount(artwork.id) || 0}
                     />
                   </div>
                   <span className="text-sm comfort-text-muted">

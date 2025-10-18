@@ -1,19 +1,23 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { SpringAuthService } from '@/services/spring-auth-service';
+import { supabase } from '@/lib/supabase';
+import type { User } from '@supabase/supabase-js';
 
-interface User {
-  id: number;
-  username: string;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+interface Profile {
+  id: string;
   email: string;
-  role: string;
+  role: 'user' | 'admin';
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: Profile | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -28,16 +32,36 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session from Spring Boot backend
+    // Check if Supabase is properly configured
+    if (!supabaseUrl || !supabaseAnonKey) {
+      // Fallback to localStorage for development
+      console.log('Supabase not configured, using localStorage fallback');
+      const loadUser = () => {
+        try {
+          const storedUser = localStorage.getItem('artspark-auth');
+          if (storedUser) {
+            setUser(JSON.parse(storedUser));
+          }
+        } catch (error) {
+          console.error('Error loading user from localStorage:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadUser();
+      return;
+    }
+
+    // Get initial session
     const getInitialSession = async () => {
       try {
-        const session = await SpringAuthService.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
-          setUser(session.user);
+          await fetchUserProfile(session.user.id);
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
@@ -48,38 +72,149 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     getInitialSession();
 
-    // Set up auth state change listener
-    const unsubscribe = SpringAuthService.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        setUser(session.user);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          await fetchUserProfile(session.user.id);
+        } else {
+          setUser(null);
+        }
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
+    );
 
-    return () => {
-      if (typeof unsubscribe === 'function') {
-        unsubscribe();
-      }
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return;
+      }
+
+      if (data) {
+        setUser({
+          id: data.id,
+          email: data.email,
+          role: data.role || 'user'
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
+
   const signIn = async (email: string, password: string) => {
-    await SpringAuthService.signIn(email, password);
+    try {
+      // Check if Supabase is properly configured
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage for development - accept any credentials
+        console.log('Supabase not configured, using localStorage fallback');
+        
+        // Check for admin credentials
+        if (email === 'omhind53@gmail.com' && password === 'admin123') {
+          const adminUser: Profile = {
+            id: '1',
+            email: 'omhind53@gmail.com',
+            role: 'admin'
+          };
+          setUser(adminUser);
+          localStorage.setItem('artspark-auth', JSON.stringify(adminUser));
+        } else if (email && password) {
+          // Accept any other valid email/password as regular user
+          const regularUser: Profile = {
+            id: Date.now().toString(),
+            email: email,
+            role: 'user'
+          };
+          setUser(regularUser);
+          localStorage.setItem('artspark-auth', JSON.stringify(regularUser));
+        } else {
+          throw new Error('Login Failed'); // Changed from 'Email and password are required'
+        }
+        return;
+      }
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        throw new Error('Login Failed'); // Changed from 'error.message'
+      }
+    } catch (error) {
+      console.error('Sign in error:', error);
+      throw error;
+    }
+  };
+
+  const signUp = async (email: string, password: string) => {
+    try {
+      if (!supabaseUrl || !supabaseAnonKey) {
+        console.log('Supabase not configured, using localStorage fallback for signUp');
+        // For development, just create a local user
+        const newUser: Profile = {
+          id: Date.now().toString(),
+          email: email,
+          role: 'user'
+        };
+        setUser(newUser);
+        localStorage.setItem('artspark-auth', JSON.stringify(newUser));
+        return;
+      }
+
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      console.error('Sign up error:', error);
+      throw error;
+    }
   };
 
   const signOut = async () => {
-    await SpringAuthService.signOut();
-    setUser(null);
+    try {
+      if (!supabaseUrl || !supabaseAnonKey) {
+        console.log('Supabase not configured, clearing localStorage');
+        setUser(null);
+        localStorage.removeItem('artspark-auth');
+        return;
+      }
+
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw new Error(error.message);
+      }
+      setUser(null);
+    } catch (error) {
+      console.error('Sign out error:', error);
+      throw error;
+    }
   };
 
-  const isAuthenticated = !!user;
-  const isAdmin = user?.role === 'ADMIN' || user?.role === 'admin';
+  const value: AuthContextType = {
+    user,
+    isAuthenticated: !!user,
+    isAdmin: user?.role === 'admin',
+    isLoading,
+    signIn,
+    signUp,
+    signOut,
+  };
 
-  return (
-    <AuthContext.Provider value={{ user, isAuthenticated, isAdmin, isLoading, signIn, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

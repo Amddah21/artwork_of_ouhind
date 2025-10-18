@@ -9,6 +9,7 @@ import { RatingProvider } from "@/contexts/RatingContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ArtisticNavbar from "@/components/ArtisticNavbar";
 import ArtisticFooter from "@/components/ArtisticFooter";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import ArtworkDetail from "./pages/ArtworkDetail";
 import GalleryDetail from "./pages/GalleryDetail";
@@ -29,27 +30,26 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
-              <Routes>
-                <Route path="*" element={
-                  <div className="min-h-screen flex flex-col">
-                    <ArtisticNavbar />
-                    <main className="flex-1">
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/artwork/:id" element={<ArtworkDetail />} />
-                        <Route path="/gallery/:galleryId" element={<GalleryDetail />} />
-                        <Route path="/voting" element={<Voting />} />
-                        <Route path="/comments" element={<Comments />} />
-                        <Route path="/admin" element={<AdminDashboard />} />
-                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </main>
-                    <ArtisticFooter />
-                  </div>
-                } />
-              </Routes>
-            </BrowserRouter>
+                <div className="min-h-screen flex flex-col">
+                  <ArtisticNavbar />
+                  <main className="flex-1">
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/artwork/:id" element={<ArtworkDetail />} />
+                      <Route path="/gallery/:galleryId" element={<GalleryDetail />} />
+                      <Route path="/voting" element={<Voting />} />
+                      <Route path="/comments" element={<Comments />} />
+                      <Route path="/admin" element={
+                        <ProtectedRoute requireAdmin={true}>
+                          <AdminDashboard />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </main>
+                  <ArtisticFooter />
+                </div>
+              </BrowserRouter>
             </RatingProvider>
           </ReviewProvider>
         </ArtworkProvider>

@@ -4,24 +4,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { contactService } from "@/lib/contactService";
 import Logo from "./Logo";
 import QRCodeComponent from "./QRCode";
 
 const Contact = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Message Envoyé !",
-      description: "Merci de m'avoir contactée. Je vous répondrai bientôt.",
-    });
-    setFormData({ name: "", email: "", message: "" });
+    setIsSubmitting(true);
+    
+    try {
+      await contactService.submitContactForm(formData);
+      toast({
+        title: "Message Envoyé !",
+        description: "Merci de m'avoir contactée. Je vous répondrai bientôt.",
+      });
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur s'est produite lors de l'envoi du message. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -171,9 +186,10 @@ const Contact = () => {
             </div>
             <Button
               type="submit"
+              disabled={isSubmitting}
               className="btn-primary w-full"
             >
-              Envoyer le Message
+              {isSubmitting ? "Envoi en cours..." : "Envoyer le Message"}
             </Button>
           </form>
         </div>

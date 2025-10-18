@@ -138,10 +138,10 @@ const ArtisticNavbar: React.FC = () => {
                   variant="default"
                   size="sm"
                   onClick={() => navigate('/admin')}
-                  className="ml-2 bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-800 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="ml-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 border-0 font-semibold"
                 >
                   <Settings className="w-4 h-4 mr-2" />
-                  LOGGING
+                  Dashboard
                 </Button>
               )}
               
@@ -151,7 +151,7 @@ const ArtisticNavbar: React.FC = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setShowLoginForm(true)}
-                  className="ml-2 bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200 hover:from-gray-100 hover:to-gray-200 hover:border-gray-300 transition-all duration-300"
+                  className="ml-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200 hover:from-yellow-100 hover:to-orange-100 hover:border-yellow-300 text-yellow-700 hover:text-orange-800 transition-all duration-300 font-medium"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   Connexion
@@ -161,7 +161,7 @@ const ArtisticNavbar: React.FC = () => {
                   variant="outline"
                   size="sm"
                   onClick={signOut}
-                  className="ml-2 bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200 hover:from-gray-100 hover:to-gray-200 hover:border-gray-300 transition-all duration-300"
+                  className="ml-2 bg-gradient-to-r from-orange-50 to-red-50 border-orange-200 hover:from-orange-100 hover:to-red-100 hover:border-orange-300 text-orange-700 hover:text-red-800 transition-all duration-300 font-medium"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Déconnexion
@@ -255,10 +255,10 @@ const ArtisticNavbar: React.FC = () => {
                       navigate('/admin');
                       setIsMenuOpen(false);
                     }}
-                    className="w-full justify-start bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400 text-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg px-4 py-3"
+                    className="w-full justify-start bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg px-4 py-3 font-semibold"
                   >
                     <Settings className="w-5 h-5 mr-3" />
-                    <span className="font-body font-medium">LOGGING</span>
+                    <span className="font-body font-medium">Dashboard</span>
                   </Button>
                 )}
                 
@@ -270,14 +270,6 @@ const ArtisticNavbar: React.FC = () => {
                   <p className="text-xs text-gray-500 font-body mb-3">
                     Suivez mon travail artistique
                   </p>
-                  <div className="flex justify-center space-x-4">
-                    <Button variant="outline" size="sm" className="painterly-card">
-                      <Mail className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" className="painterly-card">
-                      <Settings className="w-4 h-4" />
-                    </Button>
-                  </div>
                 </div>
               </div>
             </div>

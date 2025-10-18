@@ -28,23 +28,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
 
     try {
       await signIn(email, password);
-      toast({
-        title: "Connexion réussie",
-        description: "Redirection vers l'interface administrateur...",
-      });
-      
-      // Fermer le formulaire
+      // No success message - just close the form
+      onSuccess?.();
       onClose();
       
       // Rediriger automatiquement vers l'interface admin
       navigate('/admin');
-      
-      // Appeler le callback de succès si fourni
-      onSuccess?.();
     } catch (error) {
       toast({
-        title: "Erreur de connexion",
-        description: "Email ou mot de passe incorrect.",
+        title: "Login Failed",
+        description: "Invalid email or password. Please try again.",
         variant: "destructive",
       });
     } finally {

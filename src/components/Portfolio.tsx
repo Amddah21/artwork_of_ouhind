@@ -8,9 +8,9 @@ import { useArtwork } from '@/contexts/ArtworkContext';
 import { useReview } from '@/contexts/ReviewContext';
 
 interface Artwork {
-  id: number;
+  id: string;
   title: string;
-  image: string;
+  image_url: string;
   year: number;
   medium: string;
   dimensions: string;
@@ -28,20 +28,22 @@ const Portfolio: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('Tous');
   const [visibleArtworks, setVisibleArtworks] = useState<number>(8);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const portfolioRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
-  const { artworks } = useArtwork();
+  const { artworks, isLoading } = useArtwork();
   const { getArtworkRating } = useReview();
 
   useEffect(() => {
     setIsLoaded(true);
-  }, []);
+    // Debug: Log artworks to see what's loaded
+    console.log('Portfolio - Artworks loaded:', artworks.length, artworks);
+  }, [artworks]);
 
   // Enhanced artworks with color palettes (no pricing)
   const enhancedArtworks: Artwork[] = artworks.map(artwork => ({
     ...artwork,
-    year: parseInt(artwork.year) || new Date().getFullYear(),
+    year: artwork.year || new Date().getFullYear(),
     isAvailable: artwork.available,
     medium: artwork.materials?.join(', ') || 'Technique mixte',
     dimensions: artwork.size || 'Dimensions non spécifiées',
@@ -129,9 +131,30 @@ const Portfolio: React.FC = () => {
               }}
               className="hover-painterly-lift painterly-card"
               style={{
-                backgroundColor: selectedCategory === category ? 'hsl(38, 95%, 60%)' : 'transparent',
-                color: selectedCategory === category ? 'hsl(45, 100%, 97%)' : 'hsl(240, 10%, 15%)',
-                borderColor: 'hsl(330, 20%, 88%)'
+                ...(selectedCategory === category
+                  ? { // Style for selected button (any category)
+                      backgroundColor: 'hsl(38, 95%, 60%)',
+                      color: 'hsl(45, 100%, 97%)',
+                      borderColor: 'hsl(38, 95%, 60%)',
+                      borderWidth: '1px',
+                      fontWeight: 'normal'
+                    }
+                  : category === 'Tous'
+                    ? { // Style for unselected 'Tous' button
+                        backgroundColor: 'hsl(45, 100%, 97%)',
+                        color: 'hsl(240, 10%, 15%)',
+                        borderColor: 'hsl(240, 10%, 30%)',
+                        borderWidth: '2px',
+                        fontWeight: '600'
+                      }
+                    : { // Style for other unselected buttons
+                        backgroundColor: 'transparent',
+                        color: 'hsl(240, 10%, 15%)',
+                        borderColor: 'hsl(330, 20%, 88%)',
+                        borderWidth: '1px',
+                        fontWeight: 'normal'
+                      }
+                )
               }}
             >
               {category === 'Tous' ? category : `Voir ${category}`}
@@ -155,7 +178,7 @@ const Portfolio: React.FC = () => {
               {/* Image Container with artistic frame */}
               <div className="relative aspect-[4/5] overflow-hidden">
                 <ProtectedImage
-                  src={artwork.image}
+                  src={artwork.image_url}
                   alt={artwork.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
@@ -240,11 +263,11 @@ const Portfolio: React.FC = () => {
                       <Palette className="w-4 h-4" style={{ color: 'hsl(38, 95%, 60%)' }} />
                       <span style={{ color: 'hsl(240, 10%, 35%)' }}>Médium:</span>
                     </div>
-                    <span className="font-medium" style={{ color: 'hsl(240, 10%, 15%)' }}>{artwork.medium}</span>
+                    <span className="font-medium" style={{ color: 'hsl(240, 10%, 15%)' }}>{artwork.technique || artwork.medium || 'Non spécifié'}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span style={{ color: 'hsl(240, 10%, 35%)' }}>Dimensions:</span>
-                    <span className="font-medium" style={{ color: 'hsl(240, 10%, 15%)' }}>{artwork.dimensions}</span>
+                    <span className="font-medium" style={{ color: 'hsl(240, 10%, 15%)' }}>{artwork.dimensions || artwork.size || 'Non spécifié'}</span>
                   </div>
                 </div>
 
@@ -325,6 +348,47 @@ const Portfolio: React.FC = () => {
             </div>
           ))}
         </div>
+
+        {/* Loading State */}
+        {isLoading && (
+          <div className="text-center py-20">
+            <div className="max-w-md mx-auto">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+              </div>
+              <h3 className="text-2xl font-bold mb-4" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                Chargement des œuvres...
+              </h3>
+              <p className="text-lg" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                Veuillez patienter pendant que nous chargeons votre galerie.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State - when no artworks */}
+        {!isLoading && displayedArtworks.length === 0 && (
+          <div className={`text-center py-20 transition-all duration-1000 ${
+            isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
+          }`} style={{ animationDelay: '0.4s' }}>
+            <div className="max-w-md mx-auto">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+                <Palette className="w-12 h-12 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                Galerie Vide
+              </h3>
+              <p className="text-lg mb-6" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                Aucune œuvre n'est encore disponible. Utilisez le tableau de bord pour ajouter vos créations.
+              </p>
+              <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full painterly-card">
+                <span className="text-sm font-medium" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                  💡 Connectez-vous en tant qu'administrateur pour ajouter des œuvres
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Load More Button with artistic styling */}
         {visibleArtworks < filteredArtworks.length && (

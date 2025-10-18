@@ -1,16 +1,17 @@
 import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
-import { SpringReviewService, Review as SpringReview, ReviewStats } from '@/services/spring-review-service';
+import { supabase } from '@/lib/supabase';
 
 export interface Review {
-  id: number;
-  artworkId: number;
-  userName: string;
-  userEmail: string;
+  id: string;
+  artwork_id: string;
+  user_name: string;
+  user_email: string;
   rating: number; // 1-5 stars
   comment: string;
-  date: string;
   helpful: number; // number of helpful votes
   verified: boolean; // verified purchase
+  created_at: string;
+  updated_at: string;
 }
 
 interface ReviewState {
@@ -19,44 +20,22 @@ interface ReviewState {
 
 type ReviewAction =
   | { type: 'ADD_REVIEW'; payload: Review }
-  | { type: 'DELETE_REVIEW'; payload: number }
-  | { type: 'MARK_HELPFUL'; payload: number }
+  | { type: 'DELETE_REVIEW'; payload: string }
+  | { type: 'MARK_HELPFUL'; payload: string }
   | { type: 'LOAD_REVIEWS'; payload: Review[] };
 
 interface ReviewContextType {
   state: ReviewState;
   dispatch: React.Dispatch<ReviewAction>;
-  addReview: (review: Omit<Review, 'id' | 'date' | 'helpful' | 'verified'>) => Promise<void>;
-  deleteReview: (id: number) => Promise<void>;
-  markHelpful: (id: number) => Promise<void>;
-  getArtworkReviews: (artworkId: number) => Review[];
-  getArtworkRating: (artworkId: number) => { average: number; count: number; distribution: number[] };
+  addReview: (review: Omit<Review, 'id' | 'created_at' | 'updated_at' | 'helpful' | 'verified'>) => Promise<void>;
+  deleteReview: (id: string) => Promise<void>;
+  markHelpful: (id: string) => Promise<void>;
+  getArtworkReviews: (artworkId: string) => Review[];
+  getArtworkRating: (artworkId: string) => { average: number; count: number; distribution: number[] };
   loadReviews: () => Promise<void>;
 }
 
 const ReviewContext = createContext<ReviewContextType | null>(null);
-
-// Helper function to convert Spring Boot review to local review format
-const convertSpringReview = (springReview: SpringReview): Review => ({
-  id: springReview.id,
-  artworkId: springReview.artworkId,
-  userName: springReview.userName,
-  userEmail: springReview.userEmail,
-  rating: springReview.rating,
-  comment: springReview.comment,
-  date: springReview.createdAt,
-  helpful: springReview.helpful,
-  verified: springReview.verified
-});
-
-// Helper function to convert local review to Spring Boot format
-const convertToSpringReview = (review: Omit<Review, 'id' | 'date' | 'helpful' | 'verified'>) => ({
-  artworkId: review.artworkId,
-  userName: review.userName,
-  userEmail: review.userEmail,
-  rating: review.rating,
-  comment: review.comment
-});
 
 const reviewReducer = (state: ReviewState, action: ReviewAction): ReviewState => {
   switch (action.type) {
@@ -94,69 +73,110 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
 
   const [state, dispatch] = useReducer(reviewReducer, initialState);
 
-  // Load reviews from Spring Boot on mount
+  // Load reviews from Supabase on mount
   useEffect(() => {
     loadReviews();
   }, []);
 
   const loadReviews = async () => {
     try {
-      console.log('💬 [ReviewContext] Loading reviews from Spring Boot...');
-      const springReviews = await SpringReviewService.getAllReviews();
-      const convertedReviews = springReviews.map(convertSpringReview);
-      dispatch({ type: 'LOAD_REVIEWS', payload: convertedReviews });
-      console.log('💬 [ReviewContext] Reviews loaded successfully:', convertedReviews.length);
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading reviews:', error);
+        return;
+      }
+
+      dispatch({ type: 'LOAD_REVIEWS', payload: data || [] });
     } catch (error) {
-      console.error('💬 [ReviewContext] Error loading reviews:', error);
+      console.error('Error loading reviews:', error);
     }
   };
 
-  const addReview = async (review: Omit<Review, 'id' | 'date' | 'helpful' | 'verified'>) => {
+  const addReview = async (review: Omit<Review, 'id' | 'created_at' | 'updated_at' | 'helpful' | 'verified'>) => {
     try {
-      console.log('💬 [ReviewContext] Adding review:', review);
-      const springReview = convertToSpringReview(review);
-      const createdReview = await SpringReviewService.createReview(springReview);
-      const convertedReview = convertSpringReview(createdReview);
-      dispatch({ type: 'ADD_REVIEW', payload: convertedReview });
-      console.log('💬 [ReviewContext] Review added successfully:', convertedReview);
+      const { data, error } = await supabase
+        .from('reviews')
+        .insert([{
+          ...review,
+          helpful: 0,
+          verified: false
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error adding review:', error);
+        throw error;
+      }
+
+      dispatch({ type: 'ADD_REVIEW', payload: data });
     } catch (error) {
-      console.error('💬 [ReviewContext] Error adding review:', error);
+      console.error('Error adding review:', error);
       throw error;
     }
   };
 
-  const deleteReview = async (id: number) => {
+  const deleteReview = async (id: string) => {
     try {
-      console.log(`💬 [ReviewContext] Deleting review ${id}...`);
-      await SpringReviewService.deleteReview(id);
+      const { error } = await supabase
+        .from('reviews')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting review:', error);
+        throw error;
+      }
+
       dispatch({ type: 'DELETE_REVIEW', payload: id });
-      console.log(`💬 [ReviewContext] Review ${id} deleted successfully`);
     } catch (error) {
-      console.error(`💬 [ReviewContext] Error deleting review ${id}:`, error);
+      console.error('Error deleting review:', error);
       throw error;
     }
   };
 
-  const markHelpful = async (id: number) => {
+  const markHelpful = async (id: string) => {
     try {
-      console.log(`💬 [ReviewContext] Marking review ${id} as helpful...`);
-      const updatedReview = await SpringReviewService.markHelpful(id);
-      const convertedReview = convertSpringReview(updatedReview);
+      // Get current helpful count and increment it
+      const { data: review, error: fetchError } = await supabase
+        .from('reviews')
+        .select('helpful')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching review:', fetchError);
+        throw fetchError;
+      }
+
+      const { error } = await supabase
+        .from('reviews')
+        .update({ helpful: (review.helpful || 0) + 1 })
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error marking review as helpful:', error);
+        throw error;
+      }
+
       dispatch({ type: 'MARK_HELPFUL', payload: id });
-      console.log(`💬 [ReviewContext] Review ${id} marked as helpful`);
     } catch (error) {
-      console.error(`💬 [ReviewContext] Error marking review ${id} as helpful:`, error);
+      console.error('Error marking review as helpful:', error);
       throw error;
     }
   };
 
-  const getArtworkReviews = (artworkId: number): Review[] => {
+  const getArtworkReviews = (artworkId: string): Review[] => {
     return state.reviews
-      .filter(r => r.artworkId === artworkId)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      .filter(r => r.artwork_id === artworkId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   };
 
-  const getArtworkRating = (artworkId: number) => {
+  const getArtworkRating = (artworkId: string) => {
     const artworkReviews = getArtworkReviews(artworkId);
     const count = artworkReviews.length;
     

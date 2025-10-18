@@ -195,35 +195,6 @@ const ArtisticFooter: React.FC = () => {
           </div>
         </div>
 
-        {/* Newsletter Section */}
-        <div className="border-t border-gray-200 bg-gradient-to-r from-yellow-50 to-pink-50">
-          <div className="container mx-auto px-6 py-12">
-            <div className="max-w-2xl mx-auto text-center">
-              <h3 className="text-2xl font-display font-semibold text-gray-900 mb-4">
-                Restez Informé
-              </h3>
-              <p className="text-gray-700 mb-6 font-body">
-                Recevez les dernières nouvelles sur mes expositions et nouvelles créations.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <input
-                  type="email"
-                  placeholder="Votre adresse email"
-                  className="flex-1 px-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent font-body"
-                />
-                <Button 
-                  className="hover-painterly-lift paint-splash"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
-                    color: 'hsl(45, 100%, 97%)'
-                  }}
-                >
-                  S'abonner
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 bg-white/50 backdrop-blur-sm">
