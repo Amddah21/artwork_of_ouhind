@@ -1,27 +1,57 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+interface ArtworkImage {
+  id: number;
+  artwork_id: string;
+  image_url: string;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}
 
 interface Artwork {
-  id: number;
+  id: string;
   title: string;
   category: string;
-  image: string;
+  image_url: string; // Keep for backward compatibility - will be the first image
+  images?: ArtworkImage[]; // New: array of all images
   size: string;
-  year: string;
+  year: number;
   available: boolean;
   description: string;
-  featured?: boolean;
-  tags?: string[];
-  materials?: string[];
+  featured: boolean;
+  tags: string[];
+  materials: string[];
   technique?: string;
+  artist_name?: string;
+  price_mad?: string;
+  price_eur?: string;
+  reference?: string;
+  support?: string;
+  medium?: string;
+  dimensions?: string;
+  story?: string;
+  views: number;
+  created_at: string;
+  updated_at: string;
 }
 
 interface ArtworkContextType {
   artworks: Artwork[];
   isLoading: boolean;
-  addArtwork: (artwork: Omit<Artwork, 'id'>) => Promise<void>;
-  updateArtwork: (id: number, artwork: Omit<Artwork, 'id'>) => Promise<void>;
-  deleteArtwork: (id: number) => Promise<void>;
+  addArtwork: (artwork: Omit<Artwork, 'id' | 'created_at' | 'updated_at' | 'views' | 'images'>, images?: string[]) => Promise<void>;
+  updateArtwork: (id: string, artwork: Partial<Omit<Artwork, 'id' | 'created_at' | 'updated_at' | 'images'>>, images?: string[]) => Promise<void>;
+  deleteArtwork: (id: string) => Promise<void>;
   refreshArtworks: () => Promise<void>;
+  incrementViews: (id: string) => Promise<void>;
+  addArtworkImages: (artworkId: string, imageUrls: string[]) => Promise<void>;
+  deleteArtworkImage: (imageId: number) => Promise<void>;
+  getArtworkImages: (artworkId: string) => Promise<ArtworkImage[]>;
+  clearAllArtworks: () => Promise<void>;
 }
 
 const ArtworkContext = createContext<ArtworkContextType | undefined>(undefined);
@@ -34,153 +64,11 @@ export const useArtwork = () => {
   return context;
 };
 
-const defaultArtworks: Artwork[] = [
-  {
-    id: 1,
-    title: "Rêve Aquarelle",
-    category: "Aquarelle",
-    image: "/artwork1.JPG",
-    size: "40x60 cm",
-    year: "2023",
-    available: true,
-    description: "Une œuvre délicate capturant l'essence des rêves à travers des couleurs fluides et éthérées.",
-    featured: true,
-    tags: ["aquarelle", "abstrait", "coloré"],
-    materials: ["Aquarelle", "Papier Arches"],
-    technique: "Aquarelle sur papier"
-  },
-  {
-    id: 2,
-    title: "Portrait au Crayon",
-    category: "Dessin au Crayon",
-    image: "/artwork2.JPG",
-    size: "30x40 cm",
-    year: "2023",
-    available: true,
-    description: "Un portrait expressif capturant l'émotion et la personnalité du sujet.",
-    tags: ["portrait", "réaliste"],
-    materials: ["Graphite", "Papier Bristol"],
-    technique: "Crayon graphite"
-  },
-  {
-    id: 3,
-    title: "Étude au Fusain",
-    category: "Fusain",
-    image: "/artwork3.JPG",
-    size: "50x70 cm",
-    year: "2023",
-    available: true,
-    description: "Une étude atmosphérique jouant avec les lumières et les ombres.",
-    featured: false,
-    tags: ["fusain", "monochrome"],
-    materials: ["Fusain", "Papier kraft"],
-    technique: "Fusain sur papier"
-  },
-  {
-    id: 4,
-    title: "Composition Mixte",
-    category: "Techniques Mixtes",
-    image: "https://images.unsplash.com/photo-1549887534-1541e9326642?w=800&h=800&fit=crop",
-    size: "60x80 cm",
-    year: "2023",
-    available: true,
-    description: "Une exploration créative mêlant différentes techniques et matériaux.",
-    tags: ["mixte", "moderne"],
-    materials: ["Acrylique", "Encre", "Collage"],
-    technique: "Techniques mixtes"
-  },
-  {
-    id: 5,
-    title: "Illustration Botanique",
-    category: "Illustration",
-    image: "https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=800&h=800&fit=crop",
-    size: "20x30 cm",
-    year: "2023",
-    available: true,
-    description: "Une illustration détaillée inspirée de la nature.",
-    tags: ["botanique", "nature"],
-    materials: ["Encre", "Aquarelle"],
-    technique: "Illustration à l'encre et aquarelle"
-  },
-  {
-    id: 6,
-    title: "Calligraphie à l'Encre",
-    category: "Encre",
-    image: "https://images.unsplash.com/photo-1515405295579-ba7b45403062?w=800&h=800&fit=crop",
-    size: "40x50 cm",
-    year: "2023",
-    available: true,
-    description: "Une œuvre d'encre expressionniste combinant calligraphie et art abstrait.",
-    featured: true,
-    tags: ["encre", "calligraphie"],
-    materials: ["Encre", "Papier"],
-    technique: "Encre sur papier"
-  },
-  {
-    id: 7,
-    title: "Racines Silencieuses",
-    category: "Abstrait",
-    image: "/artwork4.JPG",
-    size: "60x80 cm",
-    year: "2025",
-    available: true,
-    description: "Une exploration des textures naturelles et du silence intérieur. Une œuvre abstraite capturant l'essence des racines et des formations géologiques.",
-    featured: true,
-    tags: ["abstrait", "texture", "nature", "racines"],
-    materials: ["Techniques mixtes", "Papier"],
-    technique: "Techniques mixtes sur papier"
-  },
-  {
-    id: 8,
-    title: "Expression de l'Âme",
-    category: "Abstrait",
-    image: "/artwork5.JPG",
-    size: "70x90 cm",
-    year: "2025",
-    available: true,
-    description: "L'art est l'expression de l'âme à travers la couleur et la forme. Une œuvre qui explore les profondeurs de l'émotion artistique.",
-    featured: true,
-    tags: ["abstrait", "couleur", "forme", "âme"],
-    materials: ["Techniques mixtes", "Toile"],
-    technique: "Techniques mixtes sur toile"
-  },
-  {
-    id: 9,
-    title: "Textures Organiques",
-    category: "Abstrait",
-    image: "/artwork6.JPG",
-    size: "80x100 cm",
-    year: "2025",
-    available: true,
-    description: "Une exploration des textures naturelles et des formations géologiques. Cette œuvre abstraite en noir et blanc révèle la complexité des structures organiques.",
-    featured: true,
-    tags: ["abstrait", "texture", "organique", "géologie"],
-    materials: ["Techniques mixtes", "Papier"],
-    technique: "Techniques mixtes sur papier"
-  },
-  {
-    id: 10,
-    title: "Galerie d'Art",
-    category: "Photographie",
-    image: "/slider2.JPG",
-    size: "60x80 cm",
-    year: "2025",
-    available: true,
-    description: "Une vue intérieure d'une galerie d'art élégante, capturant l'atmosphère sophistiquée et l'éclairage naturel qui met en valeur les œuvres exposées.",
-    featured: true,
-    tags: ["galerie", "architecture", "éclairage", "exposition"],
-    materials: ["Photographie", "Impression"],
-    technique: "Photographie numérique"
-  }
-];
-
-const STORAGE_KEY = 'artspark-artworks';
-
 export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load artworks from localStorage on mount
+  // Load artworks from Supabase on mount
   useEffect(() => {
     loadArtworks();
   }, []);
@@ -188,62 +76,348 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const loadArtworks = async () => {
     try {
       setIsLoading(true);
-      const storedArtworks = localStorage.getItem(STORAGE_KEY);
-      if (storedArtworks) {
-        setArtworks(JSON.parse(storedArtworks));
+      
+      // Check if Supabase is properly configured
+      if (supabaseUrl && supabaseAnonKey) {
+        const { data: artworksData, error: artworksError } = await supabase
+          .from('artworks')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (artworksError) {
+          console.error('Error loading artworks:', artworksError);
+          throw artworksError;
+        }
+
+        // Fetch images for each artwork
+        const artworksWithImages = await Promise.all(
+          (artworksData || []).map(async (artwork) => {
+            const { data: imagesData, error: imagesError } = await supabase
+              .from('artwork_images')
+              .select('*')
+              .eq('artwork_id', artwork.id)
+              .order('display_order', { ascending: true });
+
+            if (imagesError) {
+              console.error('Error loading images for artwork:', artwork.id, imagesError);
+            }
+
+            return {
+              ...artwork,
+              images: imagesData || [],
+              image_url: imagesData?.[0]?.image_url || artwork.image_url // First image as primary
+            };
+          })
+        );
+
+        setArtworks(artworksWithImages);
       } else {
-        setArtworks(defaultArtworks);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultArtworks));
+        // Fallback to localStorage for development
+        console.log('Supabase not configured, using localStorage fallback');
+        const storedArtworks = localStorage.getItem('artspark-artworks');
+        if (storedArtworks) {
+          setArtworks(JSON.parse(storedArtworks));
+        } else {
+          // Start with empty gallery - user will add artworks through dashboard
+          setArtworks([]);
+        }
       }
     } catch (error) {
       console.error('Error loading artworks:', error);
-      setArtworks(defaultArtworks);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const addArtwork = async (artwork: Omit<Artwork, 'id'>) => {
+  const addArtwork = async (artwork: Omit<Artwork, 'id' | 'created_at' | 'updated_at' | 'views' | 'images'>, images?: string[]) => {
     try {
-      const newArtwork = {
-        ...artwork,
-        id: Math.max(...artworks.map(a => a.id), 0) + 1
-      };
-      const updatedArtworks = [...artworks, newArtwork];
-      setArtworks(updatedArtworks);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedArtworks));
+      // Check if Supabase is properly configured
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage for development
+        console.log('Supabase not configured, using localStorage fallback for addArtwork');
+        const newArtwork: Artwork = {
+          ...artwork,
+          id: Date.now().toString(),
+          views: 0,
+          images: images?.map((url, index) => ({
+            id: Date.now() + index,
+            artwork_id: Date.now().toString(),
+            image_url: url,
+            display_order: index,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })) || [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        
+        const updatedArtworks = [newArtwork, ...artworks];
+        setArtworks(updatedArtworks);
+        localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
+        console.log('Artwork saved to localStorage successfully, total artworks:', updatedArtworks.length);
+        // Don't throw error - just return successfully
+        return;
+      }
+
+      // Try Supabase first, fallback to localStorage if it fails
+      try {
+        const { data, error } = await supabase
+          .from('artworks')
+          .insert([{
+            ...artwork,
+            views: 0
+          }])
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Supabase error, falling back to localStorage:', error);
+          throw error;
+        }
+
+        // Add images if provided
+        if (images && images.length > 0) {
+          const imageInserts = images.map((url, index) => ({
+            artwork_id: data.id,
+            image_url: url,
+            display_order: index
+          }));
+
+          const { error: imagesError } = await supabase
+            .from('artwork_images')
+            .insert(imageInserts);
+
+          if (imagesError) {
+            console.error('Error adding images:', imagesError);
+          }
+        }
+
+        // Reload artworks to get the images
+        await loadArtworks();
+        console.log('Artwork added to Supabase successfully, artworks reloaded');
+        return;
+      } catch (supabaseError) {
+        console.log('Supabase failed, using localStorage fallback:', supabaseError);
+        
+        // Fallback to localStorage
+        const newArtwork: Artwork = {
+          ...artwork,
+          id: Date.now().toString(),
+          views: 0,
+          images: images?.map((url, index) => ({
+            id: Date.now() + index,
+            artwork_id: Date.now().toString(),
+            image_url: url,
+            display_order: index,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })) || [],
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        
+        const updatedArtworks = [newArtwork, ...artworks];
+        setArtworks(updatedArtworks);
+        localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
+        console.log('Artwork saved to localStorage successfully, total artworks:', updatedArtworks.length);
+        // Don't throw error - just return successfully
+        return;
+      }
     } catch (error) {
       console.error('Error adding artwork:', error);
       throw error;
     }
   };
 
-  const updateArtwork = async (id: number, artwork: Omit<Artwork, 'id'>) => {
+  const updateArtwork = async (id: string, artwork: Partial<Omit<Artwork, 'id' | 'created_at' | 'updated_at'>>) => {
     try {
-      const updatedArtworks = artworks.map(a => 
-        a.id === id ? { ...a, ...artwork } : a
-      );
-      setArtworks(updatedArtworks);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedArtworks));
+      const { data, error } = await supabase
+        .from('artworks')
+        .update(artwork)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating artwork:', error);
+        throw error;
+      }
+
+      setArtworks(prev => prev.map(a => a.id === id ? data : a));
     } catch (error) {
       console.error('Error updating artwork:', error);
       throw error;
     }
   };
 
-  const deleteArtwork = async (id: number) => {
+  const deleteArtwork = async (id: string) => {
     try {
-      const updatedArtworks = artworks.filter(a => a.id !== id);
-      setArtworks(updatedArtworks);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedArtworks));
+      const { error } = await supabase
+        .from('artworks')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting artwork:', error);
+        throw error;
+      }
+
+      setArtworks(prev => prev.filter(a => a.id !== id));
     } catch (error) {
       console.error('Error deleting artwork:', error);
       throw error;
     }
   };
 
+  const incrementViews = async (id: string) => {
+    try {
+      const { error } = await supabase.rpc('increment_views', { artwork_id: id });
+      
+      if (error) {
+        console.error('Error incrementing views:', error);
+        // Fallback: update locally
+        setArtworks(prev => prev.map(a => 
+          a.id === id ? { ...a, views: a.views + 1 } : a
+        ));
+      } else {
+        // Refresh the artwork to get updated view count
+        await loadArtworks();
+      }
+    } catch (error) {
+      console.error('Error incrementing views:', error);
+      // Fallback: update locally
+      setArtworks(prev => prev.map(a => 
+        a.id === id ? { ...a, views: a.views + 1 } : a
+      ));
+    }
+  };
+
   const refreshArtworks = async () => {
     await loadArtworks();
+  };
+
+  const addArtworkImages = async (artworkId: string, imageUrls: string[]) => {
+    try {
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage
+        console.log('Supabase not configured, using localStorage fallback for addArtworkImages');
+        return;
+      }
+
+      const imageInserts = imageUrls.map((url, index) => ({
+        artwork_id: artworkId,
+        image_url: url,
+        display_order: index
+      }));
+
+      const { error } = await supabase
+        .from('artwork_images')
+        .insert(imageInserts);
+
+      if (error) {
+        console.error('Error adding artwork images:', error);
+        throw error;
+      }
+
+      // Refresh artworks to get updated images
+      await loadArtworks();
+    } catch (error) {
+      console.error('Error adding artwork images:', error);
+      throw error;
+    }
+  };
+
+  const deleteArtworkImage = async (imageId: number) => {
+    try {
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage
+        console.log('Supabase not configured, using localStorage fallback for deleteArtworkImage');
+        return;
+      }
+
+      const { error } = await supabase
+        .from('artwork_images')
+        .delete()
+        .eq('id', imageId);
+
+      if (error) {
+        console.error('Error deleting artwork image:', error);
+        throw error;
+      }
+
+      // Refresh artworks to get updated images
+      await loadArtworks();
+    } catch (error) {
+      console.error('Error deleting artwork image:', error);
+      throw error;
+    }
+  };
+
+  const getArtworkImages = async (artworkId: string): Promise<ArtworkImage[]> => {
+    try {
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage
+        console.log('Supabase not configured, using localStorage fallback for getArtworkImages');
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from('artwork_images')
+        .select('*')
+        .eq('artwork_id', artworkId)
+        .order('display_order', { ascending: true });
+
+      if (error) {
+        console.error('Error getting artwork images:', error);
+        throw error;
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error getting artwork images:', error);
+      throw error;
+    }
+  };
+
+  const clearAllArtworks = async () => {
+    try {
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage
+        console.log('Supabase not configured, clearing localStorage');
+        localStorage.removeItem('artspark-artworks');
+        setArtworks([]);
+        console.log('All artworks cleared from localStorage');
+        return;
+      }
+
+      // Clear from Supabase
+      const { error: imagesError } = await supabase
+        .from('artwork_images')
+        .delete()
+        .neq('id', 0); // Delete all images
+
+      if (imagesError) {
+        console.error('Error clearing artwork images:', imagesError);
+      }
+
+      const { error: artworksError } = await supabase
+        .from('artworks')
+        .delete()
+        .neq('id', ''); // Delete all artworks
+
+      if (artworksError) {
+        console.error('Error clearing artworks:', artworksError);
+        throw artworksError;
+      }
+
+      // Also clear localStorage as backup
+      localStorage.removeItem('artspark-artworks');
+      setArtworks([]);
+      console.log('All artworks cleared from database and localStorage');
+    } catch (error) {
+      console.error('Error clearing all artworks:', error);
+      throw error;
+    }
   };
 
   return (
@@ -253,7 +427,12 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       addArtwork, 
       updateArtwork, 
       deleteArtwork,
-      refreshArtworks
+      refreshArtworks,
+      incrementViews,
+      addArtworkImages,
+      deleteArtworkImage,
+      getArtworkImages,
+      clearAllArtworks
     }}>
       {children}
     </ArtworkContext.Provider>

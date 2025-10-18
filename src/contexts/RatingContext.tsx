@@ -1,19 +1,24 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from './AuthContext';
 
 interface Rating {
-  artworkId: string;
-  userId: string;
+  id: string;
+  artwork_id: string;
+  user_id: string;
   rating: number;
-  timestamp: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface RatingContextType {
   ratings: { [artworkId: string]: Rating[] };
   userRatings: { [artworkId: string]: number };
-  addRating: (artworkId: string, rating: number) => void;
+  addRating: (artworkId: string, rating: number) => Promise<void>;
   getAverageRating: (artworkId: string) => number;
   getRatingCount: (artworkId: string) => number;
   getUserRating: (artworkId: string) => number;
+  loadRatings: () => Promise<void>;
 }
 
 const RatingContext = createContext<RatingContextType | undefined>(undefined);
@@ -31,41 +36,105 @@ interface RatingProviderProps {
 }
 
 export const RatingProvider: React.FC<RatingProviderProps> = ({ children }) => {
-  const [ratings, setRatings] = useState<{ [artworkId: string]: Rating[] }>({
-    '1': [
-      { artworkId: '1', userId: 'user1', rating: 5, timestamp: '2024-01-20T10:00:00Z' },
-      { artworkId: '1', userId: 'user2', rating: 4, timestamp: '2024-01-19T15:30:00Z' },
-      { artworkId: '1', userId: 'user3', rating: 5, timestamp: '2024-01-18T09:15:00Z' },
-    ],
-    '2': [
-      { artworkId: '2', userId: 'user1', rating: 4, timestamp: '2024-01-20T11:00:00Z' },
-      { artworkId: '2', userId: 'user2', rating: 5, timestamp: '2024-01-19T16:30:00Z' },
-    ],
-    '3': [
-      { artworkId: '3', userId: 'user1', rating: 5, timestamp: '2024-01-20T12:00:00Z' },
-      { artworkId: '3', userId: 'user2', rating: 4, timestamp: '2024-01-19T17:30:00Z' },
-      { artworkId: '3', userId: 'user3', rating: 5, timestamp: '2024-01-18T10:15:00Z' },
-    ],
-  });
-
+  const [ratings, setRatings] = useState<{ [artworkId: string]: Rating[] }>({});
   const [userRatings, setUserRatings] = useState<{ [artworkId: string]: number }>({});
+  const { user } = useAuth();
 
-  const addRating = (artworkId: string, rating: number) => {
-    const currentUserId = 'current-user';
-    const timestamp = new Date().toISOString();
-    
-    setRatings(prev => ({
-      ...prev,
-      [artworkId]: [
-        ...(prev[artworkId] || []).filter(r => r.userId !== currentUserId),
-        { artworkId, userId: currentUserId, rating, timestamp }
-      ]
-    }));
+  // Load ratings from Supabase on mount
+  useEffect(() => {
+    loadRatings();
+  }, []);
 
-    setUserRatings(prev => ({
-      ...prev,
-      [artworkId]: rating
-    }));
+  // Update user ratings when user changes
+  useEffect(() => {
+    if (user) {
+      updateUserRatings();
+    } else {
+      setUserRatings({});
+    }
+  }, [user, ratings]);
+
+  const loadRatings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('ratings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading ratings:', error);
+        return;
+      }
+
+      // Group ratings by artwork_id
+      const groupedRatings: { [artworkId: string]: Rating[] } = {};
+      data?.forEach(rating => {
+        if (!groupedRatings[rating.artwork_id]) {
+          groupedRatings[rating.artwork_id] = [];
+        }
+        groupedRatings[rating.artwork_id].push(rating);
+      });
+
+      setRatings(groupedRatings);
+    } catch (error) {
+      console.error('Error loading ratings:', error);
+    }
+  };
+
+  const updateUserRatings = () => {
+    if (!user) return;
+
+    const userRatingsMap: { [artworkId: string]: number } = {};
+    Object.values(ratings).forEach(artworkRatings => {
+      const userRating = artworkRatings.find(r => r.user_id === user.id);
+      if (userRating) {
+        userRatingsMap[userRating.artwork_id] = userRating.rating;
+      }
+    });
+
+    setUserRatings(userRatingsMap);
+  };
+
+  const addRating = async (artworkId: string, rating: number) => {
+    if (!user) {
+      throw new Error('User must be authenticated to rate artworks');
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('ratings')
+        .upsert({
+          artwork_id: artworkId,
+          user_id: user.id,
+          rating: rating
+        }, {
+          onConflict: 'artwork_id,user_id'
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error adding rating:', error);
+        throw error;
+      }
+
+      // Update local state
+      setRatings(prev => ({
+        ...prev,
+        [artworkId]: [
+          ...(prev[artworkId] || []).filter(r => r.user_id !== user.id),
+          data
+        ]
+      }));
+
+      setUserRatings(prev => ({
+        ...prev,
+        [artworkId]: rating
+      }));
+    } catch (error) {
+      console.error('Error adding rating:', error);
+      throw error;
+    }
   };
 
   const getAverageRating = (artworkId: string): number => {
@@ -91,7 +160,8 @@ export const RatingProvider: React.FC<RatingProviderProps> = ({ children }) => {
       addRating,
       getAverageRating,
       getRatingCount,
-      getUserRating
+      getUserRating,
+      loadRatings
     }}>
       {children}
     </RatingContext.Provider>

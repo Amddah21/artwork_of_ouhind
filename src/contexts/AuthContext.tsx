@@ -1,19 +1,23 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { SupabaseAuthService } from '@/services/supabase-auth-service';
 import { supabase } from '@/lib/supabase';
+import type { User } from '@supabase/supabase-js';
 
-interface User {
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+interface Profile {
   id: string;
   email: string;
-  role?: string;
+  role: 'user' | 'admin';
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: Profile | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -28,47 +32,36 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Check if Supabase is properly configured
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.log('Supabase not configured, using localStorage fallback for auth');
+      // Load user from localStorage on mount
+      const loadUser = () => {
+        try {
+          const storedUser = localStorage.getItem('artspark-auth');
+          if (storedUser) {
+            setUser(JSON.parse(storedUser));
+          }
+        } catch (error) {
+          console.error('Error loading user from localStorage:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadUser();
+      return;
+    }
+
     // Get initial session
     const getInitialSession = async () => {
       try {
-        const session = await SupabaseAuthService.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
-          // Get user role from user_profiles table
-          const { data: userProfile, error } = await supabase
-            .from('user_profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-          
-          // Fallback: if user profile doesn't exist, create it
-          if (error && error.code === 'PGRST116') {
-            // User profile doesn't exist, create it
-            const { data: newProfile } = await supabase
-              .from('user_profiles')
-              .insert({
-                id: session.user.id,
-                email: session.user.email || '',
-                role: session.user.email === 'admin@artiste.com' ? 'admin' : 'user'
-              })
-              .select()
-              .single();
-            
-            setUser({
-              id: session.user.id,
-              email: session.user.email || '',
-              role: newProfile?.role || 'user'
-            });
-          } else {
-            setUser({
-              id: session.user.id,
-              email: session.user.email || '',
-              role: userProfile?.role || 'user'
-            });
-          }
+          await fetchUserProfile(session.user.id);
         }
       } catch (error) {
         console.error('Error getting initial session:', error);
@@ -79,56 +72,135 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     getInitialSession();
 
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        // Get user role from user_profiles table
-        const { data: userProfile, error } = await supabase
-          .from('user_profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-        
-        // Fallback: if user profile doesn't exist, create it
-        if (error && error.code === 'PGRST116') {
-          // User profile doesn't exist, create it
-          const { data: newProfile } = await supabase
-            .from('user_profiles')
-            .insert({
-              id: session.user.id,
-              email: session.user.email || '',
-              role: session.user.email === 'admin@artiste.com' ? 'admin' : 'user'
-            })
-            .select()
-            .single();
-          
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            role: newProfile?.role || 'user'
-          });
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          await fetchUserProfile(session.user.id);
         } else {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            role: userProfile?.role || 'user'
-          });
+          setUser(null);
         }
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
+    );
 
     return () => subscription.unsubscribe();
   }, []);
 
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return;
+      }
+
+      setUser(data);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
+
   const signIn = async (email: string, password: string) => {
-    await SupabaseAuthService.signIn(email, password);
+    try {
+      // Check if Supabase is properly configured
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage for development - accept any credentials
+        console.log('Supabase not configured, using localStorage fallback');
+        
+        // Check for admin credentials
+        if (email === 'omhind53@gmail.com' && password === 'admin123') {
+          const adminUser: Profile = {
+            id: '1',
+            email: 'omhind53@gmail.com',
+            role: 'admin'
+          };
+          setUser(adminUser);
+          localStorage.setItem('artspark-auth', JSON.stringify(adminUser));
+        } else if (email && password) {
+          // Accept any other valid email/password as regular user
+          const regularUser: Profile = {
+            id: Date.now().toString(),
+            email: email,
+            role: 'user'
+          };
+          setUser(regularUser);
+          localStorage.setItem('artspark-auth', JSON.stringify(regularUser));
+        } else {
+          throw new Error('Login Failed');
+        }
+        return;
+      }
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        throw new Error('Login Failed');
+      }
+    } catch (error) {
+      console.error('Error signing in:', error);
+      throw error;
+    }
+  };
+
+  const signUp = async (email: string, password: string) => {
+    try {
+      // Check if Supabase is properly configured
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage for development - accept any credentials
+        console.log('Supabase not configured, using localStorage fallback for signup');
+        
+        // Create user profile
+        const newUser: Profile = {
+          id: Date.now().toString(),
+          email: email,
+          role: 'user'
+        };
+        setUser(newUser);
+        localStorage.setItem('artspark-auth', JSON.stringify(newUser));
+        return;
+      }
+
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      console.error('Error signing up:', error);
+      throw error;
+    }
   };
 
   const signOut = async () => {
-    await SupabaseAuthService.signOut();
+    try {
+      // Check if Supabase is properly configured
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage for development
+        setUser(null);
+        localStorage.removeItem('artspark-auth');
+        return;
+      }
+
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      console.error('Error signing out:', error);
+      throw error;
+    }
   };
 
   const value: AuthContextType = {
@@ -137,6 +209,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAdmin: user?.role === 'admin',
     isLoading,
     signIn,
+    signUp,
     signOut,
   };
 

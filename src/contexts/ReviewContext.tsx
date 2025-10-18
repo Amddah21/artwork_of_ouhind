@@ -1,15 +1,17 @@
 import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export interface Review {
   id: string;
-  artworkId: number;
-  userName: string;
-  userEmail: string;
+  artwork_id: string;
+  user_name: string;
+  user_email: string;
   rating: number; // 1-5 stars
   comment: string;
-  date: string;
   helpful: number; // number of helpful votes
   verified: boolean; // verified purchase
+  created_at: string;
+  updated_at: string;
 }
 
 interface ReviewState {
@@ -25,36 +27,15 @@ type ReviewAction =
 interface ReviewContextType {
   state: ReviewState;
   dispatch: React.Dispatch<ReviewAction>;
-  addReview: (review: Omit<Review, 'id' | 'date' | 'helpful' | 'verified'>) => void;
-  deleteReview: (id: string) => void;
-  markHelpful: (id: string) => void;
-  getArtworkReviews: (artworkId: number) => Review[];
-  getArtworkRating: (artworkId: number) => { average: number; count: number; distribution: number[] };
+  addReview: (review: Omit<Review, 'id' | 'created_at' | 'updated_at' | 'helpful' | 'verified'>) => Promise<void>;
+  deleteReview: (id: string) => Promise<void>;
+  markHelpful: (id: string) => Promise<void>;
+  getArtworkReviews: (artworkId: string) => Review[];
+  getArtworkRating: (artworkId: string) => { average: number; count: number; distribution: number[] };
+  loadReviews: () => Promise<void>;
 }
 
 const ReviewContext = createContext<ReviewContextType | null>(null);
-
-// Load reviews from localStorage
-const loadReviewsFromStorage = (): Review[] => {
-  try {
-    const stored = localStorage.getItem('artwork-reviews');
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error('Error loading reviews:', error);
-  }
-  return [];
-};
-
-// Save reviews to localStorage
-const saveReviewsToStorage = (reviews: Review[]) => {
-  try {
-    localStorage.setItem('artwork-reviews', JSON.stringify(reviews));
-  } catch (error) {
-    console.error('Error saving reviews:', error);
-  }
-};
 
 const reviewReducer = (state: ReviewState, action: ReviewAction): ReviewState => {
   switch (action.type) {
@@ -87,42 +68,115 @@ const reviewReducer = (state: ReviewState, action: ReviewAction): ReviewState =>
 
 export const ReviewProvider = ({ children }: { children: ReactNode }) => {
   const initialState: ReviewState = {
-    reviews: loadReviewsFromStorage()
+    reviews: []
   };
 
   const [state, dispatch] = useReducer(reviewReducer, initialState);
 
-  // Save reviews to localStorage whenever they change
+  // Load reviews from Supabase on mount
   useEffect(() => {
-    saveReviewsToStorage(state.reviews);
-  }, [state.reviews]);
+    loadReviews();
+  }, []);
 
-  const addReview = (review: Omit<Review, 'id' | 'date' | 'helpful' | 'verified'>) => {
-    const newReview: Review = {
-      ...review,
-      id: Date.now().toString(),
-      date: new Date().toISOString(),
-      helpful: 0,
-      verified: false // You can add logic to verify purchases
-    };
-    dispatch({ type: 'ADD_REVIEW', payload: newReview });
+  const loadReviews = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading reviews:', error);
+        return;
+      }
+
+      dispatch({ type: 'LOAD_REVIEWS', payload: data || [] });
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+    }
   };
 
-  const deleteReview = (id: string) => {
-    dispatch({ type: 'DELETE_REVIEW', payload: id });
+  const addReview = async (review: Omit<Review, 'id' | 'created_at' | 'updated_at' | 'helpful' | 'verified'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('reviews')
+        .insert([{
+          ...review,
+          helpful: 0,
+          verified: false
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error adding review:', error);
+        throw error;
+      }
+
+      dispatch({ type: 'ADD_REVIEW', payload: data });
+    } catch (error) {
+      console.error('Error adding review:', error);
+      throw error;
+    }
   };
 
-  const markHelpful = (id: string) => {
-    dispatch({ type: 'MARK_HELPFUL', payload: id });
+  const deleteReview = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting review:', error);
+        throw error;
+      }
+
+      dispatch({ type: 'DELETE_REVIEW', payload: id });
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      throw error;
+    }
   };
 
-  const getArtworkReviews = (artworkId: number): Review[] => {
+  const markHelpful = async (id: string) => {
+    try {
+      // Get current helpful count and increment it
+      const { data: review, error: fetchError } = await supabase
+        .from('reviews')
+        .select('helpful')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching review:', fetchError);
+        throw fetchError;
+      }
+
+      const { error } = await supabase
+        .from('reviews')
+        .update({ helpful: (review.helpful || 0) + 1 })
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error marking review as helpful:', error);
+        throw error;
+      }
+
+      dispatch({ type: 'MARK_HELPFUL', payload: id });
+    } catch (error) {
+      console.error('Error marking review as helpful:', error);
+      throw error;
+    }
+  };
+
+  const getArtworkReviews = (artworkId: string): Review[] => {
     return state.reviews
-      .filter(r => r.artworkId === artworkId)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      .filter(r => r.artwork_id === artworkId)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   };
 
-  const getArtworkRating = (artworkId: number) => {
+  const getArtworkRating = (artworkId: string) => {
     const artworkReviews = getArtworkReviews(artworkId);
     const count = artworkReviews.length;
     
@@ -150,7 +204,8 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
       deleteReview,
       markHelpful,
       getArtworkReviews,
-      getArtworkRating
+      getArtworkRating,
+      loadReviews
     }}>
       {children}
     </ReviewContext.Provider>

@@ -11,42 +11,64 @@ import { Trash2, Edit, Plus, Eye, Upload, X, Image as ImageIcon, Camera, Grid3X3
 import { useToast } from '@/hooks/use-toast';
 import { useArtwork } from '@/contexts/ArtworkContext';
 
-interface Artwork {
+interface ArtworkImage {
   id: number;
+  artwork_id: string;
+  image_url: string;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Artwork {
+  id: string;
   title: string;
   category: string;
-  image: string;
+  image_url: string;
+  images?: ArtworkImage[];
   size: string;
-  year: string;
+  year: number;
   available: boolean;
   description: string;
-  featured?: boolean;
-  tags?: string[];
-  materials?: string[];
+  featured: boolean;
+  tags: string[];
+  materials: string[];
   technique?: string;
+  artist_name?: string;
+  price_mad?: string;
+  price_eur?: string;
+  reference?: string;
+  support?: string;
+  medium?: string;
+  dimensions?: string;
+  story?: string;
+  views: number;
+  created_at: string;
+  updated_at: string;
 }
 
 const AdminDashboard: React.FC = () => {
-  const { artworks, addArtwork, updateArtwork, deleteArtwork } = useArtwork();
+  const { artworks, addArtwork, updateArtwork, deleteArtwork, clearAllArtworks } = useArtwork();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isAdding, setIsAdding] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     category: '',
     technique: '',
     size: '',
-    year: new Date().getFullYear().toString(),
+    year: new Date().getFullYear(),
     available: true,
     featured: false,
     tags: '',
     materials: '',
-    image: ''
+    image_url: ''
   });
 
   const categories = ['Abstrait', 'Portrait', 'Paysage', 'Photographie', 'Sculpture', 'Mixte'];
@@ -59,74 +81,104 @@ const AdminDashboard: React.FC = () => {
       category: '',
       technique: '',
       size: '',
-      year: new Date().getFullYear().toString(),
+      year: new Date().getFullYear(),
       available: true,
       featured: false,
       tags: '',
       materials: '',
-      image: ''
+      image_url: ''
     });
-    setPreviewImage('');
+    setPreviewImages([]);
     setIsAdding(false);
     setEditingId(null);
   };
 
-  // Image upload handler
+  // Multiple image upload handler
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast({
-        title: "Erreur",
-        description: "Veuillez sélectionner un fichier image valide",
-        variant: "destructive",
-      });
-      return;
-    }
+    // Validate all files
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Erreur",
+          description: `Le fichier ${file.name} n'est pas une image valide (PNG, JPG, JPEG)`,
+          variant: "destructive",
+        });
+        return;
+      }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "Erreur",
-        description: "L'image doit faire moins de 5MB",
-        variant: "destructive",
-      });
-      return;
+      // Validate file size (max 50MB)
+      if (file.size > 50 * 1024 * 1024) {
+        toast({
+          title: "Fichier trop volumineux",
+          description: `L'image ${file.name} fait ${(file.size / (1024 * 1024)).toFixed(1)}MB. Veuillez choisir une image de moins de 50MB.`,
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     setIsUploading(true);
-
+    
     try {
-      // Convert to base64 for storage
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target?.result as string;
-        setFormData(prev => ({ ...prev, image: base64 }));
-        setPreviewImage(base64);
-        setIsUploading(false);
+      const newImages: string[] = [];
+      
+      // Process each file
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
         
-        toast({
-          title: "Succès",
-          description: "Image téléchargée avec succès",
-        });
-      };
-      reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          const base64 = e.target?.result as string;
+          newImages.push(base64);
+          
+          // If this is the last file, update state
+          if (newImages.length === files.length) {
+            setPreviewImages(prev => [...prev, ...newImages]);
+            setIsUploading(false);
+            
+            toast({
+              title: "Succès",
+              description: `${files.length} image(s) téléchargée(s) avec succès`,
+              variant: "success",
+            });
+          }
+        };
+        
+        reader.onerror = () => {
+          setIsUploading(false);
+          toast({
+            title: "Erreur",
+            description: `Erreur lors du téléchargement de ${file.name}`,
+            variant: "destructive",
+          });
+        };
+        
+        reader.readAsDataURL(file);
+      }
     } catch (error) {
       setIsUploading(false);
       toast({
         title: "Erreur",
-        description: "Erreur lors du téléchargement de l'image",
+        description: "Erreur lors du téléchargement des images",
         variant: "destructive",
       });
     }
   };
 
   // Remove uploaded image
-  const removeImage = () => {
-    setFormData(prev => ({ ...prev, image: '' }));
-    setPreviewImage('');
+  const removeImage = (index?: number) => {
+    if (index !== undefined) {
+      // Remove specific image
+      setPreviewImages(prev => prev.filter((_, i) => i !== index));
+    } else {
+      // Remove all images
+      setPreviewImages([]);
+      setFormData(prev => ({ ...prev, image_url: '' }));
+    }
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -135,16 +187,33 @@ const AdminDashboard: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (isSubmitting) return; // Prevent multiple submissions
+    
     if (!formData.title || !formData.description || !formData.category) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        description: "Veuillez remplir tous les champs obligatoires (Titre, Description, Catégorie)",
         variant: "destructive",
       });
       return;
     }
 
-    const artworkData: Omit<Artwork, 'id'> = {
+    // Check if images are required but not provided
+    if (previewImages.length === 0 && (!formData.image_url || formData.image_url === '')) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez ajouter au moins une image",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // Use preview images if available, otherwise fall back to image_url
+    const imagesToSave = previewImages.length > 0 ? previewImages : (formData.image_url ? [formData.image_url] : []);
+
+    const artworkData = {
       title: formData.title,
       description: formData.description,
       category: formData.category,
@@ -153,32 +222,42 @@ const AdminDashboard: React.FC = () => {
       year: formData.year,
       available: formData.available,
       featured: formData.featured,
-      image: formData.image || '/placeholder.svg',
+      image_url: imagesToSave[0] || '', // First image as primary
       tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
       materials: formData.materials.split(',').map(mat => mat.trim()).filter(Boolean),
     };
 
     try {
       if (editingId) {
-        await updateArtwork(editingId, artworkData);
+        await updateArtwork(editingId, artworkData, imagesToSave);
         toast({
           title: "Succès",
           description: "Œuvre mise à jour avec succès",
+          variant: "success",
         });
       } else {
-        await addArtwork(artworkData);
+        await addArtwork(artworkData, imagesToSave);
         toast({
           title: "Succès",
           description: "Nouvelle œuvre ajoutée avec succès",
+          variant: "success",
         });
+        // Force refresh artworks list
+        await refreshArtworks();
+        console.log('Artwork added successfully, artworks refreshed');
       }
       resetForm();
     } catch (error) {
+      console.error('Error saving artwork:', error);
+      
+      // If we get here, it's a real error (not localStorage fallback)
       toast({
         title: "Erreur",
-        description: "Erreur lors de la sauvegarde de l'œuvre",
+        description: "Erreur lors de la sauvegarde de l'œuvre. Vérifiez votre connexion.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -194,25 +273,59 @@ const AdminDashboard: React.FC = () => {
       featured: artwork.featured || false,
       tags: artwork.tags?.join(', ') || '',
       materials: artwork.materials?.join(', ') || '',
-      image: artwork.image
+      image_url: artwork.image_url
     });
-    setPreviewImage(artwork.image);
+    
+    // Load existing images
+    if (artwork.images && artwork.images.length > 0) {
+      setPreviewImages(artwork.images.map(img => img.image_url));
+    } else {
+      setPreviewImages(artwork.image_url ? [artwork.image_url] : []);
+    }
+    
     setEditingId(artwork.id);
     setIsAdding(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette œuvre ?')) {
       try {
         await deleteArtwork(id);
         toast({
           title: "Succès",
           description: "Œuvre supprimée avec succès",
+          variant: "success",
         });
       } catch (error) {
         toast({
           title: "Erreur",
           description: "Erreur lors de la suppression de l'œuvre",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const clearAllData = async () => {
+    if (window.confirm('⚠️ ATTENTION: Ceci va supprimer TOUTES les œuvres de la galerie (base de données + données locales). Êtes-vous sûr ?')) {
+      try {
+        await clearAllArtworks();
+        
+        toast({
+          title: "Galerie vidée",
+          description: "Toutes les œuvres ont été supprimées de la galerie.",
+          variant: "success",
+        });
+        
+        // Reload the page after a short delay
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } catch (error) {
+        console.error('Error clearing artworks:', error);
+        toast({
+          title: "Erreur",
+          description: "Erreur lors de la suppression des œuvres.",
           variant: "destructive",
         });
       }
@@ -225,12 +338,25 @@ const AdminDashboard: React.FC = () => {
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg border border-white/20">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
-              🎨 Tableau de Bord Admin
-            </h1>
-            <p className="text-slate-600 text-sm sm:text-base">
-              Gestion complète des œuvres d'art et du contenu de la galerie
-            </p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+                  🎨 Tableau de Bord Admin
+                </h1>
+                <p className="text-slate-600 text-sm sm:text-base">
+                  Gestion complète des œuvres d'art et du contenu de la galerie
+                </p>
+              </div>
+              <Button
+                onClick={clearAllData}
+                variant="destructive"
+                size="sm"
+                className="ml-4"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Effacer tout
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -358,7 +484,7 @@ const AdminDashboard: React.FC = () => {
                       id="year"
                       type="number"
                       value={formData.year}
-                      onChange={(e) => setFormData({...formData, year: e.target.value})}
+                      onChange={(e) => setFormData({...formData, year: parseInt(e.target.value) || new Date().getFullYear()})}
                       min="1900"
                       max={new Date().getFullYear()}
                     />
@@ -369,48 +495,84 @@ const AdminDashboard: React.FC = () => {
                     <Label htmlFor="image">URL de l'image</Label>
                     <Input
                       id="image"
-                      value={formData.image}
-                      onChange={(e) => setFormData({...formData, image: e.target.value})}
+                      value={formData.image_url}
+                      onChange={(e) => setFormData({...formData, image_url: e.target.value})}
                       placeholder="/artwork1.JPG"
                     />
                   </div>
                 </div>
 
-                {/* Image Upload Section */}
+                {/* Multiple Image Upload Section */}
                 <div className="space-y-4">
-                  <Label className="text-base font-semibold text-slate-700">📸 Image de l'œuvre</Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base font-semibold text-slate-700">📸 Images de l'œuvre</Label>
+                    <div className="text-xs text-slate-500 bg-blue-50 px-2 py-1 rounded">
+                      💡 Astuce: Vous pouvez uploader plusieurs images (jusqu'à 50MB chacune)
+                    </div>
+                  </div>
                   
                   {/* Upload Area */}
                   <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 bg-slate-50/50 hover:bg-slate-100/50 transition-colors">
                     <div className="text-center">
-                      {previewImage ? (
-                        <div className="relative">
-                          <img 
-                            src={previewImage} 
-                            alt="Preview" 
-                            className="mx-auto max-h-48 w-auto rounded-lg shadow-md"
-                          />
+                      {previewImages.length > 0 ? (
+                        <div className="space-y-4">
+                          {/* Image Grid */}
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            {previewImages.map((image, index) => (
+                              <div key={index} className="relative group">
+                                <img 
+                                  src={image} 
+                                  alt={`Preview ${index + 1}`} 
+                                  className="w-full h-32 object-cover rounded-lg shadow-md"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="sm"
+                                  className="absolute -top-2 -right-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => removeImage(index)}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                                <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                                  {index + 1}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {/* Add More Images Button */}
                           <Button
                             type="button"
-                            variant="destructive"
-                            size="sm"
-                            className="absolute -top-2 -right-2 rounded-full"
-                            onClick={removeImage}
+                            variant="outline"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={isUploading}
+                            className="mx-auto"
                           >
-                            <X className="h-4 w-4" />
+                            {isUploading ? (
+                              <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600 mr-2"></div>
+                                Téléchargement...
+                              </>
+                            ) : (
+                              <>
+                                <Plus className="h-4 w-4 mr-2" />
+                                Ajouter plus d'images
+                              </>
+                            )}
                           </Button>
                         </div>
                       ) : (
                         <div className="space-y-4">
                           <div className="mx-auto w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
-                            <Camera className="h-8 w-8 text-yellow-600" />
+                            <Grid3X3 className="h-8 w-8 text-yellow-600" />
                           </div>
                           <div>
                             <p className="text-sm text-slate-600 mb-2">
-                              Glissez-déposez une image ou cliquez pour sélectionner
+                              Glissez-déposez des images ou cliquez pour sélectionner plusieurs fichiers
                             </p>
                             <p className="text-xs text-slate-500">
-                              PNG, JPG, JPEG jusqu'à 5MB
+                              PNG, JPG, JPEG jusqu'à 50MB chacun
                             </p>
                           </div>
                           <Button
@@ -428,7 +590,7 @@ const AdminDashboard: React.FC = () => {
                             ) : (
                               <>
                                 <Upload className="h-4 w-4 mr-2" />
-                                Choisir une image
+                                Choisir des images
                               </>
                             )}
                           </Button>
@@ -440,6 +602,7 @@ const AdminDashboard: React.FC = () => {
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={handleImageUpload}
                       className="hidden"
                     />
@@ -508,9 +671,14 @@ const AdminDashboard: React.FC = () => {
                   <Button 
                     type="submit" 
                     className="flex-1 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold py-3"
-                    disabled={isUploading}
+                    disabled={isUploading || isSubmitting}
                   >
-                    {isUploading ? (
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Ajout en cours...
+                      </>
+                    ) : isUploading ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                         Traitement...
@@ -582,7 +750,7 @@ const AdminDashboard: React.FC = () => {
                   <Card key={artwork.id} className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-300 border-0">
                     <div className="aspect-square bg-slate-100 relative group">
                       <img
-                        src={artwork.image}
+                        src={artwork.image_url}
                         alt={artwork.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
