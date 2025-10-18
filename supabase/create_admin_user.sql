@@ -7,55 +7,65 @@
 -- Password: admin123
 -- Auto Confirm User: ✅
 
--- Method 2: SQL Script (Alternative)
--- First, create the admin user in auth.users
-INSERT INTO auth.users (
-  id,
-  instance_id,
-  aud,
-  role,
-  email,
-  encrypted_password,
-  email_confirmed_at,
-  recovery_sent_at,
-  last_sign_in_at,
-  raw_app_meta_data,
-  raw_user_meta_data,
-  created_at,
-  updated_at,
-  confirmation_token,
-  email_change,
-  email_change_token_new,
-  recovery_token
-) VALUES (
-  gen_random_uuid(),
-  '00000000-0000-0000-0000-000000000000',
-  'authenticated',
-  'authenticated',
-  'omhind53@gmail.com',
-  crypt('admin123', gen_salt('bf')),
-  NOW(),
-  NULL,
-  NULL,
-  '{"provider": "email", "providers": ["email"]}',
-  '{}',
-  NOW(),
-  NOW(),
-  '',
-  '',
-  '',
-  ''
-);
+-- Method 2: SQL Script (Fixed - Handles Existing User)
+-- This script will work whether the user exists or not
 
--- Get the user ID for the admin user and create profile
 DO $$
 DECLARE
     admin_user_id UUID;
+    user_exists BOOLEAN;
 BEGIN
-    -- Get the admin user ID
+    -- Check if user already exists
+    SELECT EXISTS(SELECT 1 FROM auth.users WHERE email = 'omhind53@gmail.com') INTO user_exists;
+    
+    IF NOT user_exists THEN
+        -- Create the admin user in auth.users only if it doesn't exist
+        INSERT INTO auth.users (
+            id,
+            instance_id,
+            aud,
+            role,
+            email,
+            encrypted_password,
+            email_confirmed_at,
+            recovery_sent_at,
+            last_sign_in_at,
+            raw_app_meta_data,
+            raw_user_meta_data,
+            created_at,
+            updated_at,
+            confirmation_token,
+            email_change,
+            email_change_token_new,
+            recovery_token
+        ) VALUES (
+            gen_random_uuid(),
+            '00000000-0000-0000-0000-000000000000',
+            'authenticated',
+            'authenticated',
+            'omhind53@gmail.com',
+            crypt('admin123', gen_salt('bf')),
+            NOW(),
+            NULL,
+            NULL,
+            '{"provider": "email", "providers": ["email"]}',
+            '{}',
+            NOW(),
+            NOW(),
+            '',
+            '',
+            '',
+            ''
+        );
+        RAISE NOTICE 'New admin user created';
+    ELSE
+        RAISE NOTICE 'Admin user already exists, updating profile only';
+    END IF;
+    
+    -- Get the admin user ID (whether existing or newly created)
     SELECT id INTO admin_user_id FROM auth.users WHERE email = 'omhind53@gmail.com';
     
-    -- Insert into profiles table
+    -- Insert or update profile table
     INSERT INTO public.profiles (
         id,
         email,
@@ -70,7 +80,8 @@ BEGIN
         NOW()
     ) ON CONFLICT (id) DO UPDATE SET
         role = 'admin',
+        email = 'omhind53@gmail.com',
         updated_at = NOW();
         
-    RAISE NOTICE 'Admin user created with ID: %', admin_user_id;
+    RAISE NOTICE 'Admin profile created/updated with ID: %', admin_user_id;
 END $$;
