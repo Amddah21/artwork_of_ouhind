@@ -22,6 +22,10 @@ interface Artwork {
   colorPalette: string[];
   price?: number;
   artist: string;
+  technique?: string;
+  size?: string;
+  available?: boolean;
+  materials?: string[];
 }
 
 const Portfolio: React.FC = () => {
@@ -38,6 +42,15 @@ const Portfolio: React.FC = () => {
     setIsLoaded(true);
     // Debug: Log artworks to see what's loaded
     console.log('Portfolio - Artworks loaded:', artworks.length, artworks);
+    
+    // Debug: Check localStorage directly
+    const storedArtworks = localStorage.getItem('artspark-artworks');
+    if (storedArtworks) {
+      const parsedArtworks = JSON.parse(storedArtworks);
+      console.log('Portfolio - localStorage artworks:', parsedArtworks.length, parsedArtworks);
+    } else {
+      console.log('Portfolio - No artworks in localStorage');
+    }
   }, [artworks]);
 
   // Enhanced artworks with color palettes (no pricing)

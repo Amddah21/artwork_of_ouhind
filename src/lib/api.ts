@@ -1,130 +1,266 @@
-// 🔧 BACKEND API CONFIGURATION
-// Configure your Spring Boot backend endpoint here
+// 🔧 API CONFIGURATION
+// Configuration pour Supabase Backend
 
-export const API_BASE_URL = 'http://localhost:8091/api' // Your Spring Boot backend URL
-// Change this to your actual Spring Boot backend URL
-// Example: 'http://localhost:8091/api' or 'https://your-domain.com/api'
+import { createClient } from '@supabase/supabase-js'
 
-// API Endpoints
-export const API_ENDPOINTS = {
-  auth: {
-    login: '/auth/login',
-    validate: '/auth/validate',
-    createAdmin: '/auth/create-admin'
-  },
-  // Add more endpoints as needed
-  artworks: '/artworks',
-  users: '/users'
-}
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// API Response Types
-export interface LoginRequest {
+export const supabase = createClient(supabaseUrl, supabaseKey)
+
+// Types pour les données
+export interface User {
+  id: string
   email: string
-  password: string
+  username?: string
+  role?: 'admin' | 'user'
+  created_at?: string
 }
 
-export interface AuthResponse {
-  token: string
-  user: {
-    id: number
-    username: string
-    email: string
-    role: string
-  }
+export interface Artwork {
+  id: string
+  title: string
+  description: string
+  category: string
+  image_url: string
+  images?: ArtworkImage[]
+  size: string
+  year: number
+  available: boolean
+  featured: boolean
+  tags: string[]
+  materials: string[]
+  technique?: string
+  artist_name?: string
+  price_mad?: string
+  price_eur?: string
+  reference?: string
+  support?: string
+  medium?: string
+  dimensions?: string
+  created_at?: string
+  updated_at?: string
 }
 
-export interface ValidateTokenResponse {
-  valid: boolean
+export interface ArtworkImage {
+  id: number
+  artwork_id: string
+  image_url: string
+  display_order: number
+  created_at: string
+  updated_at: string
 }
 
-// API Service Class
+export interface Review {
+  id: string
+  artwork_id: string
+  user_name: string
+  user_email: string
+  rating: number
+  comment: string
+  helpful_count: number
+  approved: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface ContactMessage {
+  id: string
+  name: string
+  email: string
+  subject: string
+  message: string
+  read: boolean
+  responded: boolean
+  created_at: string
+  updated_at: string
+}
+
+// Services API
 export class ApiService {
-  private baseUrl: string
-
-  constructor(baseUrl: string = API_BASE_URL) {
-    this.baseUrl = baseUrl
+  // Authentification
+  static async signIn(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    })
+    if (error) throw error
+    return data
   }
 
-  // Generic API call method
-  private async apiCall<T>(
-    endpoint: string, 
-    options: RequestInit = {}
-  ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`
+  static async signOut() {
+    const { error } = await supabase.auth.signOut()
+    if (error) throw error
+  }
+
+  static async getCurrentUser() {
+    const { data: { user } } = await supabase.auth.getUser()
+    return user
+  }
+
+  // Œuvres d'art
+  static async getArtworks() {
+    const { data, error } = await supabase
+      .from('artworks')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return data
+  }
+
+  static async getArtworkById(id: string) {
+    const { data, error } = await supabase
+      .from('artworks')
+      .select('*')
+      .eq('id', id)
+      .single()
+    if (error) throw error
+    return data
+  }
+
+  static async createArtwork(artwork: Partial<Artwork>) {
+    const { data, error } = await supabase
+      .from('artworks')
+      .insert([artwork])
+      .select()
+      .single()
+    if (error) throw error
+    return data
+  }
+
+  static async updateArtwork(id: string, updates: Partial<Artwork>) {
+    const { data, error } = await supabase
+      .from('artworks')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw error
+    return data
+  }
+
+  static async deleteArtwork(id: string) {
+    const { error } = await supabase
+      .from('artworks')
+      .delete()
+      .eq('id', id)
+    if (error) throw error
+  }
+
+  // Images d'œuvres
+  static async getArtworkImages(artworkId: string) {
+    const { data, error } = await supabase
+      .from('artwork_images')
+      .select('*')
+      .eq('artwork_id', artworkId)
+      .order('display_order')
+    if (error) throw error
+    return data
+  }
+
+  static async uploadArtworkImage(artworkId: string, imageUrl: string, displayOrder: number = 0) {
+    const { data, error } = await supabase
+      .from('artwork_images')
+      .insert([{
+        artwork_id: artworkId,
+        image_url: imageUrl,
+        display_order: displayOrder
+      }])
+      .select()
+      .single()
+    if (error) throw error
+    return data
+  }
+
+  // Commentaires/Avis
+  static async getReviews(artworkId?: string) {
+    let query = supabase.from('reviews').select('*')
     
-    const defaultHeaders = {
-      'Content-Type': 'application/json',
+    if (artworkId) {
+      query = query.eq('artwork_id', artworkId)
     }
-
-    // Add Authorization header if token exists
-    const token = localStorage.getItem('authToken')
-    if (token) {
-      defaultHeaders['Authorization'] = `Bearer ${token}`
-    }
-
-    const config: RequestInit = {
-      ...options,
-      headers: {
-        ...defaultHeaders,
-        ...options.headers,
-      },
-    }
-
-    try {
-      console.log('🌐 API Call:', { url, method: config.method, headers: config.headers })
-      
-      const response = await fetch(url, config)
-      console.log('📡 Response status:', response.status, response.statusText)
-      
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error('❌ API Error Response:', errorText)
-        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`)
-      }
-
-      const data = await response.json()
-      console.log('✅ API Response:', data)
-      return data
-    } catch (error) {
-      console.error('❌ API call failed:', error)
-      throw error
-    }
+    
+    const { data, error } = await query.order('created_at', { ascending: false })
+    if (error) throw error
+    return data
   }
 
-  // Authentication methods
-  async login(credentials: LoginRequest): Promise<AuthResponse> {
-    return this.apiCall<AuthResponse>(API_ENDPOINTS.auth.login, {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    })
+  static async createReview(review: Partial<Review>) {
+    const { data, error } = await supabase
+      .from('reviews')
+      .insert([review])
+      .select()
+      .single()
+    if (error) throw error
+    return data
   }
 
-  async validateToken(): Promise<ValidateTokenResponse> {
-    return this.apiCall<ValidateTokenResponse>(API_ENDPOINTS.auth.validate, {
-      method: 'POST',
-    })
+  static async approveReview(id: string) {
+    const { data, error } = await supabase
+      .from('reviews')
+      .update({ approved: true })
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw error
+    return data
   }
 
-  async createAdmin(): Promise<{ message: string; username: string; email: string }> {
-    return this.apiCall(API_ENDPOINTS.auth.createAdmin, {
-      method: 'POST',
-    })
+  static async deleteReview(id: string) {
+    const { error } = await supabase
+      .from('reviews')
+      .delete()
+      .eq('id', id)
+    if (error) throw error
   }
 
-  // Add more API methods as needed
-  async getArtworks() {
-    return this.apiCall(API_ENDPOINTS.artworks, {
-      method: 'GET',
-    })
+  // Messages de contact
+  static async getContactMessages() {
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return data
   }
 
-  async createArtwork(artwork: any) {
-    return this.apiCall(API_ENDPOINTS.artworks, {
-      method: 'POST',
-      body: JSON.stringify(artwork),
-    })
+  static async createContactMessage(message: Partial<ContactMessage>) {
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .insert([message])
+      .select()
+      .single()
+    if (error) throw error
+    return data
+  }
+
+  static async markContactAsRead(id: string) {
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .update({ read: true })
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw error
+    return data
+  }
+
+  static async markContactAsResponded(id: string) {
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .update({ responded: true })
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw error
+    return data
+  }
+
+  static async deleteContactMessage(id: string) {
+    const { error } = await supabase
+      .from('contact_messages')
+      .delete()
+      .eq('id', id)
+    if (error) throw error
   }
 }
-
-// Export singleton instance
-export const apiService = new ApiService()

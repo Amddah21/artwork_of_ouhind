@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/api';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -131,99 +131,69 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addArtwork = async (artwork: Omit<Artwork, 'id' | 'created_at' | 'updated_at' | 'views' | 'images'>, images?: string[]) => {
+    // Check if Supabase is properly configured
+    if (!supabaseUrl || !supabaseAnonKey) {
+      // Fallback to localStorage for development
+      console.log('Supabase not configured, using localStorage fallback for addArtwork');
+      const newArtwork: Artwork = {
+        ...artwork,
+        id: Date.now().toString(),
+        views: 0,
+        images: images?.map((url, index) => ({
+          id: Date.now() + index,
+          artwork_id: Date.now().toString(),
+          image_url: url,
+          display_order: index,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })) || [],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      const updatedArtworks = [newArtwork, ...artworks];
+      setArtworks(updatedArtworks);
+      localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
+      console.log('Artwork saved to localStorage successfully, total artworks:', updatedArtworks.length);
+      return; // Exit early - no error thrown
+    }
+
+    // Supabase code only runs if supabaseUrl and supabaseAnonKey are configured
     try {
-      // Check if Supabase is properly configured
-      if (!supabaseUrl || !supabaseAnonKey) {
-        // Fallback to localStorage for development
-        console.log('Supabase not configured, using localStorage fallback for addArtwork');
-        const newArtwork: Artwork = {
+      const { data, error } = await supabase
+        .from('artworks')
+        .insert([{
           ...artwork,
-          id: Date.now().toString(),
-          views: 0,
-          images: images?.map((url, index) => ({
-            id: Date.now() + index,
-            artwork_id: Date.now().toString(),
-            image_url: url,
-            display_order: index,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })) || [],
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        
-        const updatedArtworks = [newArtwork, ...artworks];
-        setArtworks(updatedArtworks);
-        localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
-        console.log('Artwork saved to localStorage successfully, total artworks:', updatedArtworks.length);
-        // Don't throw error - just return successfully
-        return;
+          views: 0
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
       }
 
-      // Try Supabase first, fallback to localStorage if it fails
-      try {
-        const { data, error } = await supabase
-          .from('artworks')
-          .insert([{
-            ...artwork,
-            views: 0
-          }])
-          .select()
-          .single();
+      // Add images if provided
+      if (images && images.length > 0) {
+        const imageInserts = images.map((url, index) => ({
+          artwork_id: data.id,
+          image_url: url,
+          display_order: index
+        }));
 
-        if (error) {
-          console.error('Supabase error, falling back to localStorage:', error);
-          throw error;
+        const { error: imagesError } = await supabase
+          .from('artwork_images')
+          .insert(imageInserts);
+
+        if (imagesError) {
+          console.error('Error adding images:', imagesError);
         }
-
-        // Add images if provided
-        if (images && images.length > 0) {
-          const imageInserts = images.map((url, index) => ({
-            artwork_id: data.id,
-            image_url: url,
-            display_order: index
-          }));
-
-          const { error: imagesError } = await supabase
-            .from('artwork_images')
-            .insert(imageInserts);
-
-          if (imagesError) {
-            console.error('Error adding images:', imagesError);
-          }
-        }
-
-        // Reload artworks to get the images
-        await loadArtworks();
-        console.log('Artwork added to Supabase successfully, artworks reloaded');
-        return;
-      } catch (supabaseError) {
-        console.log('Supabase failed, using localStorage fallback:', supabaseError);
-        
-        // Fallback to localStorage
-        const newArtwork: Artwork = {
-          ...artwork,
-          id: Date.now().toString(),
-          views: 0,
-          images: images?.map((url, index) => ({
-            id: Date.now() + index,
-            artwork_id: Date.now().toString(),
-            image_url: url,
-            display_order: index,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })) || [],
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        
-        const updatedArtworks = [newArtwork, ...artworks];
-        setArtworks(updatedArtworks);
-        localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
-        console.log('Artwork saved to localStorage successfully, total artworks:', updatedArtworks.length);
-        // Don't throw error - just return successfully
-        return;
       }
+
+      // Reload artworks to get the images
+      await loadArtworks();
+      console.log('Artwork added to Supabase successfully, artworks reloaded');
     } catch (error) {
       console.error('Error adding artwork:', error);
       throw error;
@@ -253,6 +223,20 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteArtwork = async (id: string) => {
     try {
+      // Check if Supabase is properly configured
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage for development
+        console.log('Supabase not configured, using localStorage fallback for deleteArtwork');
+        const storedArtworks = localStorage.getItem('artspark-artworks');
+        if (storedArtworks) {
+          const artworks = JSON.parse(storedArtworks);
+          const filteredArtworks = artworks.filter((a: Artwork) => a.id !== id);
+          localStorage.setItem('artspark-artworks', JSON.stringify(filteredArtworks));
+          setArtworks(filteredArtworks);
+        }
+        return;
+      }
+
       const { error } = await supabase
         .from('artworks')
         .delete()

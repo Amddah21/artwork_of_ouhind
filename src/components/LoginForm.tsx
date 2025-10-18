@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -13,12 +14,13 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@portfolio.com');
+  const [password, setPassword] = useState('admin123');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, isAdmin } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +31,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
       // No success message - just close the form
       onSuccess?.();
       onClose();
+      
+      // Rediriger automatiquement vers l'interface admin
+      navigate('/admin');
     } catch (error) {
       toast({
         title: "Login Failed",
@@ -39,6 +44,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -54,7 +60,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
           </Button>
           <CardTitle>Connexion Administrateur</CardTitle>
           <CardDescription>
-            Connectez-vous pour accéder au panneau d'administration
+            Connectez-vous pour accéder au panneau d'administration. Vous serez automatiquement redirigé vers l'interface admin après connexion.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -100,6 +106,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? 'Connexion...' : 'Se connecter'}
             </Button>
+            
           </form>
         </CardContent>
       </Card>

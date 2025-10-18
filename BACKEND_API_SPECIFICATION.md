@@ -4,6 +4,11 @@
 
 Cette documentation fournit toutes les routes, modèles de données et fonctionnalités nécessaires pour développer un backend compatible avec le frontend React ArtSpark Studio Canvas.
 
+## 🗄️ Base de données : MySQL
+- **Type :** MySQL Database
+- **Port :** 3306 (par défaut)
+- **Tables :** users, artworks, reviews, comments
+
 ## 🎯 Architecture Frontend
 
 ### **Routes Frontend :**
@@ -20,7 +25,7 @@ Cette documentation fournit toutes les routes, modèles de données et fonctionn
 
 ### **Base URL :** `http://localhost:8091/api/auth`
 
-### **1.1 Login**
+#### **1.1 Connexion**
 ```http
 POST /api/auth/login
 Content-Type: application/json
@@ -44,7 +49,7 @@ Content-Type: application/json
 }
 ```
 
-### **1.2 Validation Token**
+#### **1.2 Validation Token**
 ```http
 POST /api/auth/validate
 Authorization: Bearer <token>
@@ -57,7 +62,7 @@ Authorization: Bearer <token>
 }
 ```
 
-### **1.3 Création Admin (Setup initial)**
+#### **1.3 Création Admin (Setup initial)**
 ```http
 POST /api/auth/create-admin
 ```
@@ -97,11 +102,11 @@ public class User {
     @Column(nullable = false)
     private Role role = Role.ADMIN;
     
-    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
     
     public enum Role {
-        ADMIN, USER
+        ADMIN
     }
 }
 ```
@@ -110,9 +115,9 @@ public class User {
 
 ### **Base URL :** `http://localhost:8091/api/artworks`
 
-### **2.1 Récupérer toutes les œuvres**
+#### **2.1 Récupérer toutes les œuvres**
 ```http
-GET /api/artworks
+GET /artworks
 ```
 
 **Réponse :**
@@ -120,74 +125,98 @@ GET /api/artworks
 [
   {
     "id": 1,
-    "title": "Rêve Aquarelle",
-    "category": "Aquarelle",
-    "image": "/artwork1.JPG",
-    "size": "40x60 cm",
-    "year": "2023",
+    "title": "Harmonie Nocturne",
+    "description": "Une œuvre abstraite qui capture l'essence de la nuit",
+    "imageUrl": "/artwork1.JPG",
+    "technique": "Peinture acrylique",
+    "dimensions": "80x60 cm",
+    "year": 2024,
+    "category": "Abstrait",
     "available": true,
-    "description": "Une œuvre délicate capturant l'essence des rêves...",
     "featured": true,
-    "tags": ["aquarelle", "abstrait", "coloré"],
-    "materials": ["Aquarelle", "Papier Arches"],
-    "technique": "Aquarelle sur papier"
+    "tags": ["abstrait", "nuit", "mystère"],
+    "materials": ["Acrylique", "Toile"],
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
   }
 ]
 ```
 
-### **2.2 Récupérer une œuvre par ID**
+#### **2.2 Récupérer une œuvre par ID**
 ```http
-GET /api/artworks/{id}
+GET /artworks/{id}
 ```
 
-### **2.3 Créer une nouvelle œuvre (Admin)**
+#### **2.3 Créer une nouvelle œuvre (Admin)**
 ```http
-POST /api/artworks
-Authorization: Bearer <token>
+POST /artworks
+Authorization: Bearer {token}
 Content-Type: application/json
 
 {
-  "title": "Nouvelle Œuvre",
+  "title": "Titre de l'œuvre",
+  "description": "Description",
   "category": "Peinture",
-  "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
-  "size": "50x70 cm",
-  "year": "2024",
-  "available": true,
-  "description": "Description de l'œuvre...",
-  "featured": false,
-  "tags": ["moderne", "coloré"],
-  "materials": ["Acrylique", "Toile"],
-  "technique": "Peinture acrylique"
+  "price": 500.00,
+  "imageUrl": "image.jpg"
 }
 ```
 
-### **2.4 Modifier une œuvre (Admin)**
+#### **2.4 Upload d'image (Admin)**
 ```http
-PUT /api/artworks/{id}
-Authorization: Bearer <token>
+POST /artworks/upload
+Authorization: Bearer {token}
+Content-Type: multipart/form-data
+
+file: {fichier image}
+```
+
+#### **2.5 Modifier une œuvre (Admin)**
+```http
+PUT /artworks/{id}
+Authorization: Bearer {token}
 Content-Type: application/json
 
 {
-  "title": "Titre modifié",
-  "description": "Nouvelle description...",
-  // ... autres champs
+  "title": "Nouveau titre",
+  "description": "Nouvelle description"
 }
 ```
 
-### **2.5 Supprimer une œuvre (Admin)**
+#### **2.6 Supprimer une œuvre (Admin)**
 ```http
-DELETE /api/artworks/{id}
-Authorization: Bearer <token>
+DELETE /artworks/{id}
+Authorization: Bearer {token}
 ```
 
-### **2.6 Filtrer par catégorie**
+#### **2.7 Rechercher des œuvres**
 ```http
-GET /api/artworks?category=Aquarelle
+GET /artworks/search?q={query}
 ```
 
-### **2.7 Récupérer les œuvres en vedette**
+#### **2.8 Filtrer par technique**
 ```http
-GET /api/artworks?featured=true
+GET /artworks/technique/{technique}
+```
+
+#### **2.9 Filtrer par année**
+```http
+GET /artworks/year/{year}
+```
+
+#### **2.10 Récupérer les œuvres mises en avant**
+```http
+GET /artworks/featured
+```
+
+#### **2.11 Filtrer par catégorie**
+```http
+GET /artworks/category/{category}
+```
+
+#### **2.12 Récupération des images**
+```http
+GET /artworks/images/{fileName}
 ```
 
 ### **Modèle Artwork :**
@@ -200,29 +229,19 @@ public class Artwork {
     private Long id;
     
     @NotBlank
-    @Column(nullable = false)
     private String title;
-    
-    @NotBlank
-    @Column(nullable = false)
-    private String category;
-    
-    @Column(columnDefinition = "TEXT")
-    private String image; // Base64 ou URL
-    
-    @Column(nullable = false)
-    private String size;
-    
-    @Column(nullable = false)
-    private String year;
-    
-    @Column(nullable = false)
-    private Boolean available = true;
     
     @Column(columnDefinition = "TEXT")
     private String description;
     
-    @Column(nullable = false)
+    @NotBlank
+    private String imageUrl;
+    
+    private String technique;
+    private String dimensions;
+    private Integer year;
+    private String category;
+    private Boolean available = true;
     private Boolean featured = false;
     
     @ElementCollection
@@ -235,75 +254,89 @@ public class Artwork {
     @Column(name = "material")
     private List<String> materials = new ArrayList<>();
     
-    private String technique;
-    
-    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
     
-    @Column(name = "updated_at")
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
-    
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-    
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }
 ```
 
-## 💬 3. SYSTÈME DE COMMENTAIRES
+## 💬 3. GESTION DES AVIS ET COMMENTAIRES
 
 ### **Base URL :** `http://localhost:8091/api/reviews`
 
-### **3.1 Ajouter un commentaire**
+#### **3.1 Récupérer tous les avis**
 ```http
-POST /api/reviews
+GET /reviews
+```
+
+#### **3.2 Récupérer les avis d'une œuvre**
+```http
+GET /reviews/artwork/{artworkId}
+```
+
+#### **3.3 Récupérer un avis par ID**
+```http
+GET /reviews/{id}
+```
+
+#### **3.4 Créer un nouvel avis**
+```http
+POST /reviews
 Content-Type: application/json
 
 {
   "artworkId": 1,
+  "userName": "Jean Dupont",
+  "userEmail": "jean@example.com",
   "rating": 5,
-  "comment": "Magnifique œuvre !",
-  "authorName": "Jean Dupont",
-  "authorEmail": "jean@example.com"
+  "comment": "Magnifique œuvre !"
 }
 ```
 
-### **3.2 Récupérer les commentaires d'une œuvre**
+#### **3.5 Modifier un avis**
 ```http
-GET /api/reviews/artwork/{artworkId}
+PUT /reviews/{id}
+Content-Type: application/json
+
+{
+  "comment": "Commentaire modifié"
+}
+```
+
+#### **3.6 Supprimer un avis**
+```http
+DELETE /reviews/{id}
+```
+
+#### **3.7 Marquer un avis comme utile**
+```http
+POST /reviews/{id}/helpful
+```
+
+#### **3.8 Récupérer les statistiques d'avis**
+```http
+GET /reviews/artwork/{artworkId}/stats
 ```
 
 **Réponse :**
 ```json
-[
-  {
-    "id": "1",
-    "artworkId": 1,
-    "rating": 5,
-    "comment": "Magnifique œuvre !",
-    "authorName": "Jean Dupont",
-    "date": "2024-01-15T10:30:00Z",
-    "helpful": 3,
-    "verified": true
-  }
-]
+{
+  "average": 4.5,
+  "count": 10,
+  "distribution": [0, 0, 1, 2, 7]
+}
 ```
 
-### **3.3 Marquer un commentaire comme utile**
+#### **3.9 Récupérer les avis d'un utilisateur**
 ```http
-POST /api/reviews/{reviewId}/helpful
+GET /reviews/user/{userEmail}
 ```
 
-### **3.4 Supprimer un commentaire (Admin)**
+#### **3.10 Vérifier un avis (Admin)**
 ```http
-DELETE /api/reviews/{reviewId}
-Authorization: Bearer <token>
+POST /reviews/{id}/verify
 ```
 
 ### **Modèle Review :**
@@ -315,53 +348,49 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false)
-    private Long artworkId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "artwork_id", nullable = false)
+    private Artwork artwork;
     
-    @Min(1) @Max(5)
-    @Column(nullable = false)
+    @NotBlank
+    private String userName;
+    
+    @NotBlank
+    @Email
+    private String userEmail;
+    
+    @Min(1)
+    @Max(5)
     private Integer rating;
     
     @Column(columnDefinition = "TEXT")
     private String comment;
     
-    @NotBlank
-    @Column(nullable = false)
-    private String authorName;
-    
-    @Email
-    @Column(nullable = false)
-    private String authorEmail;
-    
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime date;
-    
-    @Column(nullable = false)
     private Integer helpful = 0;
-    
-    @Column(nullable = false)
     private Boolean verified = false;
     
-    @PrePersist
-    protected void onCreate() {
-        date = LocalDateTime.now();
-    }
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }
 ```
 
-## 📧 4. SYSTÈME DE CONTACT
+## 📞 4. GESTION DES CONTACTS
 
 ### **Base URL :** `http://localhost:8091/api/contact`
 
-### **4.1 Envoyer un message de contact**
+#### **4.1 Envoyer un message de contact**
 ```http
-POST /api/contact
+POST /contact
 Content-Type: application/json
 
 {
-  "name": "Marie Martin",
-  "email": "marie@example.com",
-  "message": "Bonjour, je suis intéressée par vos œuvres..."
+  "name": "Jean Dupont",
+  "email": "jean@example.com",
+  "subject": "Demande d'information",
+  "message": "Bonjour, j'aimerais en savoir plus sur vos œuvres."
 }
 ```
 
@@ -373,309 +402,268 @@ Content-Type: application/json
 }
 ```
 
-### **4.2 Récupérer les messages (Admin)**
-```http
-GET /api/contact
-Authorization: Bearer <token>
-```
-
 ### **Modèle Contact :**
 ```java
 @Entity
-@Table(name = "contact_messages")
-public class ContactMessage {
+@Table(name = "contacts")
+public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @NotBlank
-    @Column(nullable = false)
     private String name;
     
     @NotBlank
     @Email
-    @Column(nullable = false)
     private String email;
     
     @NotBlank
-    @Column(columnDefinition = "TEXT", nullable = false)
+    private String subject;
+    
+    @Column(columnDefinition = "TEXT")
     private String message;
     
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-    
-    @Column(nullable = false)
     private Boolean read = false;
     
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }
 ```
 
-## 📊 5. STATISTIQUES (Admin Dashboard)
+## 📊 5. STATISTIQUES
 
 ### **Base URL :** `http://localhost:8091/api/stats`
 
-### **5.1 Statistiques générales**
+#### **5.1 Récupérer les statistiques générales**
 ```http
-GET /api/stats
-Authorization: Bearer <token>
+GET /stats
 ```
 
 **Réponse :**
 ```json
 {
   "totalArtworks": 25,
-  "availableArtworks": 20,
-  "featuredArtworks": 5,
-  "totalCategories": 8,
-  "totalReviews": 45,
-  "averageRating": 4.7,
-  "totalContactMessages": 12,
-  "unreadMessages": 3
+  "totalReviews": 150,
+  "averageRating": 4.3,
+  "totalContacts": 45,
+  "featuredArtworks": 8,
+  "categories": {
+    "Abstrait": 10,
+    "Figuratif": 8,
+    "Paysage": 7
+  },
+  "techniques": {
+    "Peinture acrylique": 12,
+    "Peinture à l'huile": 8,
+    "Aquarelle": 5
+  }
 }
 ```
 
-## 🔧 6. CONFIGURATION TECHNIQUE
+## 🗄️ 6. STRUCTURE BASE DE DONNÉES MYSQL
 
-### **6.1 CORS Configuration**
-```java
-@Configuration
-public class CorsConfig {
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:8081"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
-        return source;
-    }
-}
-```
+### **Script SQL de création :**
 
-### **6.2 Sécurité JWT**
-```java
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-    
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/artworks", "/api/reviews/**", "/api/contact").permitAll()
-                .requestMatchers("/api/artworks/**", "/api/stats/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        
-        return http.build();
-    }
-}
-```
-
-## 📝 7. SCHÉMA DE BASE DE DONNÉES
-
-### **7.1 Tables principales**
 ```sql
 -- Table des utilisateurs
 CREATE TABLE users (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) NOT NULL DEFAULT 'USER',
+    role ENUM('ADMIN') NOT NULL DEFAULT 'ADMIN',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table des œuvres d'art
 CREATE TABLE artworks (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    image TEXT,
-    size VARCHAR(50) NOT NULL,
-    year VARCHAR(10) NOT NULL,
-    available BOOLEAN NOT NULL DEFAULT TRUE,
     description TEXT,
-    featured BOOLEAN NOT NULL DEFAULT FALSE,
+    image_url VARCHAR(255) NOT NULL,
     technique VARCHAR(255),
+    dimensions VARCHAR(100),
+    year INT,
+    category VARCHAR(100),
+    available BOOLEAN DEFAULT TRUE,
+    featured BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Table des tags
+-- Table des tags des œuvres
 CREATE TABLE artwork_tags (
     artwork_id BIGINT,
-    tag VARCHAR(100),
+    tag VARCHAR(255),
     FOREIGN KEY (artwork_id) REFERENCES artworks(id) ON DELETE CASCADE
 );
 
--- Table des matériaux
+-- Table des matériaux des œuvres
 CREATE TABLE artwork_materials (
     artwork_id BIGINT,
-    material VARCHAR(100),
+    material VARCHAR(255),
     FOREIGN KEY (artwork_id) REFERENCES artworks(id) ON DELETE CASCADE
 );
 
--- Table des commentaires
+-- Table des avis
 CREATE TABLE reviews (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     artwork_id BIGINT NOT NULL,
+    user_name VARCHAR(255) NOT NULL,
+    user_email VARCHAR(255) NOT NULL,
     rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
     comment TEXT,
-    author_name VARCHAR(255) NOT NULL,
-    author_email VARCHAR(255) NOT NULL,
     helpful INT DEFAULT 0,
     verified BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (artwork_id) REFERENCES artworks(id) ON DELETE CASCADE
 );
 
--- Table des messages de contact
-CREATE TABLE contact_messages (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+-- Table des contacts
+CREATE TABLE contacts (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
     read BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Index pour les performances
+CREATE INDEX idx_artworks_title ON artworks(title);
+CREATE INDEX idx_artworks_category ON artworks(category);
+CREATE INDEX idx_artworks_featured ON artworks(featured);
+CREATE INDEX idx_reviews_artwork_id ON reviews(artwork_id);
+CREATE INDEX idx_reviews_rating ON reviews(rating);
+CREATE INDEX idx_contacts_email ON contacts(email);
 ```
 
-## 🚀 8. DÉMARRAGE RAPIDE
+## 🔧 7. CONFIGURATION SPRING BOOT
 
-### **8.1 Configuration Spring Boot**
-```properties
-# application.properties
-server.port=8091
-spring.datasource.url=jdbc:mysql://localhost:3306/artspark_db
-spring.datasource.username=root
-spring.datasource.password=password
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
+### **application.yml :**
+```yaml
+server:
+  port: 8091
 
-# JWT Configuration
-jwt.secret=your-secret-key-here
-jwt.expiration=86400000
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/artspark_studio
+    username: your_username
+    password: your_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+  security:
+    jwt:
+      secret: your-secret-key-here
+      expiration: 86400000 # 24 hours
+
+logging:
+  level:
+    com.portfolio.artiste: DEBUG
+    org.springframework.security: DEBUG
 ```
 
-### **8.2 Dépendances Maven**
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt</artifactId>
-        <version>0.9.1</version>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-validation</artifactId>
-    </dependency>
-</dependencies>
-```
-
-## ✅ 9. CHECKLIST DE COMPATIBILITÉ
-
-### **9.1 Endpoints obligatoires**
-- [ ] `POST /api/auth/login` - Connexion
-- [ ] `POST /api/auth/validate` - Validation token
-- [ ] `POST /api/auth/create-admin` - Création admin
-- [ ] `GET /api/artworks` - Liste des œuvres
-- [ ] `GET /api/artworks/{id}` - Détail œuvre
-- [ ] `POST /api/artworks` - Créer œuvre (Admin)
-- [ ] `PUT /api/artworks/{id}` - Modifier œuvre (Admin)
-- [ ] `DELETE /api/artworks/{id}` - Supprimer œuvre (Admin)
-- [ ] `POST /api/reviews` - Ajouter commentaire
-- [ ] `GET /api/reviews/artwork/{id}` - Commentaires œuvre
-- [ ] `POST /api/contact` - Message contact
-- [ ] `GET /api/stats` - Statistiques (Admin)
-
-### **9.2 Fonctionnalités requises**
-- [ ] Authentification JWT
-- [ ] CORS configuré pour `http://localhost:8081`
-- [ ] Validation des données
-- [ ] Gestion des erreurs HTTP
-- [ ] Upload d'images (Base64)
-- [ ] Filtrage par catégorie
-- [ ] Système de rôles (ADMIN/USER)
-
-## 🎯 10. EXEMPLE DE CONTRÔLEUR COMPLET
-
+### **CORS Configuration :**
 ```java
-@RestController
-@RequestMapping("/api/artworks")
-@CrossOrigin(origins = "http://localhost:8081")
-@RequiredArgsConstructor
-public class ArtworkController {
+@Configuration
+@EnableWebMvc
+public class WebConfig implements WebMvcConfigurer {
     
-    private final ArtworkService artworkService;
-    
-    @GetMapping
-    public ResponseEntity<List<Artwork>> getAllArtworks(
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) Boolean featured) {
-        List<Artwork> artworks = artworkService.getAllArtworks(category, featured);
-        return ResponseEntity.ok(artworks);
-    }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Artwork> getArtworkById(@PathVariable Long id) {
-        Artwork artwork = artworkService.getArtworkById(id);
-        return ResponseEntity.ok(artwork);
-    }
-    
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Artwork> createArtwork(@Valid @RequestBody Artwork artwork) {
-        Artwork createdArtwork = artworkService.createArtwork(artwork);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdArtwork);
-    }
-    
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Artwork> updateArtwork(@PathVariable Long id, @Valid @RequestBody Artwork artwork) {
-        Artwork updatedArtwork = artworkService.updateArtwork(id, artwork);
-        return ResponseEntity.ok(updatedArtwork);
-    }
-    
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteArtwork(@PathVariable Long id) {
-        artworkService.deleteArtwork(id);
-        return ResponseEntity.noContent().build();
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**")
+                .allowedOrigins("http://localhost:8081", "http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
 ```
 
-## 🎉 Conclusion
+## 🚀 8. ENDPOINTS COMPLETS REQUIS
 
-Cette spécification fournit tout ce qu'il faut pour développer un backend Spring Boot compatible avec le frontend ArtSpark Studio Canvas. Le backend doit implémenter toutes les routes, modèles de données et fonctionnalités décrites pour assurer une intégration parfaite.
+### **Authentification :**
+- `POST /api/auth/login` - Connexion
+- `POST /api/auth/validate` - Validation token
+- `POST /api/auth/create-admin` - Création admin (setup)
 
-**Bon développement !** 🚀🎨
+### **Œuvres d'art :**
+- `GET /api/artworks` - Liste toutes les œuvres
+- `GET /api/artworks/{id}` - Détail d'une œuvre
+- `POST /api/artworks` - Créer une œuvre
+- `PUT /api/artworks/{id}` - Modifier une œuvre
+- `DELETE /api/artworks/{id}` - Supprimer une œuvre
+- `GET /api/artworks/search?q={query}` - Rechercher
+- `GET /api/artworks/technique/{technique}` - Filtrer par technique
+- `GET /api/artworks/year/{year}` - Filtrer par année
+- `GET /api/artworks/featured` - Œuvres mises en avant
+- `GET /api/artworks/category/{category}` - Filtrer par catégorie
+
+### **Avis :**
+- `GET /api/reviews` - Liste tous les avis
+- `GET /api/reviews/{id}` - Détail d'un avis
+- `GET /api/reviews/artwork/{artworkId}` - Avis d'une œuvre
+- `POST /api/reviews` - Créer un avis
+- `PUT /api/reviews/{id}` - Modifier un avis
+- `DELETE /api/reviews/{id}` - Supprimer un avis
+- `POST /api/reviews/{id}/helpful` - Marquer comme utile
+- `GET /api/reviews/artwork/{artworkId}/stats` - Statistiques avis
+- `GET /api/reviews/user/{userEmail}` - Avis d'un utilisateur
+- `POST /api/reviews/{id}/verify` - Vérifier avis (admin)
+
+### **Contact :**
+- `POST /api/contact` - Envoyer message
+
+### **Statistiques :**
+- `GET /api/stats` - Statistiques générales
+
+## ✅ 9. TESTS DE VALIDATION
+
+### **Test de connexion :**
+```bash
+curl -X POST http://localhost:8091/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@portfolio.com","password":"admin123"}'
+```
+
+### **Test création admin :**
+```bash
+curl -X POST http://localhost:8091/api/auth/create-admin
+```
+
+### **Test récupération œuvres :**
+```bash
+curl -X GET http://localhost:8091/api/artworks
+```
+
+### **Test création avis :**
+```bash
+curl -X POST http://localhost:8091/api/reviews \
+  -H "Content-Type: application/json" \
+  -d '{"artworkId":1,"userName":"Test","userEmail":"test@test.com","rating":5,"comment":"Test"}'
+```
+
+## 🎯 10. NOTES IMPORTANTES
+
+1. **Authentification :** Utiliser JWT avec Bearer token
+2. **CORS :** Configurer pour `http://localhost:8081` (frontend)
+3. **Validation :** Valider tous les inputs avec `@Valid`
+4. **Gestion d'erreurs :** Retourner des messages d'erreur clairs
+5. **Sécurité :** Protéger les routes admin avec `@PreAuthorize`
+6. **Logs :** Activer les logs DEBUG pour le développement
+7. **Base de données :** Utiliser MySQL avec les tables spécifiées
+8. **Port :** Backend sur le port 8091
+
+Cette spécification garantit une compatibilité parfaite avec le frontend React ArtSpark Studio Canvas ! 🚀

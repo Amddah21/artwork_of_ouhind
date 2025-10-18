@@ -132,18 +132,16 @@ const ArtisticNavbar: React.FC = () => {
                 );
               })}
               
-              {/* LOGGING Button - Only for Admin Users */}
-              {isAdmin && (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => navigate('/admin')}
-                  className="ml-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 border-0 font-semibold"
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  Dashboard
-                </Button>
-              )}
+              {/* Admin Dashboard Button - Always visible for easy access */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/admin')}
+                className="ml-2 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 text-blue-700 hover:text-indigo-800 transition-all duration-300 font-medium"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Admin
+              </Button>
               
               {/* Login/Logout Button */}
               {!isAuthenticated ? (
@@ -247,18 +245,43 @@ const ArtisticNavbar: React.FC = () => {
                   );
                 })}
                 
-                {/* LOGGING Button for Mobile - Only for Admin Users */}
-                {isAdmin && (
+                {/* Admin Dashboard Button for Mobile - Always visible */}
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    navigate('/admin');
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full justify-start bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 text-blue-700 hover:text-indigo-800 transition-all duration-300 rounded-lg px-4 py-3 font-medium"
+                >
+                  <Settings className="w-5 h-5 mr-3" />
+                  <span className="font-body font-medium">Admin Dashboard</span>
+                </Button>
+                
+                {/* Login/Logout Button for Mobile */}
+                {!isAuthenticated ? (
                   <Button
-                    variant="default"
+                    variant="outline"
                     onClick={() => {
-                      navigate('/admin');
+                      setShowLoginForm(true);
                       setIsMenuOpen(false);
                     }}
-                    className="w-full justify-start bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-lg px-4 py-3 font-semibold"
+                    className="w-full justify-start bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200 hover:from-yellow-100 hover:to-orange-100 hover:border-yellow-300 text-yellow-700 hover:text-orange-800 transition-all duration-300 rounded-lg px-4 py-3 font-medium"
                   >
-                    <Settings className="w-5 h-5 mr-3" />
-                    <span className="font-body font-medium">Dashboard</span>
+                    <LogIn className="w-5 h-5 mr-3" />
+                    <span className="font-body font-medium">Connexion</span>
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full justify-start bg-gradient-to-r from-orange-50 to-red-50 border-orange-200 hover:from-orange-100 hover:to-red-100 hover:border-orange-300 text-orange-700 hover:text-red-800 transition-all duration-300 rounded-lg px-4 py-3 font-medium"
+                  >
+                    <LogOut className="w-5 h-5 mr-3" />
+                    <span className="font-body font-medium">Déconnexion</span>
                   </Button>
                 )}
                 

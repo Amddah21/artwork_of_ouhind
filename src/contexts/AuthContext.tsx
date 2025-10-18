@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/api';
 import type { User } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -40,19 +40,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!supabaseUrl || !supabaseAnonKey) {
       // Fallback to localStorage for development
       console.log('Supabase not configured, using localStorage fallback');
-      const loadUser = () => {
-        try {
-          const storedUser = localStorage.getItem('artspark-auth');
-          if (storedUser) {
-            setUser(JSON.parse(storedUser));
-          }
-        } catch (error) {
-          console.error('Error loading user from localStorage:', error);
-        } finally {
-          setIsLoading(false);
+      try {
+        const storedUser = localStorage.getItem('artspark-auth');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
         }
-      };
-      loadUser();
+      } catch (error) {
+        console.error('Error loading user from localStorage:', error);
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
 
