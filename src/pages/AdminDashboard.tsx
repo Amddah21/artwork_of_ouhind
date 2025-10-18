@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Trash2, Edit, Plus, Eye, Upload, X, Image as ImageIcon, Camera, Grid3X3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useArtwork } from '@/contexts/ArtworkContext';
+import { supabase } from '@/lib/supabase';
 
 interface ArtworkImage {
   id: number;
@@ -382,6 +383,54 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const testSupabaseConnection = async () => {
+    try {
+      // Vérifier les variables d'environnement
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      console.log('🔍 Testing Supabase connection...');
+      console.log('📋 Environment variables:');
+      console.log('  VITE_SUPABASE_URL:', supabaseUrl);
+      console.log('  VITE_SUPABASE_ANON_KEY:', supabaseKey ? '***' + supabaseKey.slice(-4) : 'undefined');
+      
+      // Vérifier si les valeurs sont les valeurs par défaut
+      if (supabaseUrl === 'https://your-project.supabase.co' || supabaseKey === 'your-anon-key') {
+        toast({
+          title: "❌ Supabase non configuré",
+          description: "Utilise localStorage (local uniquement). Créez un fichier .env avec vos clés Supabase.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Tester la connexion avec Supabase
+      const { data, error } = await supabase.from('artworks').select('count').limit(1);
+      
+      if (error) {
+        toast({
+          title: "❌ Connexion Supabase échouée",
+          description: `Erreur: ${error.message}`,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      toast({
+        title: "✅ Supabase connecté !",
+        description: "Vos œuvres seront visibles sur tous les appareils.",
+        variant: "success",
+      });
+      
+    } catch (err) {
+      toast({
+        title: "❌ Erreur de connexion",
+        description: `Erreur: ${err}`,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-50 to-orange-50 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
@@ -398,6 +447,15 @@ const AdminDashboard: React.FC = () => {
                 </p>
               </div>
               <div className="flex gap-2 ml-4">
+                <Button
+                  onClick={testSupabaseConnection}
+                  variant="outline"
+                  size="sm"
+                  className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                >
+                  <Grid3X3 className="h-4 w-4 mr-2" />
+                  Test Supabase
+                </Button>
                 <Button
                   onClick={resetViews}
                   variant="outline"
