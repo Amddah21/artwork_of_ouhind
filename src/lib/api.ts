@@ -6,7 +6,44 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
+console.log('🔧 Supabase API Config:', { 
+  url: supabaseUrl, 
+  keyExists: !!supabaseKey,
+  keyLength: supabaseKey?.length 
+});
+
+// Create mock client for development if env vars are missing
+const createMockClient = () => ({
+  auth: {
+    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    signInWithPassword: () => Promise.resolve({ error: { message: 'Supabase not configured' } }),
+    signUp: () => Promise.resolve({ error: { message: 'Supabase not configured' } }),
+    signOut: () => Promise.resolve({ error: null }),
+    getUser: () => Promise.resolve({ data: { user: null }, error: null })
+  },
+  from: () => ({
+    select: () => ({ 
+      eq: () => ({ 
+        single: () => Promise.resolve({ data: null, error: null }),
+        order: () => Promise.resolve({ data: null, error: null }),
+        limit: () => Promise.resolve({ data: null, error: null })
+      }),
+      order: () => Promise.resolve({ data: null, error: null }),
+      limit: () => Promise.resolve({ data: null, error: null })
+    }),
+    insert: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }),
+    update: () => ({ eq: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) }) }),
+    delete: () => ({ eq: () => Promise.resolve({ error: null }), neq: () => Promise.resolve({ error: null }) }),
+    upsert: () => ({ select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) })
+  }),
+  rpc: () => Promise.resolve({ error: null })
+});
+
+// Export the appropriate client
+export const supabase = (!supabaseUrl || !supabaseKey) 
+  ? createMockClient() as any
+  : createClient(supabaseUrl, supabaseKey);
 
 // Types pour les données
 export interface User {
