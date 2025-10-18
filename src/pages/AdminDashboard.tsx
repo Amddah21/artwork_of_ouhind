@@ -10,13 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { Trash2, Edit, Plus, Eye, Upload, X, Image as ImageIcon, Camera, Grid3X3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useArtwork } from '@/contexts/ArtworkContext';
-import TestArtworkCreation from '@/components/TestArtworkCreation';
-import SimpleTest from '@/components/SimpleTest';
-import DebugTest from '@/components/DebugTest';
-import BackendTest from '@/components/BackendTest';
-import TestRealFlow from '@/components/TestRealFlow';
-import NetworkTest from '@/components/NetworkTest';
-import FinalTest from '@/components/FinalTest';
 
 interface ArtworkImage {
   id: number;
@@ -55,7 +48,7 @@ interface Artwork {
 }
 
 const AdminDashboard: React.FC = () => {
-  const { artworks, addArtwork, updateArtwork, deleteArtwork, clearAllArtworks, resetAllViews } = useArtwork();
+  const { artworks, addArtwork, updateArtwork, deleteArtwork, clearAllArtworks, resetAllViews, refreshArtworks } = useArtwork();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -255,17 +248,7 @@ const AdminDashboard: React.FC = () => {
         console.log('Artwork added successfully, artworks refreshed');
       }
       resetForm();
-<<<<<<< HEAD
     } catch (error: any) {
-      console.error('❌ [AdminDashboard] Error saving artwork:', error);
-      
-      // Provide more specific error message
-      let errorMessage = "Erreur lors de la sauvegarde de l'œuvre";
-      if (error.message) {
-        errorMessage = error.message;
-      }
-      
-    } catch (error) {
       console.error('Error saving artwork:', error);
       
       // If we get here, it's a real error (not localStorage fallback)
@@ -803,115 +786,9 @@ const AdminDashboard: React.FC = () => {
               <Plus className="h-4 w-4 mr-2" />
               Ajouter une nouvelle œuvre
             </Button>
-            
-            <Button 
-              onClick={() => setShowTestForm(!showTestForm)} 
-              variant="outline"
-              className="border-blue-300 text-blue-700 hover:bg-blue-50"
-            >
-              {showTestForm ? 'Masquer' : 'Afficher'} Test Simple
-            </Button>
-            
-            <Button 
-              onClick={() => setShowSimpleTest(!showSimpleTest)} 
-              variant="outline"
-              className="border-green-300 text-green-700 hover:bg-green-50"
-            >
-              {showSimpleTest ? 'Masquer' : 'Afficher'} Test Direct
-            </Button>
-            
-            <Button 
-              onClick={() => setShowDebugTest(!showDebugTest)} 
-              variant="outline"
-              className="border-purple-300 text-purple-700 hover:bg-purple-50"
-            >
-              {showDebugTest ? 'Masquer' : 'Afficher'} Debug
-            </Button>
-            
-            <Button 
-              onClick={() => setShowBackendTest(!showBackendTest)} 
-              variant="outline"
-              className="border-red-300 text-red-700 hover:bg-red-50"
-            >
-              {showBackendTest ? 'Masquer' : 'Afficher'} Test Backend
-            </Button>
-            
-            
-            <Button 
-              onClick={() => setShowRealFlowTest(!showRealFlowTest)} 
-              variant="outline"
-              className="border-orange-300 text-orange-700 hover:bg-orange-50"
-            >
-              {showRealFlowTest ? 'Masquer' : 'Afficher'} Test Flux Réel
-            </Button>
-            
-            <Button 
-              onClick={() => setShowNetworkTest(!showNetworkTest)} 
-              variant="outline"
-              className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
-            >
-              {showNetworkTest ? 'Masquer' : 'Afficher'} Test Réseau
-            </Button>
-            
-            <Button 
-              onClick={() => setShowFinalTest(!showFinalTest)} 
-              variant="outline"
-              className="border-green-300 text-green-700 hover:bg-green-50"
-            >
-              {showFinalTest ? 'Masquer' : 'Afficher'} Test Final
-            </Button>
           </div>
         )}
 
-        {/* Test Form */}
-        {showTestForm && (
-          <div className="mb-6">
-            <TestArtworkCreation />
-          </div>
-        )}
-
-        {/* Simple Test */}
-        {showSimpleTest && (
-          <div className="mb-6">
-            <SimpleTest />
-          </div>
-        )}
-
-        {/* Debug Test */}
-        {showDebugTest && (
-          <div className="mb-6">
-            <DebugTest />
-          </div>
-        )}
-
-        {/* Backend Test */}
-        {showBackendTest && (
-          <div className="mb-6">
-            <BackendTest />
-          </div>
-        )}
-
-
-        {/* Real Flow Test */}
-        {showRealFlowTest && (
-          <div className="mb-6">
-            <TestRealFlow />
-          </div>
-        )}
-
-        {/* Network Test */}
-        {showNetworkTest && (
-          <div className="mb-6">
-            <NetworkTest />
-          </div>
-        )}
-
-        {/* Final Test */}
-        {showFinalTest && (
-          <div className="mb-6">
-            <FinalTest />
-          </div>
-        )}
 
         {/* Artworks List */}
         <Card className="bg-white/90 backdrop-blur-sm border-white/20 shadow-xl">
