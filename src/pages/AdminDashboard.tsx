@@ -48,7 +48,7 @@ interface Artwork {
 }
 
 const AdminDashboard: React.FC = () => {
-  const { artworks, addArtwork, updateArtwork, deleteArtwork, clearAllArtworks } = useArtwork();
+  const { artworks, addArtwork, updateArtwork, deleteArtwork, clearAllArtworks, resetAllViews } = useArtwork();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -332,6 +332,36 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const resetViews = async () => {
+    if (window.confirm('⚠️ ATTENTION: Ceci va remettre à zéro TOUS les compteurs de vues. Êtes-vous sûr ?')) {
+      try {
+        await resetAllViews();
+        
+        toast({
+          title: "Compteurs réinitialisés",
+          description: "Tous les compteurs de vues ont été remis à zéro.",
+          variant: "success",
+        });
+        
+        // Clear session storage to allow new views
+        Object.keys(sessionStorage).forEach(key => {
+          if (key.startsWith('artwork_viewed_')) {
+            sessionStorage.removeItem(key);
+          }
+        });
+        
+        console.log('Session storage cleared for view tracking');
+      } catch (error) {
+        console.error('Error resetting views:', error);
+        toast({
+          title: "Erreur",
+          description: "Erreur lors de la réinitialisation des vues.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-50 to-orange-50 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
@@ -347,15 +377,25 @@ const AdminDashboard: React.FC = () => {
                   Gestion complète des œuvres d'art et du contenu de la galerie
                 </p>
               </div>
-              <Button
-                onClick={clearAllData}
-                variant="destructive"
-                size="sm"
-                className="ml-4"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Effacer tout
-              </Button>
+              <div className="flex gap-2 ml-4">
+                <Button
+                  onClick={resetViews}
+                  variant="outline"
+                  size="sm"
+                  className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  Reset Vues
+                </Button>
+                <Button
+                  onClick={clearAllData}
+                  variant="destructive"
+                  size="sm"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Effacer tout
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -380,6 +420,18 @@ const AdminDashboard: React.FC = () => {
             <CardContent>
               <div className="text-xl sm:text-2xl font-bold text-slate-800">
                 {artworks.filter(a => a.available).length}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-xs sm:text-sm font-medium text-slate-700">Total Vues</CardTitle>
+              <Eye className="h-4 w-4 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-xl sm:text-2xl font-bold text-slate-800">
+                {artworks.reduce((total, artwork) => total + (artwork.views || 0), 0)}
               </div>
             </CardContent>
           </Card>
@@ -793,6 +845,10 @@ const AdminDashboard: React.FC = () => {
                         <div className="flex justify-between">
                           <span className="font-medium">Année:</span>
                           <span>{artwork.year}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-medium">Vues:</span>
+                          <span className="font-semibold text-blue-600">{artwork.views || 0}</span>
                         </div>
                       </div>
 

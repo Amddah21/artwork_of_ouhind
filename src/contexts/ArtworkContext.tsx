@@ -52,6 +52,7 @@ interface ArtworkContextType {
   deleteArtworkImage: (imageId: number) => Promise<void>;
   getArtworkImages: (artworkId: string) => Promise<ArtworkImage[]>;
   clearAllArtworks: () => Promise<void>;
+  resetAllViews: () => Promise<void>;
 }
 
 const ArtworkContext = createContext<ArtworkContextType | undefined>(undefined);
@@ -271,6 +272,35 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const incrementViews = async (id: string) => {
     try {
+      // Check if this artwork has already been viewed in this session
+      const viewedKey = `artwork_viewed_${id}`;
+      const hasViewed = sessionStorage.getItem(viewedKey);
+      
+      if (hasViewed) {
+        console.log(`Artwork ${id} already viewed in this session, skipping view increment`);
+        return;
+      }
+
+      // Mark as viewed in this session
+      sessionStorage.setItem(viewedKey, 'true');
+
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage for development
+        console.log('Supabase not configured, incrementing views locally');
+        setArtworks(prev => prev.map(a => 
+          a.id === id ? { ...a, views: a.views + 1 } : a
+        ));
+        
+        // Update localStorage
+        const updatedArtworks = artworks.map(a => 
+          a.id === id ? { ...a, views: a.views + 1 } : a
+        );
+        localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
+        console.log(`View incremented locally for artwork ${id}`);
+        return;
+      }
+
+      // Use Supabase RPC function to increment views
       const { error } = await supabase.rpc('increment_views', { artwork_id: id });
       
       if (error) {
@@ -279,9 +309,18 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
         setArtworks(prev => prev.map(a => 
           a.id === id ? { ...a, views: a.views + 1 } : a
         ));
+        console.log(`View incremented locally (fallback) for artwork ${id}`);
       } else {
-        // Refresh the artwork to get updated view count
-        await loadArtworks();
+        // Update local state immediately for better UX
+        setArtworks(prev => prev.map(a => 
+          a.id === id ? { ...a, views: a.views + 1 } : a
+        ));
+        console.log(`View incremented in database for artwork ${id}`);
+        
+        // Also refresh from database to ensure accuracy
+        setTimeout(async () => {
+          await loadArtworks();
+        }, 1000);
       }
     } catch (error) {
       console.error('Error incrementing views:', error);
@@ -289,6 +328,7 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       setArtworks(prev => prev.map(a => 
         a.id === id ? { ...a, views: a.views + 1 } : a
       ));
+      console.log(`View incremented locally (error fallback) for artwork ${id}`);
     }
   };
 
@@ -420,6 +460,40 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const resetAllViews = async () => {
+    try {
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage
+        console.log('Supabase not configured, resetting views locally');
+        setArtworks(prev => prev.map(artwork => ({ ...artwork, views: 0 })));
+        
+        // Update localStorage
+        const updatedArtworks = artworks.map(artwork => ({ ...artwork, views: 0 }));
+        localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
+        console.log('All view counts reset locally');
+        return;
+      }
+
+      // Reset views in Supabase
+      const { error } = await supabase
+        .from('artworks')
+        .update({ views: 0 })
+        .neq('id', ''); // Update all artworks
+
+      if (error) {
+        console.error('Error resetting views:', error);
+        throw error;
+      }
+
+      // Update local state
+      setArtworks(prev => prev.map(artwork => ({ ...artwork, views: 0 })));
+      console.log('All view counts reset in database');
+    } catch (error) {
+      console.error('Error resetting views:', error);
+      throw error;
+    }
+  };
+
   return (
     <ArtworkContext.Provider value={{ 
       artworks, 
@@ -432,7 +506,8 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       addArtworkImages,
       deleteArtworkImage,
       getArtworkImages,
-      clearAllArtworks
+      clearAllArtworks,
+      resetAllViews // New
     }}>
       {children}
     </ArtworkContext.Provider>

@@ -5,6 +5,7 @@ A modern, full-stack art gallery application built with React, TypeScript, and S
 ## ✨ Features
 
 ### 🖼️ **Artwork Management**
+
 - **Multiple Image Upload** - Upload multiple images per artwork
 - **Dynamic Gallery** - Real-time artwork display
 - **Artwork Details** - Comprehensive artwork information
@@ -12,18 +13,21 @@ A modern, full-stack art gallery application built with React, TypeScript, and S
 - **Search & Filter** - Easy artwork discovery
 
 ### 👤 **Authentication System**
+
 - **User Authentication** - Secure login/signup
 - **Admin Dashboard** - Complete artwork management
 - **Role-based Access** - User and admin roles
 - **Protected Routes** - Secure admin access
 
 ### 🎨 **Admin Dashboard**
+
 - **Add/Edit Artworks** - Full CRUD operations
 - **Image Management** - Multiple image upload with previews
 - **Clear All Data** - Database management tools
 - **Real-time Updates** - Instant gallery updates
 
 ### 🗄️ **Backend Integration**
+
 - **Supabase Database** - PostgreSQL with real-time features
 - **Row Level Security** - Secure data access
 - **Image Storage** - Base64 image storage
@@ -32,6 +36,7 @@ A modern, full-stack art gallery application built with React, TypeScript, and S
 ## 🚀 **Tech Stack**
 
 ### **Frontend**
+
 - **React 18** - Modern React with hooks
 - **TypeScript** - Type-safe development
 - **Vite** - Fast build tool
@@ -39,12 +44,14 @@ A modern, full-stack art gallery application built with React, TypeScript, and S
 - **Shadcn/ui** - Beautiful UI components
 
 ### **Backend**
+
 - **Supabase** - Backend-as-a-Service
 - **PostgreSQL** - Relational database
 - **Row Level Security** - Data security
 - **Real-time Subscriptions** - Live updates
 
 ### **Development Tools**
+
 - **ESLint** - Code linting
 - **Prettier** - Code formatting
 - **Git** - Version control
@@ -52,37 +59,43 @@ A modern, full-stack art gallery application built with React, TypeScript, and S
 ## 📦 **Installation**
 
 ### **Prerequisites**
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 - Supabase account
 
 ### **Setup Steps**
 
 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/Amddah21/artspark-studio-canvas.git
 cd artspark-studio-canvas
 ```
 
 2. **Install dependencies**
+
 ```bash
 npm install
 ```
 
 3. **Environment Setup**
-Create `.env.local` file:
+   Create `.env.local` file:
+
 ```env
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 4. **Database Setup**
-Run the SQL scripts in `supabase/` directory:
+   Run the SQL scripts in `supabase/` directory:
+
 - `schema.sql` - Main database schema
 - `admin_setup.sql` - Admin user setup
 - `multiple_images_schema.sql` - Multiple images support
 
 5. **Start Development Server**
+
 ```bash
 npm run dev
 ```
@@ -90,6 +103,7 @@ npm run dev
 ## 🗄️ **Database Schema**
 
 ### **Tables**
+
 - **`artworks`** - Main artwork information
 - **`artwork_images`** - Multiple images per artwork
 - **`profiles`** - User profiles and roles
@@ -97,6 +111,7 @@ npm run dev
 - **`reviews`** - Artwork reviews
 
 ### **Key Features**
+
 - **Foreign Key Relationships** - Linked artwork images
 - **Row Level Security** - Secure data access
 - **Custom Functions** - Database logic
@@ -105,12 +120,14 @@ npm run dev
 ## 🎯 **Usage**
 
 ### **For Users**
+
 1. **Browse Gallery** - View all available artworks
 2. **Artwork Details** - Click on artwork for full details
 3. **Rate & Review** - Leave ratings and reviews
 4. **Contact** - Get in touch with the artist
 
 ### **For Admins**
+
 1. **Login** - Use admin credentials
 2. **Dashboard** - Access admin panel
 3. **Add Artworks** - Upload new artworks with multiple images
@@ -120,15 +137,18 @@ npm run dev
 ## 🔧 **Configuration**
 
 ### **Admin Credentials**
+
 - **Email:** `omhind53@gmail.com`
 - **Password:** `admin123`
 
 ### **Image Upload**
+
 - **File Size Limit:** 50MB per image
 - **Supported Formats:** PNG, JPG, JPEG
 - **Multiple Images:** Up to 10 images per artwork
 
 ### **Database Settings**
+
 - **Real-time:** Enabled for live updates
 - **Security:** Row Level Security enabled
 - **Backup:** Automatic backups enabled
@@ -157,16 +177,19 @@ supabase/
 ## 🚀 **Deployment**
 
 ### **Vercel (Recommended)**
+
 1. Connect GitHub repository to Vercel
 2. Add environment variables
 3. Deploy automatically
 
 ### **Netlify**
+
 1. Connect GitHub repository
 2. Configure build settings
 3. Add environment variables
 
 ### **Manual Deployment**
+
 1. Build the project: `npm run build`
 2. Upload `dist/` folder to your hosting service
 3. Configure environment variables
@@ -201,6 +224,7 @@ This project is licensed under the MIT License.
 ## 👨‍💻 **Developer**
 
 **Oum Hind F. Douirani**
+
 - **Email:** omhind53@gmail.com
 - **GitHub:** [@Amddah21](https://github.com/Amddah21)
 
