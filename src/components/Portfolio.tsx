@@ -131,11 +131,30 @@ const Portfolio: React.FC = () => {
               }}
               className="hover-painterly-lift painterly-card"
               style={{
-                backgroundColor: selectedCategory === category ? 'hsl(38, 95%, 60%)' : 'hsl(45, 100%, 97%)',
-                color: selectedCategory === category ? 'hsl(45, 100%, 97%)' : 'hsl(240, 10%, 15%)',
-                borderColor: selectedCategory === category ? 'hsl(38, 95%, 60%)' : 'hsl(240, 10%, 30%)',
-                borderWidth: '2px',
-                fontWeight: '600'
+                ...(selectedCategory === category
+                  ? { // Style for selected button (any category)
+                      backgroundColor: 'hsl(38, 95%, 60%)',
+                      color: 'hsl(45, 100%, 97%)',
+                      borderColor: 'hsl(38, 95%, 60%)',
+                      borderWidth: '1px',
+                      fontWeight: 'normal'
+                    }
+                  : category === 'Tous'
+                    ? { // Style for unselected 'Tous' button
+                        backgroundColor: 'hsl(45, 100%, 97%)',
+                        color: 'hsl(240, 10%, 15%)',
+                        borderColor: 'hsl(240, 10%, 30%)',
+                        borderWidth: '2px',
+                        fontWeight: '600'
+                      }
+                    : { // Style for other unselected buttons
+                        backgroundColor: 'transparent',
+                        color: 'hsl(240, 10%, 15%)',
+                        borderColor: 'hsl(330, 20%, 88%)',
+                        borderWidth: '1px',
+                        fontWeight: 'normal'
+                      }
+                )
               }}
             >
               {category === 'Tous' ? category : `Voir ${category}`}
