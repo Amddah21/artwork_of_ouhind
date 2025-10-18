@@ -253,6 +253,20 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteArtwork = async (id: string) => {
     try {
+      // Check if Supabase is properly configured
+      if (!supabaseUrl || !supabaseAnonKey) {
+        // Fallback to localStorage for development
+        console.log('Supabase not configured, using localStorage fallback for deleteArtwork');
+        const storedArtworks = localStorage.getItem('artspark-artworks');
+        if (storedArtworks) {
+          const artworks = JSON.parse(storedArtworks);
+          const filteredArtworks = artworks.filter((a: Artwork) => a.id !== id);
+          localStorage.setItem('artspark-artworks', JSON.stringify(filteredArtworks));
+          setArtworks(filteredArtworks);
+        }
+        return;
+      }
+
       const { error } = await supabase
         .from('artworks')
         .delete()
