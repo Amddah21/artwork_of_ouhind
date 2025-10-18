@@ -131,9 +131,11 @@ const Portfolio: React.FC = () => {
               }}
               className="hover-painterly-lift painterly-card"
               style={{
-                backgroundColor: selectedCategory === category ? 'hsl(38, 95%, 60%)' : 'transparent',
+                backgroundColor: selectedCategory === category ? 'hsl(38, 95%, 60%)' : 'hsl(45, 100%, 97%)',
                 color: selectedCategory === category ? 'hsl(45, 100%, 97%)' : 'hsl(240, 10%, 15%)',
-                borderColor: 'hsl(330, 20%, 88%)'
+                borderColor: selectedCategory === category ? 'hsl(38, 95%, 60%)' : 'hsl(240, 10%, 30%)',
+                borderWidth: '2px',
+                fontWeight: '600'
               }}
             >
               {category === 'Tous' ? category : `Voir ${category}`}
