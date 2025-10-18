@@ -128,6 +128,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           setUser(adminUser);
           localStorage.setItem('artspark-auth', JSON.stringify(adminUser));
+          console.log('Admin login successful:', adminUser);
         } else if (email && password) {
           // Accept any other valid email/password as regular user
           const regularUser: Profile = {
@@ -137,6 +138,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           setUser(regularUser);
           localStorage.setItem('artspark-auth', JSON.stringify(regularUser));
+          console.log('Regular user login successful:', regularUser);
         } else {
           throw new Error('Login Failed'); // Changed from 'Email and password are required'
         }
@@ -151,6 +153,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         throw new Error('Login Failed'); // Changed from 'error.message'
       }
+
+      // Fetch profile after successful sign-in
+      const { data: { user: supabaseUser } } = await supabase.auth.getUser();
+      if (supabaseUser) {
+        await fetchUserProfile(supabaseUser.id);
+      }
+
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
