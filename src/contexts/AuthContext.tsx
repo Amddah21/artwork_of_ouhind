@@ -36,6 +36,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log('🚀 AuthContext initializing...', { supabaseUrl, supabaseAnonKey });
+    
     // Check if Supabase is properly configured
     if (!supabaseUrl || !supabaseAnonKey) {
       // Fallback to localStorage for development
@@ -111,6 +113,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
+      console.log('🔐 SignIn attempt:', { email, supabaseUrl, supabaseAnonKey });
+      
       // Check if Supabase is properly configured
       if (!supabaseUrl || !supabaseAnonKey) {
         // Fallback to localStorage for development - accept any credentials
@@ -137,20 +141,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.setItem('artspark-auth', JSON.stringify(regularUser));
           console.log('Regular user login successful:', regularUser);
         } else {
-          throw new Error('Login Failed'); // Changed from 'Email and password are required'
+          throw new Error('Login Failed');
         }
         return;
       }
 
+      console.log('🌐 Using Supabase authentication...');
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        throw new Error('Login Failed'); // Changed from 'error.message'
+        console.error('❌ Supabase login error:', error);
+        throw new Error('Login Failed');
       }
 
+      console.log('✅ Supabase login successful, fetching profile...');
       // Fetch profile after successful sign-in
       const { data: { user: supabaseUser } } = await supabase.auth.getUser();
       if (supabaseUser) {
@@ -158,7 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
     } catch (error) {
-      console.error('Sign in error:', error);
+      console.error('💥 Sign in error:', error);
       throw error;
     }
   };
