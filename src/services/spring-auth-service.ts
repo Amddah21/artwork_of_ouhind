@@ -18,8 +18,11 @@ export class SpringAuthService {
   static async signIn(email: string, password: string): Promise<User> {
     try {
       console.log('🔐 [SpringAuthService] Attempting login for:', email)
+      console.log('🔐 [SpringAuthService] API Base URL:', apiService.defaults.baseURL)
       
       const credentials: LoginRequest = { email, password }
+      console.log('🔐 [SpringAuthService] Sending credentials:', { email, password: '***' })
+      
       const response: AuthResponse = await apiService.login(credentials)
       
       console.log('🔐 [SpringAuthService] Login successful:', response)
@@ -33,6 +36,11 @@ export class SpringAuthService {
       return response.user
     } catch (error: any) {
       console.error('🔐 [SpringAuthService] Login failed:', error)
+      console.error('🔐 [SpringAuthService] Error details:', {
+        message: error.message,
+        status: error.status,
+        stack: error.stack
+      })
       
       // Gestion des erreurs spécifiques
       if (error.message?.includes('401')) {
@@ -41,8 +49,10 @@ export class SpringAuthService {
         throw new Error('Accès refusé')
       } else if (error.message?.includes('404')) {
         throw new Error('Service d\'authentification non disponible')
+      } else if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+        throw new Error('Impossible de se connecter au serveur. Vérifiez que le backend est démarré.')
       } else {
-        throw new Error('Erreur de connexion. Veuillez réessayer.')
+        throw new Error(`Erreur de connexion: ${error.message || 'Erreur inconnue'}`)
       }
     }
   }

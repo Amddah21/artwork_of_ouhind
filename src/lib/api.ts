@@ -10,9 +10,27 @@ export const API_ENDPOINTS = {
     validate: '/auth/validate',
     createAdmin: '/auth/create-admin'
   },
-  artworks: '/artworks',
-  reviews: '/reviews',
-  contact: '/contact',
+  artworks: {
+    base: '/artworks',
+    search: '/artworks/search',
+    images: '/artworks/images',
+    upload: '/artworks/upload'
+  },
+  reviews: {
+    base: '/reviews',
+    artwork: '/reviews/artwork',
+    pending: '/reviews/pending',
+    helpful: '/reviews',
+    approve: '/reviews',
+    delete: '/reviews'
+  },
+  contact: {
+    base: '/contact',
+    unread: '/contact/unread',
+    read: '/contact',
+    responded: '/contact',
+    delete: '/contact'
+  },
   stats: '/stats'
 }
 
@@ -34,6 +52,81 @@ export interface AuthResponse {
 
 export interface ValidateTokenResponse {
   valid: boolean
+}
+
+// Interfaces pour les œuvres
+export interface Artwork {
+  id: number
+  titre: string
+  description: string
+  technique: string
+  dimensions: string
+  annee: number
+  imageUrl: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface ArtworkSearchParams {
+  q?: string
+  technique?: string
+  annee?: number
+  limit?: number
+  offset?: number
+}
+
+export interface UploadResponse {
+  imageUrl: string
+  fileName: string
+}
+
+// Interfaces pour les reviews
+export interface Review {
+  id: number
+  authorName: string
+  rating: number
+  comment: string
+  helpful: number
+  artworkId?: number
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED'
+  createdAt: string
+}
+
+export interface ReviewRequest {
+  authorName: string
+  rating: number
+  comment: string
+  artworkId?: number
+}
+
+// Interfaces pour le contact
+export interface ContactMessage {
+  id: number
+  name: string
+  email: string
+  subject: string
+  message: string
+  isRead: boolean
+  isResponded: boolean
+  createdAt: string
+}
+
+export interface ContactRequest {
+  name: string
+  email: string
+  subject: string
+  message: string
+}
+
+// Interfaces pour les statistiques
+export interface StatsResponse {
+  totalArtworks: number
+  totalReviews: number
+  totalContactMessages: number
+  unreadMessages: number
+  pendingReviews: number
+  averageRating: number
+  totalViews?: number
 }
 
 // Gestion des erreurs API
@@ -168,43 +261,69 @@ export class ApiService {
 
   // ===== MÉTHODES SPÉCIFIQUES AUX ŒUVRES =====
   
-  async getArtworks() {
-    return this.apiCall(API_ENDPOINTS.artworks, {
+  // Routes publiques
+  async getArtworks(): Promise<Artwork[]> {
+    return this.apiCall<Artwork[]>(API_ENDPOINTS.artworks.base, {
       method: 'GET',
     })
   }
 
-  async getArtworkById(id: number) {
-    return this.apiCall(`${API_ENDPOINTS.artworks}/${id}`, {
+  async getArtworkById(id: number): Promise<Artwork> {
+    return this.apiCall<Artwork>(`${API_ENDPOINTS.artworks.base}/${id}`, {
       method: 'GET',
     })
   }
 
-  async createArtwork(artwork: any) {
-    return this.apiCall(API_ENDPOINTS.artworks, {
+  async searchArtworks(params: ArtworkSearchParams): Promise<Artwork[]> {
+    const queryParams = new URLSearchParams()
+    if (params.q) queryParams.append('q', params.q)
+    if (params.technique) queryParams.append('technique', params.technique)
+    if (params.annee) queryParams.append('annee', params.annee.toString())
+    if (params.limit) queryParams.append('limit', params.limit.toString())
+    if (params.offset) queryParams.append('offset', params.offset.toString())
+    
+    const queryString = queryParams.toString()
+    const endpoint = queryString ? `${API_ENDPOINTS.artworks.search}?${queryString}` : API_ENDPOINTS.artworks.search
+    
+    return this.apiCall<Artwork[]>(endpoint, {
+      method: 'GET',
+    })
+  }
+
+  async getArtworkImage(fileName: string): Promise<Blob> {
+    const response = await fetch(`${this.baseUrl}${API_ENDPOINTS.artworks.images}/${fileName}`)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    return response.blob()
+  }
+
+  // Routes protégées (ADMIN)
+  async createArtwork(artwork: Omit<Artwork, 'id' | 'createdAt' | 'updatedAt'>): Promise<Artwork> {
+    return this.apiCall<Artwork>(API_ENDPOINTS.artworks.base, {
       method: 'POST',
       body: JSON.stringify(artwork),
     })
   }
 
-  async updateArtwork(id: number, artwork: any) {
-    return this.apiCall(`${API_ENDPOINTS.artworks}/${id}`, {
+  async updateArtwork(id: number, artwork: Partial<Artwork>): Promise<Artwork> {
+    return this.apiCall<Artwork>(`${API_ENDPOINTS.artworks.base}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(artwork),
     })
   }
 
-  async deleteArtwork(id: number) {
-    return this.apiCall(`${API_ENDPOINTS.artworks}/${id}`, {
+  async deleteArtwork(id: number): Promise<{ message: string }> {
+    return this.apiCall<{ message: string }>(`${API_ENDPOINTS.artworks.base}/${id}`, {
       method: 'DELETE',
     })
   }
 
-  async uploadImage(file: File) {
+  async uploadImage(file: File): Promise<UploadResponse> {
     const formData = new FormData()
     formData.append('file', file)
     
-    return this.apiCall(`${API_ENDPOINTS.artworks}/upload`, {
+    return this.apiCall<UploadResponse>(API_ENDPOINTS.artworks.upload, {
       method: 'POST',
       headers: {
         // Ne pas définir Content-Type pour multipart/form-data
@@ -214,40 +333,98 @@ export class ApiService {
     })
   }
 
-  // ===== MÉTHODES SPÉCIFIQUES AUX COMMENTAIRES =====
+  // ===== MÉTHODES SPÉCIFIQUES AUX REVIEWS =====
   
-  async getReviews() {
-    return this.apiCall(API_ENDPOINTS.reviews, {
+  // Routes publiques
+  async getReviews(): Promise<Review[]> {
+    return this.apiCall<Review[]>(API_ENDPOINTS.reviews.base, {
       method: 'GET',
     })
   }
 
-  async createReview(review: any) {
-    return this.apiCall(API_ENDPOINTS.reviews, {
+  async getReviewsByArtwork(artworkId: number): Promise<Review[]> {
+    return this.apiCall<Review[]>(`${API_ENDPOINTS.reviews.artwork}/${artworkId}`, {
+      method: 'GET',
+    })
+  }
+
+  async createReview(review: ReviewRequest): Promise<Review> {
+    return this.apiCall<Review>(API_ENDPOINTS.reviews.base, {
       method: 'POST',
       body: JSON.stringify(review),
     })
   }
 
-  async markReviewHelpful(id: number) {
-    return this.apiCall(`${API_ENDPOINTS.reviews}/${id}/helpful`, {
+  async markReviewHelpful(reviewId: number): Promise<{ message: string; helpful: number }> {
+    return this.apiCall<{ message: string; helpful: number }>(`${API_ENDPOINTS.reviews.helpful}/${reviewId}/helpful`, {
       method: 'POST',
+    })
+  }
+
+  // Routes protégées (ADMIN)
+  async getPendingReviews(): Promise<Review[]> {
+    return this.apiCall<Review[]>(API_ENDPOINTS.reviews.pending, {
+      method: 'GET',
+    })
+  }
+
+  async approveReview(reviewId: number): Promise<{ message: string }> {
+    return this.apiCall<{ message: string }>(`${API_ENDPOINTS.reviews.approve}/${reviewId}/approve`, {
+      method: 'POST',
+    })
+  }
+
+  async deleteReview(reviewId: number): Promise<{ message: string }> {
+    return this.apiCall<{ message: string }>(`${API_ENDPOINTS.reviews.delete}/${reviewId}`, {
+      method: 'DELETE',
     })
   }
 
   // ===== MÉTHODES SPÉCIFIQUES AU CONTACT =====
   
-  async sendContactMessage(contactData: any) {
-    return this.apiCall(API_ENDPOINTS.contact, {
+  // Routes publiques
+  async sendContactMessage(contactData: ContactRequest): Promise<{ message: string }> {
+    return this.apiCall<{ message: string }>(API_ENDPOINTS.contact.base, {
       method: 'POST',
       body: JSON.stringify(contactData),
     })
   }
 
+  // Routes protégées (ADMIN)
+  async getContactMessages(): Promise<ContactMessage[]> {
+    return this.apiCall<ContactMessage[]>(API_ENDPOINTS.contact.base, {
+      method: 'GET',
+    })
+  }
+
+  async getUnreadContactMessages(): Promise<ContactMessage[]> {
+    return this.apiCall<ContactMessage[]>(API_ENDPOINTS.contact.unread, {
+      method: 'GET',
+    })
+  }
+
+  async markContactAsRead(contactId: number): Promise<{ message: string }> {
+    return this.apiCall<{ message: string }>(`${API_ENDPOINTS.contact.read}/${contactId}/read`, {
+      method: 'POST',
+    })
+  }
+
+  async markContactAsResponded(contactId: number): Promise<{ message: string }> {
+    return this.apiCall<{ message: string }>(`${API_ENDPOINTS.contact.responded}/${contactId}/responded`, {
+      method: 'POST',
+    })
+  }
+
+  async deleteContactMessage(contactId: number): Promise<{ message: string }> {
+    return this.apiCall<{ message: string }>(`${API_ENDPOINTS.contact.delete}/${contactId}`, {
+      method: 'DELETE',
+    })
+  }
+
   // ===== MÉTHODES SPÉCIFIQUES AUX STATISTIQUES =====
   
-  async getStats() {
-    return this.apiCall(API_ENDPOINTS.stats, {
+  async getStats(): Promise<StatsResponse> {
+    return this.apiCall<StatsResponse>(API_ENDPOINTS.stats, {
       method: 'GET',
     })
   }

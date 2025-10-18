@@ -836,6 +836,7 @@ const AdminDashboard: React.FC = () => {
               {showBackendTest ? 'Masquer' : 'Afficher'} Test Backend
             </Button>
             
+            
             <Button 
               onClick={() => setShowRealFlowTest(!showRealFlowTest)} 
               variant="outline"
@@ -889,6 +890,7 @@ const AdminDashboard: React.FC = () => {
             <BackendTest />
           </div>
         )}
+
 
         {/* Real Flow Test */}
         {showRealFlowTest && (
