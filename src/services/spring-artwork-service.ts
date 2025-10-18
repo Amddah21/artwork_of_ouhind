@@ -8,8 +8,6 @@ export interface Artwork {
   technique?: string
   dimensions?: string
   annee?: number
-  createdAt?: string
-  updatedAt?: string
 }
 
 export interface CreateArtworkRequest {
@@ -36,8 +34,8 @@ export class SpringArtworkService {
     try {
       console.log('🎨 [SpringArtworkService] Fetching all artworks...')
       const response = await apiService.get('/artworks')
-      console.log('🎨 [SpringArtworkService] Artworks fetched successfully:', response.data)
-      return response.data || []
+      console.log('🎨 [SpringArtworkService] Artworks fetched successfully:', response)
+      return (response as Artwork[]) || []
     } catch (error) {
       console.error('🎨 [SpringArtworkService] Error fetching artworks:', error)
       throw new Error('Failed to fetch artworks')
@@ -49,8 +47,8 @@ export class SpringArtworkService {
     try {
       console.log(`🎨 [SpringArtworkService] Fetching artwork ${id}...`)
       const response = await apiService.get(`/artworks/${id}`)
-      console.log(`🎨 [SpringArtworkService] Artwork ${id} fetched successfully:`, response.data)
-      return response.data
+      console.log(`🎨 [SpringArtworkService] Artwork ${id} fetched successfully:`, response)
+      return response as Artwork
     } catch (error) {
       console.error(`🎨 [SpringArtworkService] Error fetching artwork ${id}:`, error)
       return null
@@ -63,7 +61,7 @@ export class SpringArtworkService {
       console.log('🎨 [SpringArtworkService] Creating artwork:', artwork)
       const response = await apiService.post('/artworks', artwork)
       console.log('🎨 [SpringArtworkService] Artwork created successfully:', response)
-      return response
+      return response as Artwork
     } catch (error: any) {
       console.error('🎨 [SpringArtworkService] Error creating artwork:', error)
       
@@ -97,11 +95,17 @@ export class SpringArtworkService {
           'Content-Type': 'multipart/form-data'
         }
       })
-      console.log('🎨 [SpringArtworkService] Image uploaded successfully:', response.data)
-      return response.data
-    } catch (error) {
+      console.log('🎨 [SpringArtworkService] Image uploaded successfully:', response)
+      return response as { imageUrl: string }
+    } catch (error: any) {
       console.error('🎨 [SpringArtworkService] Error uploading image:', error)
-      throw new Error('Failed to upload image')
+      let errorMessage = 'Failed to upload image'
+      if (error.message) {
+        errorMessage = error.message
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      }
+      throw new Error(errorMessage)
     }
   }
 
@@ -110,11 +114,25 @@ export class SpringArtworkService {
     try {
       console.log(`🎨 [SpringArtworkService] Updating artwork ${id}:`, artwork)
       const response = await apiService.put(`/artworks/${id}`, artwork)
-      console.log(`🎨 [SpringArtworkService] Artwork ${id} updated successfully:`, response.data)
-      return response.data
-    } catch (error) {
+      console.log(`🎨 [SpringArtworkService] Artwork ${id} updated successfully:`, response)
+      return response as Artwork
+    } catch (error: any) {
       console.error(`🎨 [SpringArtworkService] Error updating artwork ${id}:`, error)
-      throw new Error('Failed to update artwork')
+      
+      let errorMessage = 'Failed to update artwork'
+      if (error.message) {
+        errorMessage = error.message
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      } else if (error.status === 404) {
+        errorMessage = 'Artwork not found'
+      } else if (error.status === 403) {
+        errorMessage = 'Access denied - Admin privileges required'
+      } else if (error.status === 401) {
+        errorMessage = 'Authentication required'
+      }
+      
+      throw new Error(errorMessage)
     }
   }
 
@@ -127,7 +145,6 @@ export class SpringArtworkService {
     } catch (error: any) {
       console.error(`🎨 [SpringArtworkService] Error deleting artwork ${id}:`, error)
       
-      // Provide more detailed error information
       let errorMessage = 'Failed to delete artwork'
       if (error.message) {
         errorMessage = error.message
@@ -150,8 +167,8 @@ export class SpringArtworkService {
     try {
       console.log(`🎨 [SpringArtworkService] Searching artworks with query: "${query}"`)
       const response = await apiService.get(`/artworks/search?q=${encodeURIComponent(query)}`)
-      console.log(`🎨 [SpringArtworkService] Search results:`, response.data)
-      return response.data || []
+      console.log('🎨 [SpringArtworkService] Search results:', response)
+      return (response as Artwork[]) || []
     } catch (error) {
       console.error('🎨 [SpringArtworkService] Error searching artworks:', error)
       throw new Error('Failed to search artworks')
@@ -163,8 +180,8 @@ export class SpringArtworkService {
     try {
       console.log(`🎨 [SpringArtworkService] Fetching artworks by technique: "${technique}"`)
       const response = await apiService.get(`/artworks/technique/${encodeURIComponent(technique)}`)
-      console.log(`🎨 [SpringArtworkService] Artworks by technique fetched:`, response.data)
-      return response.data || []
+      console.log('🎨 [SpringArtworkService] Artworks by technique fetched:', response)
+      return (response as Artwork[]) || []
     } catch (error) {
       console.error('🎨 [SpringArtworkService] Error fetching artworks by technique:', error)
       throw new Error('Failed to fetch artworks by technique')
@@ -174,10 +191,10 @@ export class SpringArtworkService {
   // Get artworks by year
   static async getArtworksByYear(year: number): Promise<Artwork[]> {
     try {
-      console.log(`🎨 [SpringArtworkService] Fetching artworks by year: ${year}`)
+      console.log(`🎨 [SpringArtworkService] Fetching artworks by year: "${year}"`)
       const response = await apiService.get(`/artworks/year/${year}`)
-      console.log(`🎨 [SpringArtworkService] Artworks by year fetched:`, response.data)
-      return response.data || []
+      console.log('🎨 [SpringArtworkService] Artworks by year fetched:', response)
+      return (response as Artwork[]) || []
     } catch (error) {
       console.error('🎨 [SpringArtworkService] Error fetching artworks by year:', error)
       throw new Error('Failed to fetch artworks by year')
@@ -189,8 +206,8 @@ export class SpringArtworkService {
     try {
       console.log('🎨 [SpringArtworkService] Fetching featured artworks...')
       const response = await apiService.get('/artworks/featured')
-      console.log('🎨 [SpringArtworkService] Featured artworks fetched:', response.data)
-      return response.data || []
+      console.log('🎨 [SpringArtworkService] Featured artworks fetched:', response)
+      return (response as Artwork[]) || []
     } catch (error) {
       console.error('🎨 [SpringArtworkService] Error fetching featured artworks:', error)
       throw new Error('Failed to fetch featured artworks')
@@ -202,8 +219,8 @@ export class SpringArtworkService {
     try {
       console.log(`🎨 [SpringArtworkService] Fetching artworks by category: "${category}"`)
       const response = await apiService.get(`/artworks/category/${encodeURIComponent(category)}`)
-      console.log(`🎨 [SpringArtworkService] Artworks by category fetched:`, response.data)
-      return response.data || []
+      console.log('🎨 [SpringArtworkService] Artworks by category fetched:', response)
+      return (response as Artwork[]) || []
     } catch (error) {
       console.error('🎨 [SpringArtworkService] Error fetching artworks by category:', error)
       throw new Error('Failed to fetch artworks by category')
