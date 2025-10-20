@@ -214,16 +214,75 @@ body {
     padding: 2px 6px;
   }
   
+  .copyright-watermark.center {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  
   .protection-message {
     padding: 15px;
     font-size: 14px;
     margin: 0 20px;
+    max-width: 90vw;
   }
   
   .protection-shield {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     font-size: 10px;
+    top: 8px;
+    right: 8px;
+  }
+  
+  /* Mobile-specific image protection */
+  img, .artwork-image, .gallery-image {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+  }
+  
+  /* Mobile text sizing */
+  .protection-message div {
+    font-size: 12px;
+  }
+  
+  .protection-message h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .copyright-watermark {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+  
+  .protection-message {
+    padding: 12px;
+    font-size: 13px;
+    margin: 0 15px;
+  }
+  
+  .protection-shield {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+  }
+  
+  .copyright-watermark.center {
+    font-size: 11px;
+    padding: 4px 8px;
   }
 }
 

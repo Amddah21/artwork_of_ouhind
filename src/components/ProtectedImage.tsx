@@ -120,12 +120,14 @@ const ProtectedImage = ({
     >
       {/* Copyright Protection Overlay - Always visible */}
       <div className="absolute inset-0 z-20 pointer-events-none">
-        <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
-          <Shield className="w-3 h-3 inline mr-1" />
-          © Mamany-Art
+        <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-black/70 text-white px-1 sm:px-2 py-0.5 sm:py-1 rounded text-xs font-medium">
+          <Shield className="w-2 h-2 sm:w-3 sm:h-3 inline mr-0.5 sm:mr-1" />
+          <span className="hidden sm:inline">© Mamany-Art</span>
+          <span className="sm:hidden">© M-A</span>
         </div>
-        <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
-          Droits réservés
+        <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 bg-black/70 text-white px-1 sm:px-2 py-0.5 sm:py-1 rounded text-xs">
+          <span className="hidden sm:inline">Droits réservés</span>
+          <span className="sm:hidden">©</span>
         </div>
       </div>
 

@@ -90,8 +90,8 @@ const ArtisticNavbar: React.FC = () => {
           ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200' 
           : 'bg-transparent'
       }`}>
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between h-16">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo and Brand */}
             <div className="flex items-center space-x-3">
               <div className={`transition-all duration-500 ${
@@ -182,12 +182,12 @@ const ArtisticNavbar: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden bg-white/80 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300"
+              className="lg:hidden bg-white/80 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 p-2"
             >
               {isMenuOpen ? (
-                <X className="w-5 h-5 text-gray-700" />
+                <X className="w-4 h-4 text-gray-700" />
               ) : (
-                <Menu className="w-5 h-5 text-gray-700" />
+                <Menu className="w-4 h-4 text-gray-700" />
               )}
             </Button>
           </div>

@@ -208,21 +208,22 @@ const GalleryDetail: React.FC = () => {
   return (
     <div className="min-h-screen watercolor-bg canvas-texture">
       {/* Header */}
-      <div className="container mx-auto px-6 pt-8 pb-4">
+      <div className="container mx-auto px-4 sm:px-6 pt-4 sm:pt-8 pb-2 sm:pb-4">
         <Button
           variant="ghost"
           onClick={() => navigate('/portfolio')}
-          className="mb-6 hover-painterly-lift"
+          className="mb-4 sm:mb-6 hover-painterly-lift text-sm sm:text-base"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Retour au Portfolio
+          <span className="hidden sm:inline">Retour au Portfolio</span>
+          <span className="sm:hidden">Retour</span>
         </Button>
       </div>
 
       {/* Main Gallery Content */}
-      <div className="container mx-auto px-6 pb-20">
+      <div className="container mx-auto px-4 sm:px-6 pb-12 sm:pb-20">
         {/* Featured Gallery Image */}
-        <div className={`mb-16 transition-all duration-1000 ${
+        <div className={`mb-8 sm:mb-16 transition-all duration-1000 ${
           isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
         }`}>
           <Card className="painterly-card overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500">
@@ -235,32 +236,32 @@ const GalleryDetail: React.FC = () => {
               
               {/* Gallery Info Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent">
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Badge className="painterly-card" style={{
+                <div className="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                    <Badge className="painterly-card text-xs sm:text-sm" style={{
                       backgroundColor: 'rgba(251, 191, 36, 0.1)',
                       color: 'hsl(38, 95%, 60%)'
                     }}>
                       {galleryData.category}
                     </Badge>
-                    <Badge variant="outline" className="text-white border-white/30">
+                    <Badge variant="outline" className="text-white border-white/30 text-xs sm:text-sm">
                       {galleryData.artworkCount} œuvres
                     </Badge>
                   </div>
-                  <h1 className="text-4xl md:text-5xl font-bold font-display text-white mb-2">
+                  <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold font-display text-white mb-1 sm:mb-2 leading-tight">
                     {galleryData.name}
                   </h1>
-                  <p className="text-lg text-white/90 font-body mb-4">
+                  <p className="text-sm sm:text-lg text-white/90 font-body mb-2 sm:mb-4 leading-relaxed">
                     {galleryData.description}
                   </p>
-                  <div className="flex items-center gap-4 text-white/80">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      <span className="text-sm">{galleryData.year}</span>
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-white/80">
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="text-xs sm:text-sm">{galleryData.year}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Palette className="w-4 h-4" />
-                      <span className="text-sm">{galleryData.category}</span>
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <Palette className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="text-xs sm:text-sm">{galleryData.category}</span>
                     </div>
                   </div>
                 </div>
@@ -270,20 +271,20 @@ const GalleryDetail: React.FC = () => {
         </div>
 
         {/* Contact Section */}
-        <div className={`mb-16 transition-all duration-1000 ${
+        <div className={`mb-8 sm:mb-16 transition-all duration-1000 ${
           isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
         }`} style={{ animationDelay: '0.2s' }}>
-          <Card className="painterly-card p-8 text-center">
-            <h2 className="text-2xl font-bold font-display mb-2" style={{ color: 'hsl(240, 10%, 15%)' }}>
+          <Card className="painterly-card p-4 sm:p-8 text-center">
+            <h2 className="text-xl sm:text-2xl font-bold font-display mb-2" style={{ color: 'hsl(240, 10%, 15%)' }}>
               Intéressé par cette galerie ?
             </h2>
-            <p className="text-slate-600 mb-6 font-body">
+            <p className="text-slate-600 mb-4 sm:mb-6 font-body text-sm sm:text-base">
               Contactez-moi pour discuter de cette collection et de sa valeur artistique
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <Button 
                 onClick={handleWhatsAppContact}
-                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base py-2 sm:py-3"
               >
                 <Phone className="w-4 h-4 mr-2" />
                 WhatsApp
@@ -291,7 +292,7 @@ const GalleryDetail: React.FC = () => {
               <Button 
                 onClick={handleEmailContact}
                 variant="outline"
-                className="border-2 hover:bg-slate-50 transition-all duration-300"
+                className="border-2 hover:bg-slate-50 transition-all duration-300 text-sm sm:text-base py-2 sm:py-3"
                 style={{ 
                   borderColor: 'hsl(38, 95%, 60%)',
                   color: 'hsl(240, 10%, 15%)'
@@ -306,13 +307,13 @@ const GalleryDetail: React.FC = () => {
 
         {/* Gallery Artworks */}
         {categoryArtworks.length > 0 && (
-          <div className={`mb-16 transition-all duration-1000 ${
+          <div className={`mb-8 sm:mb-16 transition-all duration-1000 ${
             isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
           }`} style={{ animationDelay: '0.4s' }}>
-            <h2 className="text-3xl font-bold font-display mb-8 text-center" style={{ color: 'hsl(240, 10%, 15%)' }}>
+            <h2 className="text-2xl sm:text-3xl font-bold font-display mb-6 sm:mb-8 text-center" style={{ color: 'hsl(240, 10%, 15%)' }}>
               Œuvres de cette galerie
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {categoryArtworks.slice(0, 6).map((artwork, index) => (
                 <Card 
                   key={artwork.id}
