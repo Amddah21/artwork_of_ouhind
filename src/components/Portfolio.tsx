@@ -6,6 +6,7 @@ import RatingDisplay from './RatingDisplay';
 import ProtectedImage from './ProtectedImage';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import { useReview } from '@/contexts/ReviewContext';
+import { useGallery } from '@/contexts/GalleryContext';
 
 interface Artwork {
   id: string;
@@ -37,11 +38,17 @@ const Portfolio: React.FC = () => {
   const navigate = useNavigate();
   const { artworks, isLoading } = useArtwork();
   const { getArtworkRating } = useReview();
+  const { state: galleryState, refreshGalleries, updateGalleryData } = useGallery();
 
   useEffect(() => {
     setIsLoaded(true);
     // Debug: Log artworks to see what's loaded
     console.log('Portfolio - Artworks loaded:', artworks.length, artworks);
+    
+    // Update gallery data when artworks change
+    if (artworks.length > 0) {
+      updateGalleryData();
+    }
     
     // Debug: Check localStorage directly
     const storedArtworks = localStorage.getItem('artspark-artworks');
@@ -51,7 +58,7 @@ const Portfolio: React.FC = () => {
     } else {
       console.log('Portfolio - No artworks in localStorage');
     }
-  }, [artworks]);
+  }, [artworks, updateGalleryData]);
 
   // Enhanced artworks with color palettes (no pricing)
   const enhancedArtworks: Artwork[] = artworks.map(artwork => ({
@@ -62,13 +69,14 @@ const Portfolio: React.FC = () => {
     dimensions: artwork.size || 'Dimensions non spécifiées',
     rating: getArtworkRating(artwork.id).average || 0,
     ratingCount: getArtworkRating(artwork.id).count || 0,
-    artist: 'Oum Hind F. Douirani',
+    artist: artwork.artist_name || 'Mamany-Art', // Use dynamic artist name from database
     colorPalette: [
       '#FF6B9D', '#C44569', '#F8B500', '#6C5CE7',
       '#00B894', '#E17055', '#74B9FF', '#A29BFE'
     ].sort(() => Math.random() - 0.5).slice(0, 4)
   }));
 
+  // Generate categories dynamically from gallery state or artworks
   const categories = ['Tous', ...Array.from(new Set(enhancedArtworks.map(artwork => artwork.category)))];
 
   const filteredArtworks = selectedCategory === 'Tous' 
@@ -76,6 +84,45 @@ const Portfolio: React.FC = () => {
     : enhancedArtworks.filter(artwork => artwork.category === selectedCategory && artwork.isAvailable);
 
   const displayedArtworks = filteredArtworks.slice(0, visibleArtworks);
+
+  const handleShareArtwork = async (artwork: Artwork) => {
+    const shareData = {
+      title: artwork.title,
+      text: `Découvrez "${artwork.title}" par ${artwork.artist}`,
+      url: `${window.location.origin}/artwork/${artwork.id}`
+    };
+
+    try {
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: Copy to clipboard
+        await navigator.clipboard.writeText(shareData.url);
+        
+        // Show a temporary success message
+        const button = document.querySelector('[data-share-button]') as HTMLElement;
+        if (button) {
+          const originalText = button.textContent;
+          button.textContent = 'Lien copié !';
+          button.style.backgroundColor = '#10b981';
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.style.backgroundColor = '';
+          }, 2000);
+        }
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      // Fallback: Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        alert('Lien copié dans le presse-papiers !');
+      } catch (clipboardError) {
+        console.error('Clipboard error:', clipboardError);
+        alert('Impossible de partager. Veuillez copier manuellement l\'URL.');
+      }
+    }
+  };
 
   const loadMore = () => {
     setVisibleArtworks(prev => Math.min(prev + 8, filteredArtworks.length));
@@ -180,7 +227,7 @@ const Portfolio: React.FC = () => {
           {displayedArtworks.map((artwork, index) => (
             <div
               key={artwork.id}
-              className={`group painterly-card overflow-hidden hover-painterly-lift break-inside-avoid transition-all duration-1000 cursor-pointer ${
+              className={`group break-inside-avoid transition-all duration-1000 cursor-pointer bg-white shadow-xl hover:shadow-2xl rounded-2xl overflow-hidden border border-slate-200 hover:border-yellow-300 transform hover:scale-[1.02] ${
                 isLoaded ? 'animate-gallery-reveal' : 'opacity-0 translate-y-8'
               }`}
               style={{ animationDelay: `${0.4 + index * 0.1}s` }}
@@ -188,172 +235,194 @@ const Portfolio: React.FC = () => {
               onMouseLeave={() => setHoveredId(null)}
               onClick={() => handleViewArtwork(artwork)}
             >
-              {/* Image Container with artistic frame */}
-              <div className="relative aspect-[4/5] overflow-hidden">
-                <ProtectedImage
-                  src={artwork.image_url}
-                  alt={artwork.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+              {/* Enhanced Image Container with premium frame */}
+              <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-slate-50 to-yellow-50 p-2">
+                <div className="relative w-full h-full overflow-hidden rounded-lg shadow-inner">
+                  <ProtectedImage
+                    src={artwork.image_url}
+                    alt={artwork.title}
+                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
+                  />
+                  
+                  {/* Premium overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                </div>
                 
-                {/* Color Palette Preview */}
-                <div className="absolute top-4 left-4 flex space-x-1">
+                {/* Enhanced Color Palette Preview */}
+                <div className="absolute top-6 left-6 flex space-x-1.5">
                   {artwork.colorPalette.slice(0, 4).map((color, idx) => (
                     <div
                       key={idx}
-                      className="w-4 h-4 rounded-full border-2 border-white shadow-sm"
+                      className="w-5 h-5 rounded-full border-2 border-white shadow-lg hover:scale-110 transition-transform duration-300"
                       style={{ backgroundColor: color }}
+                      title={`Color ${idx + 1}`}
                     />
                   ))}
                 </div>
 
-                {/* Availability Badge */}
-                <div className="absolute top-4 right-4">
-                  <span className="px-3 py-1 rounded-full text-xs font-medium painterly-card text-green-800" style={{
-                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                    borderColor: 'rgba(34, 197, 94, 0.3)'
+                {/* Premium Availability Badge */}
+                <div className="absolute top-6 right-6">
+                  <span className="px-4 py-2 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm" style={{
+                    backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                    borderColor: 'rgba(34, 197, 94, 0.4)',
+                    borderWidth: '1px',
+                    color: '#166534'
                   }}>
-                    Disponible
+                    ✓ Disponible
                   </span>
                 </div>
 
-                {/* Floating Sparkles */}
-                {hoveredId === artwork.id && (
-                  <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-1/4 left-1/4 animate-ping">
-                      <Sparkles className="w-3 h-3 text-yellow-400" />
-                    </div>
-                    <div className="absolute top-3/4 right-1/4 animate-ping" style={{ animationDelay: '0.5s' }}>
-                      <Sparkles className="w-2 h-2 text-pink-400" />
-                    </div>
-                    <div className="absolute top-1/2 right-1/3 animate-ping" style={{ animationDelay: '1s' }}>
-                      <Sparkles className="w-2 h-2 text-purple-400" />
-                    </div>
+                {/* Artist signature overlay */}
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-500">
+                    <p className="text-xs font-medium text-slate-700 text-center">
+                      {artwork.artist} @{artwork.year}
+                    </p>
                   </div>
-                )}
+                </div>
 
-                {/* Hover Overlay with artistic effects */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-                  <div className="absolute bottom-4 left-4 right-4 space-y-2">
-                    <Button className="w-full hover-watercolor-blend" style={{
-                      backgroundColor: 'hsl(38, 95%, 60%)',
-                      color: 'hsl(45, 100%, 97%)'
-                    }}>
-                      <Eye className="w-4 h-4 mr-2" />
+                {/* Enhanced Hover Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <Button 
+                      className="w-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300" 
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 50%) 100%)',
+                        color: 'white',
+                        border: 'none'
+                      }}
+                    >
+                      <Eye className="w-5 h-5 mr-2" />
                       Voir détails
                     </Button>
                   </div>
                 </div>
 
-                {/* Artistic corner decorations */}
-                <div className="absolute top-2 right-2 w-6 h-6 border-t-2 border-r-2 border-yellow-400 rounded-tr-lg opacity-60" />
-                <div className="absolute bottom-2 left-2 w-6 h-6 border-b-2 border-l-2 border-yellow-400 rounded-bl-lg opacity-60" />
+                {/* Premium corner decorations */}
+                <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-yellow-500 rounded-tr-xl opacity-70" />
+                <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-yellow-500 rounded-bl-xl opacity-70" />
+                
+                {/* Floating premium sparkles */}
+                {hoveredId === artwork.id && (
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-1/4 left-1/4 animate-pulse">
+                      <Sparkles className="w-4 h-4 text-yellow-400 drop-shadow-lg" />
+                    </div>
+                    <div className="absolute top-3/4 right-1/4 animate-pulse" style={{ animationDelay: '0.5s' }}>
+                      <Sparkles className="w-3 h-3 text-pink-400 drop-shadow-lg" />
+                    </div>
+                    <div className="absolute top-1/2 right-1/3 animate-pulse" style={{ animationDelay: '1s' }}>
+                      <Sparkles className="w-3 h-3 text-purple-400 drop-shadow-lg" />
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Artwork Info with enhanced styling */}
-              <div className="p-6 space-y-4">
+              {/* Compact Product Info Section */}
+              <div className="p-4 space-y-3 bg-white">
                 {/* Title and Artist */}
-                <div>
-                  <h3 className="text-xl font-semibold font-display mb-1" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-bold text-slate-800">
                     {artwork.title}
                   </h3>
-                  <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
-                    Oum Hind F. Douirani
-                  </p>
-                </div>
-
-                {/* Details with icons */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4" style={{ color: 'hsl(38, 95%, 60%)' }} />
-                      <span style={{ color: 'hsl(240, 10%, 35%)' }}>Année:</span>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                      <span className="text-white text-xs font-bold">
+                        {artwork.artist.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                      </span>
                     </div>
-                    <span className="font-medium" style={{ color: 'hsl(240, 10%, 15%)' }}>{artwork.year}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center space-x-2">
-                      <Palette className="w-4 h-4" style={{ color: 'hsl(38, 95%, 60%)' }} />
-                      <span style={{ color: 'hsl(240, 10%, 35%)' }}>Médium:</span>
-                    </div>
-                    <span className="font-medium" style={{ color: 'hsl(240, 10%, 15%)' }}>{artwork.technique || artwork.medium || 'Non spécifié'}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span style={{ color: 'hsl(240, 10%, 35%)' }}>Dimensions:</span>
-                    <span className="font-medium" style={{ color: 'hsl(240, 10%, 15%)' }}>{artwork.dimensions || artwork.size || 'Non spécifié'}</span>
+                    <p className="text-sm text-slate-600">
+                      {artwork.artist}
+                    </p>
                   </div>
                 </div>
 
-                {/* Category and Rating Display */}
+                {/* Compact Details */}
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-3 h-3 text-yellow-600" />
+                    <span className="text-slate-600">Année:</span>
+                    <span className="font-medium text-slate-800">{artwork.year}</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-1">
+                    <Palette className="w-3 h-3 text-blue-600" />
+                    <span className="text-slate-600">Médium:</span>
+                    <span className="font-medium text-slate-800">{artwork.technique || artwork.medium || 'N/A'}</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-1">
+                    <Tag className="w-3 h-3 text-green-600" />
+                    <span className="text-slate-600">Taille:</span>
+                    <span className="font-medium text-slate-800">{artwork.dimensions || artwork.size || 'N/A'}</span>
+                  </div>
+                </div>
+
+                {/* Rating and Category */}
                 <div className="flex items-center justify-between">
                   <RatingDisplay 
                     rating={getArtworkRating(artwork.id).average}
                     count={getArtworkRating(artwork.id).count}
                     size="sm"
                   />
-                  <span className="text-xs px-2 py-1 rounded-full painterly-card font-medium" style={{ 
+                  <span className="text-xs px-2 py-1 rounded-full font-medium" style={{ 
                     color: 'hsl(38, 95%, 60%)',
-                    backgroundColor: 'rgba(251, 191, 36, 0.1)'
+                    backgroundColor: 'rgba(251, 191, 36, 0.15)'
                   }}>
                     {artwork.category}
                   </span>
                 </div>
 
-                {/* Art Value Note */}
-                <div className="text-center py-2">
-                  <p className="text-xs font-body italic" style={{ color: 'hsl(240, 10%, 35%)' }}>
-                    Prix sur demande
-                  </p>
-                </div>
-
-                {/* Direct Contact Buttons */}
-                <div className="space-y-2 pt-2">
-                  <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      className="flex-1 hover-painterly-lift"
-                      style={{
-                        background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
-                        color: 'white'
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleWhatsAppContact(artwork);
-                      }}
-                    >
-                      <Phone className="w-4 h-4 mr-2" />
-                      WhatsApp
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      className="flex-1 hover-painterly-lift"
-                      style={{
-                        background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
-                        color: 'hsl(45, 100%, 97%)'
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEmailContact(artwork);
-                      }}
-                    >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Email
-                    </Button>
-                  </div>
+                {/* Compact Contact Buttons */}
+                <div className="grid grid-cols-3 gap-2">
                   <Button 
-                    variant="outline" 
                     size="sm" 
-                    className="w-full hover-ink-flow painterly-card"
-                    style={{ 
-                      borderColor: 'hsl(330, 20%, 88%)',
-                      color: 'hsl(240, 10%, 15%)'
+                    className="text-xs"
+                    style={{
+                      background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+                      color: 'white',
+                      border: 'none'
                     }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Handle share action
+                      handleWhatsAppContact(artwork);
                     }}
                   >
-                    <Share2 className="w-4 h-4 mr-2" />
+                    <Phone className="w-3 h-3 mr-1" />
+                    WhatsApp
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    className="text-xs"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
+                      color: 'white',
+                      border: 'none'
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEmailContact(artwork);
+                    }}
+                  >
+                    <Mail className="w-3 h-3 mr-1" />
+                    Email
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-xs"
+                    style={{ 
+                      borderColor: 'hsl(330, 20%, 88%)',
+                      color: 'hsl(240, 10%, 15%)',
+                      backgroundColor: 'white'
+                    }}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      await handleShareArtwork(artwork);
+                    }}
+                    data-share-button
+                  >
+                    <Share2 className="w-3 h-3 mr-1" />
                     Partager
                   </Button>
                 </div>

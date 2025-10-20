@@ -5,6 +5,7 @@ import { Menu, X, Palette, Home, Grid3X3, User, Mail, Settings, Calendar, Brush,
 import Logo from './Logo';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginForm from './LoginForm';
+import { useArtwork } from '@/contexts/ArtworkContext';
 
 const ArtisticNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,6 +14,12 @@ const ArtisticNavbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAdmin, isAuthenticated, signOut } = useAuth();
+  const { artworks } = useArtwork();
+  
+  // Get the artist name from the first artwork or use default
+  const artistName = artworks.length > 0 && artworks[0].artist_name 
+    ? artworks[0].artist_name 
+    : 'Mamany-Art';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -98,7 +105,7 @@ const ArtisticNavbar: React.FC = () => {
                     ? 'text-slate-800' 
                     : 'bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent'
                 }`}>
-                  Oum Hind F. Douirani
+                  {artistName}
                 </h1>
                 <p className={`text-xs font-body transition-colors duration-500 ${
                   isScrolled ? 'text-gray-600' : 'text-gray-500'
@@ -132,16 +139,6 @@ const ArtisticNavbar: React.FC = () => {
                 );
               })}
               
-              {/* Admin Dashboard Button - Always visible for easy access */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/admin')}
-                className="ml-2 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 text-blue-700 hover:text-indigo-800 transition-all duration-300 font-medium"
-              >
-                <Settings className="w-4 h-4 mr-2" />
-                Admin
-              </Button>
               
               {/* Login/Logout Button */}
               {!isAuthenticated ? (
@@ -158,11 +155,24 @@ const ArtisticNavbar: React.FC = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={signOut}
-                  className="ml-2 bg-gradient-to-r from-orange-50 to-red-50 border-orange-200 hover:from-orange-100 hover:to-red-100 hover:border-orange-300 text-orange-700 hover:text-red-800 transition-all duration-300 font-medium"
+                  onClick={isAdmin ? () => navigate('/admin') : signOut}
+                  className={`ml-2 transition-all duration-300 font-medium ${
+                    isAdmin 
+                      ? "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 text-blue-700 hover:text-indigo-800"
+                      : "bg-gradient-to-r from-orange-50 to-red-50 border-orange-200 hover:from-orange-100 hover:to-red-100 hover:border-orange-300 text-orange-700 hover:text-red-800"
+                  }`}
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Déconnexion
+                  {isAdmin ? (
+                    <>
+                      <Settings className="w-4 h-4 mr-2" />
+                      Dashboard Admin
+                    </>
+                  ) : (
+                    <>
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Déconnexion
+                    </>
+                  )}
                 </Button>
               )}
             </div>
@@ -245,18 +255,6 @@ const ArtisticNavbar: React.FC = () => {
                   );
                 })}
                 
-                {/* Admin Dashboard Button for Mobile - Always visible */}
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    navigate('/admin');
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full justify-start bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 text-blue-700 hover:text-indigo-800 transition-all duration-300 rounded-lg px-4 py-3 font-medium"
-                >
-                  <Settings className="w-5 h-5 mr-3" />
-                  <span className="font-body font-medium">Admin Dashboard</span>
-                </Button>
                 
                 {/* Login/Logout Button for Mobile */}
                 {!isAuthenticated ? (
@@ -275,13 +273,30 @@ const ArtisticNavbar: React.FC = () => {
                   <Button
                     variant="outline"
                     onClick={() => {
-                      signOut();
+                      if (isAdmin) {
+                        navigate('/admin');
+                      } else {
+                        signOut();
+                      }
                       setIsMenuOpen(false);
                     }}
-                    className="w-full justify-start bg-gradient-to-r from-orange-50 to-red-50 border-orange-200 hover:from-orange-100 hover:to-red-100 hover:border-orange-300 text-orange-700 hover:text-red-800 transition-all duration-300 rounded-lg px-4 py-3 font-medium"
+                    className={`w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 font-medium ${
+                      isAdmin 
+                        ? "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 text-blue-700 hover:text-indigo-800"
+                        : "bg-gradient-to-r from-orange-50 to-red-50 border-orange-200 hover:from-orange-100 hover:to-red-100 hover:border-orange-300 text-orange-700 hover:text-red-800"
+                    }`}
                   >
-                    <LogOut className="w-5 h-5 mr-3" />
-                    <span className="font-body font-medium">Déconnexion</span>
+                    {isAdmin ? (
+                      <>
+                        <Settings className="w-5 h-5 mr-3" />
+                        <span className="font-body font-medium">Dashboard Admin</span>
+                      </>
+                    ) : (
+                      <>
+                        <LogOut className="w-5 h-5 mr-3" />
+                        <span className="font-body font-medium">Déconnexion</span>
+                      </>
+                    )}
                   </Button>
                 )}
                 

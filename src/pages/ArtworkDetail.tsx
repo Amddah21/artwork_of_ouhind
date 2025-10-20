@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Share2, Eye, ShoppingCart, MessageCircle, Flag, Palette, Calendar, Tag, Maximize, ZoomIn, RotateCcw, Star, Phone, Mail, Euro } from 'lucide-react';
+import { ArrowLeft, Share2, Eye, ShoppingCart, MessageCircle, Flag, Palette, Calendar, Tag, Star, Phone, Mail, Euro } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import StarRating from '@/components/StarRating';
-import CommentForm from '@/components/CommentForm';
-import CommentsDisplay from '@/components/CommentsDisplay';
+import ReviewSection from '@/components/ReviewSection';
 import { useRating } from '@/contexts/RatingContext';
 import { useArtwork } from '@/contexts/ArtworkContext';
 
@@ -48,8 +47,6 @@ const ArtworkDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [comments, setComments] = useState<any[]>([]);
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -116,15 +113,42 @@ const ArtworkDetail: React.FC = () => {
     navigate(-1);
   };
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: artwork.title,
-        text: artwork.description,
-        url: window.location.href
-      });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
+  const handleShare = async () => {
+    const shareData = {
+      title: artwork.title,
+      text: `Découvrez "${artwork.title}" par ${artwork.artist_name || 'Mamany-Art'}`,
+      url: window.location.href
+    };
+
+    try {
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: Copy to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        
+        // Show a temporary success message
+        const button = document.querySelector('[data-share-button]') as HTMLElement;
+        if (button) {
+          const originalText = button.textContent;
+          button.textContent = 'Lien copié !';
+          button.style.backgroundColor = '#10b981';
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.style.backgroundColor = '';
+          }, 2000);
+        }
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      // Fallback: Copy to clipboard
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Lien copié dans le presse-papiers !');
+      } catch (clipboardError) {
+        console.error('Clipboard error:', clipboardError);
+        alert('Impossible de partager. Veuillez copier manuellement l\'URL.');
+      }
     }
   };
 
@@ -132,59 +156,16 @@ const ArtworkDetail: React.FC = () => {
     addRating(artwork.id, rating);
   };
 
-  const handleCommentSubmit = (comment: { rating: number; content: string }) => {
-    const newComment = {
-      id: Date.now().toString(),
-      userId: 'current-user',
-      userName: 'Vous',
-      content: comment.content,
-      rating: comment.rating,
-      timestamp: new Date().toISOString(),
-      likes: 0,
-      dislikes: 0,
-      replies: [],
-      isEdited: false
-    };
-    setComments([newComment, ...comments]);
-  };
-
-  const handleLikeComment = (commentId: string) => {
-    setComments(comments.map(comment => 
-      comment.id === commentId 
-        ? { ...comment, likes: comment.likes + 1 }
-        : comment
-    ));
-  };
-
-  const handleDislikeComment = (commentId: string) => {
-    setComments(comments.map(comment => 
-      comment.id === commentId 
-        ? { ...comment, dislikes: comment.dislikes + 1 }
-        : comment
-    ));
-  };
-
-  const handleReply = (commentId: string, content: string) => {
-    // Handle reply logic
-  };
-
-  const handleReport = (commentId: string) => {
-    // Handle report logic
-  };
-
-  const handleDelete = (commentId: string) => {
-    setComments(comments.filter(comment => comment.id !== commentId));
-  };
 
   const handleWhatsAppContact = () => {
-    const message = `Bonjour ! Je suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist_name || 'Oum Hind F. Douirani'}. Pourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?`;
+    const message = `Bonjour ! Je suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist_name || 'Mamany-Art'}. Pourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?`;
     const whatsappUrl = `https://wa.me/212666672756?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleEmailContact = () => {
     const subject = `Demande d'information - ${artwork.title}`;
-    const body = `Bonjour,\n\nJe suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist_name || 'Oum Hind F. Douirani'}.\n\nDimensions: ${artwork.dimensions || artwork.size}\nAnnée: ${artwork.year}\nMédium: ${artwork.medium || artwork.technique}\n\nPourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique et des modalités d'acquisition ?\n\nCordialement,`;
+    const body = `Bonjour,\n\nJe suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist_name || 'Mamany-Art'}.\n\nDimensions: ${artwork.dimensions || artwork.size}\nAnnée: ${artwork.year}\nMédium: ${artwork.medium || artwork.technique}\n\nPourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique et des modalités d'acquisition ?\n\nCordialement,`;
     const mailtoUrl = `mailto:omhind53@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(mailtoUrl);
   };
@@ -235,20 +216,8 @@ const ArtworkDetail: React.FC = () => {
                 <img
                   src={multipleViews[currentImageIndex]?.url || artwork.image_url}
                   alt={artwork.title}
-                  className={`w-full h-full object-cover transition-all duration-500 ${isZoomed ? 'scale-150' : 'group-hover:scale-105'}`}
+                  className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
                 />
-                
-                {/* Zoom Controls */}
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="comfort-card opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => setIsZoomed(!isZoomed)}
-                  >
-                    {isZoomed ? <Maximize className="w-4 h-4" /> : <ZoomIn className="w-4 h-4" />}
-                  </Button>
-                </div>
 
                 {/* High Resolution Badge */}
                 <Badge className="absolute top-4 left-4 comfort-card" style={{backgroundColor: 'rgba(248, 248, 248, 0.9)', color: '#7A6B5A'}}>
@@ -290,7 +259,7 @@ const ArtworkDetail: React.FC = () => {
                 {artwork.title}
               </h1>
               <p className="text-xl comfort-text-muted font-body">
-                par <span className="font-semibold" style={{color: '#7A6B5A'}}>{artwork.artist_name || 'Oum Hind F. Douirani'}</span>
+                par <span className="font-semibold" style={{color: '#7A6B5A'}}>{artwork.artist_name || 'Mamany-Art'}</span>
               </p>
             </div>
 
@@ -311,7 +280,7 @@ const ArtworkDetail: React.FC = () => {
               <Card className="comfort-card p-6">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(122, 107, 90, 0.1)'}}>
-                    <Maximize className="w-5 h-5" style={{color: '#7A6B5A'}} />
+                    <Tag className="w-5 h-5" style={{color: '#7A6B5A'}} />
                   </div>
                   <div>
                     <p className="text-sm comfort-text-muted font-body">Dimensions</p>
@@ -457,6 +426,7 @@ const ArtworkDetail: React.FC = () => {
                         color: 'hsl(240, 10%, 15%)'
                       }}
                       onClick={handleShare}
+                      data-share-button
                     >
                       <Share2 className="w-4 h-4 mr-2" />
                       Partager
@@ -519,24 +489,11 @@ const ArtworkDetail: React.FC = () => {
           </div>
         </div>
 
-        {/* Comments Section */}
+        {/* Reviews Section */}
         <div className="mt-16 max-w-4xl mx-auto">
-          {/* Comment Form */}
-          <CommentForm
+          <ReviewSection
             artworkId={artwork.id}
             artworkTitle={artwork.title}
-            onSubmit={handleCommentSubmit}
-            className="mb-8"
-          />
-
-          {/* Comments Display */}
-          <CommentsDisplay
-            comments={comments}
-            onLikeComment={handleLikeComment}
-            onDislikeComment={handleDislikeComment}
-            onReply={handleReply}
-            onReport={handleReport}
-            onDelete={handleDelete}
           />
         </div>
       </div>

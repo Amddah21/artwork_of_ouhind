@@ -20,7 +20,7 @@ const About = () => {
                 <Logo size="lg" className="text-foreground flex-shrink-0" />
                 <div className="text-center sm:text-left">
                   <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-serif font-bold text-foreground leading-tight">
-                    Oum Hind F. Douirani
+                    Oum Hind, Fatima
                   </h2>
                   <p className="text-accent font-medium text-sm md:text-base lg:text-lg xl:text-xl">Artiste Plasticienne • Née à Safi en 1957</p>
                 </div>
@@ -29,21 +29,17 @@ const About = () => {
             
             <div className="space-y-3 md:space-y-4 lg:space-y-6">
               <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Oum Hind, Fatima de son prénom</strong>, est née à Safi en 1957. 
+                <strong className="text-foreground">Oum Hind, Fatima</strong>, est née à Safi en 1957. 
                 Artiste plasticienne au tempérament de femme battante, elle se caractérise par de fortes valeurs 
                 et des objectifs clairs. Son travail constitue un processus édificateur de projets riches en 
                 expériences et recherches en Arts Plastiques.
               </p>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-muted-foreground leading-relaxed">
                 Sa signature artistique est <strong className="text-foreground">impressionniste et expressionniste contemporaine</strong>. 
-                Elle se manifeste par un modelage mesuré en couches, des éclaboussures de couleurs et des traits 
+                Elle se manifeste par un modelage de matieres et de pigments mesuré en couches, des éclaboussures de couleurs et des traits 
                 pleins de nuances, avec des compositions exécutées avec une grande précision.
               </p>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-muted-foreground leading-relaxed">
-                Son style incisif et l'abondance de détails significatifs au niveau de la texture picturale 
-                créent des œuvres où le regard baigne dans une source inépuisable d'émotions euphoriques, 
-                distillées avec une grande sensibilité féminine.
-              </p>
+          
             </div>
 
             <div className="grid gap-2 md:gap-3 lg:gap-4">
@@ -96,7 +92,7 @@ const About = () => {
                         <User className="w-12 h-12 lg:w-14 lg:h-14 text-white" />
                       </div>
                       <p className="text-sm font-accent font-bold comfort-text" style={{color: '#7A6B5A'}}>
-                        Oum Hind F. Douirani
+                        Oum Hind, Fatima
                       </p>
                       <p className="text-xs comfort-text-muted font-body">
                         Artiste Plasticienne

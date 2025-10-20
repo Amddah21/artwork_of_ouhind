@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, ZoomIn, ZoomOut, RotateCw, Share2 } from 'lucide-react';
+import { X, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,7 +10,7 @@ import { useReview } from '@/contexts/ReviewContext';
 
 interface ArtworkZoomModalProps {
   artwork: {
-    id: number;
+    id: string;
     title: string;
     category: string;
     image: string;
@@ -20,25 +20,16 @@ interface ArtworkZoomModalProps {
     technique?: string;
     materials?: string[];
     tags?: string[];
+    artist_name?: string;
   };
   isOpen: boolean;
   onClose: () => void;
 }
 
 const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) => {
-  const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const { getArtworkRating } = useReview();
 
   if (!isOpen) return null;
-
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.25, 3));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.25, 0.5));
-  const handleRotate = () => setRotation(prev => (prev + 90) % 360);
-  const handleReset = () => {
-    setZoom(1);
-    setRotation(0);
-  };
 
 
   return (
@@ -54,42 +45,6 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
               <p className="text-sm text-muted-foreground">{artwork.category} • {artwork.size} • {artwork.year}</p>
             </div>
             
-            {/* Zoom Controls */}
-            <div className="flex items-center gap-2 mr-4">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleZoomOut}
-                disabled={zoom <= 0.5}
-              >
-                <ZoomOut className="w-4 h-4" />
-              </Button>
-              <span className="text-sm font-medium min-w-[3rem] text-center">
-                {Math.round(zoom * 100)}%
-              </span>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleZoomIn}
-                disabled={zoom >= 3}
-              >
-                <ZoomIn className="w-4 h-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleRotate}
-              >
-                <RotateCw className="w-4 h-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={handleReset}
-              >
-                Reset
-              </Button>
-            </div>
 
             <Button variant="ghost" size="sm" onClick={onClose}>
               <X className="w-5 h-5" />
@@ -104,18 +59,14 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
                 <ProtectedImage
                   src={artwork.image}
                   alt={artwork.title}
-                  className="max-w-full max-h-full object-contain transition-transform duration-200"
-                  style={{
-                    transform: `scale(${zoom}) rotate(${rotation}deg)`,
-                    cursor: zoom > 1 ? 'grab' : 'default'
-                  }}
+                  className="max-w-full max-h-full object-contain"
                   showWatermark={true}
                   watermarkPosition="center"
                 />
                 
                 {/* Copyright Watermark */}
                 <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium backdrop-blur-sm">
-                  © Omhind Fatima Douirani
+                  © Mamany-Art
                 </div>
               </div>
             </div>
@@ -126,10 +77,10 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
                 {/* Rating Display */}
                 <div className="mt-2">
                   <RatingDisplay
-                    rating={getArtworkRating(artwork.id).average}
+                    rating={getArtworkRating(artwork.id.toString()).average}
                     size="md"
                     showNumber
-                    count={getArtworkRating(artwork.id).count}
+                    count={getArtworkRating(artwork.id.toString()).count}
                   />
                 </div>
 
@@ -137,9 +88,9 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
                 <Tabs defaultValue="details" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="details">Détails</TabsTrigger>
-                    <TabsTrigger value="reviews">
-                      Avis ({getArtworkRating(artwork.id).count})
-                    </TabsTrigger>
+                      <TabsTrigger value="reviews">
+                        Avis ({getArtworkRating(artwork.id.toString()).count})
+                      </TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="details" className="space-y-6 mt-4">
@@ -210,8 +161,26 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
                         <Button
                           variant="outline"
                           className="flex-1"
-                          disabled
-                          title="Partage désactivé pour protéger les droits d'auteur"
+                          onClick={async () => {
+                            const shareData = {
+                              title: artwork.title,
+                              text: `Découvrez "${artwork.title}" par ${artwork.artist_name || 'Mamany-Art'}`,
+                              url: `${window.location.origin}/artwork/${artwork.id}`
+                            };
+
+                            try {
+                              if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                                await navigator.share(shareData);
+                              } else {
+                                await navigator.clipboard.writeText(shareData.url);
+                                alert('Lien copié dans le presse-papiers !');
+                              }
+                            } catch (error) {
+                              console.error('Error sharing:', error);
+                              await navigator.clipboard.writeText(shareData.url);
+                              alert('Lien copié dans le presse-papiers !');
+                            }
+                          }}
                         >
                           <Share2 className="w-4 h-4 mr-2" />
                           Partager
@@ -222,7 +191,7 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
                     {/* Copyright Notice */}
                     <div className="pt-4 border-t">
                       <p className="text-xs text-muted-foreground text-center">
-                        © {new Date().getFullYear()} Omhind Fatima Douirani. Tous droits réservés.
+                        © {new Date().getFullYear()} Mamany-Art. Tous droits réservés.
                       </p>
                       <p className="text-xs text-muted-foreground text-center mt-1">
                         Cette œuvre est protégée par le droit d'auteur.
@@ -231,7 +200,7 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
                   </TabsContent>
 
                   <TabsContent value="reviews" className="mt-4">
-                    <ReviewSection artworkId={artwork.id} artworkTitle={artwork.title} />
+                    <ReviewSection artworkId={artwork.id.toString()} artworkTitle={artwork.title} />
                   </TabsContent>
                 </Tabs>
               </div>

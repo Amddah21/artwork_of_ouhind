@@ -27,7 +27,7 @@ CREATE TABLE public.artworks (
   tags TEXT[] DEFAULT '{}',
   materials TEXT[] DEFAULT '{}',
   technique TEXT,
-  artist_name TEXT DEFAULT 'Oum Hind F. Douirani',
+  artist_name TEXT DEFAULT 'Mamany Art',
   price_mad TEXT,
   price_eur TEXT,
   reference TEXT,
@@ -50,6 +50,7 @@ CREATE TABLE public.reviews (
   comment TEXT NOT NULL,
   helpful INTEGER DEFAULT 0,
   verified BOOLEAN DEFAULT false,
+  approved BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
-import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, Download, Share2, MessageCircle, Star } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Download, Share2, MessageCircle, Star } from 'lucide-react';
 import RatingDisplay from './RatingDisplay';
 import ProtectedImage from './ProtectedImage';
 
@@ -39,8 +39,6 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
   hasPrev = false
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  const [rotation, setRotation] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -48,28 +46,12 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      setZoomLevel(1);
-      setRotation(0);
       setCurrentImageIndex(0);
     }
   }, [isOpen, artwork.id]);
 
-  const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 0.25, 3));
-  };
-
-  const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 0.25, 0.5));
-  };
-
-  const handleRotate = () => {
-    setRotation(prev => (prev + 90) % 360);
-  };
-
   const handleImageChange = (index: number) => {
     setCurrentImageIndex(index);
-    setZoomLevel(1);
-    setRotation(0);
   };
 
   const handleDownload = () => {
@@ -152,7 +134,6 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                   alt={`${artwork.title} - Vue ${currentImageIndex + 1}`}
                   className="max-w-full max-h-full object-contain transition-all duration-300"
                   style={{
-                    transform: `scale(${zoomLevel}) rotate(${rotation}deg)`,
                     filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.1))'
                   }}
                 />
@@ -162,33 +143,6 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
             {/* Image Controls */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
               <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 painterly-card">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleZoomOut}
-                  disabled={zoomLevel <= 0.5}
-                >
-                  <ZoomOut className="w-4 h-4" />
-                </Button>
-                <span className="text-sm font-medium px-2">
-                  {Math.round(zoomLevel * 100)}%
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleZoomIn}
-                  disabled={zoomLevel >= 3}
-                >
-                  <ZoomIn className="w-4 h-4" />
-                </Button>
-                <div className="w-px h-4 bg-gray-300" />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleRotate}
-                >
-                  <RotateCw className="w-4 h-4" />
-                </Button>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -232,7 +186,7 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                 {artwork.title}
               </DialogTitle>
               <p className="text-sm text-gray-600 font-body mb-4">
-                Par Oum Hind F. Douirani
+                Par Mamany-Art
               </p>
               
               {/* Rating */}

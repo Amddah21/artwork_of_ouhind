@@ -30,7 +30,7 @@ const Voting = () => {
     {
       id: '1',
       title: 'Rêves d\'Orient',
-      artist: 'Oum Hind F. Douirani',
+      artist: 'Mamany-Art',
       image: '/artwork-1.jpg',
       year: 2023,
       medium: 'Aquarelle sur papier',
@@ -48,7 +48,7 @@ const Voting = () => {
     {
       id: '2',
       title: 'Harmonie des Couleurs',
-      artist: 'Oum Hind F. Douirani',
+      artist: 'Mamany-Art',
       image: '/artwork-2.jpg',
       year: 2023,
       medium: 'Huile sur toile',
@@ -66,7 +66,7 @@ const Voting = () => {
     {
       id: '3',
       title: 'Émotions du Sud',
-      artist: 'Oum Hind F. Douirani',
+      artist: 'Mamany-Art',
       image: '/artwork-3.jpg',
       year: 2022,
       medium: 'Technique mixte',
@@ -84,7 +84,7 @@ const Voting = () => {
     {
       id: '4',
       title: 'Lumières du Désert',
-      artist: 'Oum Hind F. Douirani',
+      artist: 'Mamany-Art',
       image: '/artwork-4.jpg',
       year: 2023,
       medium: 'Aquarelle sur toile',
@@ -102,7 +102,7 @@ const Voting = () => {
     {
       id: '5',
       title: 'Reflets Urbains',
-      artist: 'Oum Hind F. Douirani',
+      artist: 'Mamany-Art',
       image: '/artwork-5.jpg',
       year: 2022,
       medium: 'Huile sur bois',

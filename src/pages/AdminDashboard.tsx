@@ -10,7 +10,9 @@ import { Badge } from '@/components/ui/badge';
 import { Trash2, Edit, Plus, Eye, Upload, X, Image as ImageIcon, Camera, Grid3X3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useArtwork } from '@/contexts/ArtworkContext';
+import { useGallery } from '@/contexts/GalleryContext';
 import { supabase } from '@/lib/supabase';
+import AdminReviewsSection from '@/components/AdminReviewsSection';
 
 interface ArtworkImage {
   id: number;
@@ -50,6 +52,7 @@ interface Artwork {
 
 const AdminDashboard: React.FC = () => {
   const { artworks, addArtwork, updateArtwork, deleteArtwork, clearAllArtworks, resetAllViews, refreshArtworks } = useArtwork();
+  const { refreshGalleries } = useGallery();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -69,7 +72,8 @@ const AdminDashboard: React.FC = () => {
     featured: false,
     tags: '',
     materials: '',
-    image_url: ''
+    image_url: '',
+    artist_name: 'Mamany-Art' // Default artist name
   });
 
   const categories = ['Abstrait', 'Portrait', 'Paysage', 'Photographie', 'Sculpture', 'Mixte'];
@@ -87,7 +91,8 @@ const AdminDashboard: React.FC = () => {
       featured: false,
       tags: '',
       materials: '',
-      image_url: ''
+      image_url: '',
+      artist_name: 'Mamany-Art' // Default artist name
     });
     setPreviewImages([]);
     setIsAdding(false);
@@ -226,12 +231,16 @@ const AdminDashboard: React.FC = () => {
       image_url: imagesToSave[0] || '', // First image as primary
       tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
       materials: formData.materials.split(',').map(mat => mat.trim()).filter(Boolean),
+      artist_name: formData.artist_name, // Include artist name
     };
 
     try {
       console.log('🎨 [AdminDashboard] Submitting artwork:', artworkData);
+      console.log('🎨 [AdminDashboard] Images to save:', imagesToSave);
+      console.log('🎨 [AdminDashboard] Current artworks count before adding:', artworks.length);
       if (editingId) {
         await updateArtwork(editingId, artworkData, imagesToSave);
+        await refreshGalleries(); // Refresh gallery data
         toast({
           title: "Succès",
           description: "Œuvre mise à jour avec succès",
@@ -239,6 +248,7 @@ const AdminDashboard: React.FC = () => {
         });
       } else {
         await addArtwork(artworkData, imagesToSave);
+        await refreshGalleries(); // Refresh gallery data
         toast({
           title: "Succès",
           description: "Nouvelle œuvre ajoutée avec succès",
@@ -290,7 +300,8 @@ const AdminDashboard: React.FC = () => {
       featured: artwork.featured || false,
       tags: artwork.tags?.join(', ') || '',
       materials: artwork.materials?.join(', ') || '',
-      image_url: artwork.image_url
+      image_url: artwork.image_url,
+      artist_name: artwork.artist_name || 'Mamany-Art'
     });
     
     // Load existing images
@@ -447,21 +458,21 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-50 to-orange-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-50 to-orange-50 p-2 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg border border-white/20">
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-white/20">
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+              <div className="flex-1">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
                   🎨 Tableau de Bord Admin
                 </h1>
                 <p className="text-slate-600 text-sm sm:text-base">
                   Gestion complète des œuvres d'art et du contenu de la galerie
                 </p>
               </div>
-              <div className="flex gap-2 ml-4">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   onClick={testSupabaseConnection}
                   variant="outline"
@@ -480,21 +491,13 @@ const AdminDashboard: React.FC = () => {
                   <Eye className="h-4 w-4 mr-2" />
                   Reset Vues
                 </Button>
-                <Button
-                  onClick={clearAllData}
-                  variant="destructive"
-                  size="sm"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Effacer tout
-                </Button>
               </div>
             </div>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
           <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs sm:text-sm font-medium text-slate-700">Total Œuvres</CardTitle>
@@ -556,19 +559,19 @@ const AdminDashboard: React.FC = () => {
 
         {/* Add/Edit Form */}
         {isAdding && (
-          <Card className="mb-6 sm:mb-8 bg-white/90 backdrop-blur-sm border-white/20 shadow-xl">
-            <CardHeader className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-t-lg">
-              <CardTitle className="flex items-center gap-2 text-slate-800">
-                {editingId ? <Edit className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
-                {editingId ? 'Modifier l\'œuvre' : 'Ajouter une nouvelle œuvre'}
+          <Card className="mb-4 sm:mb-6 lg:mb-8 bg-white/90 backdrop-blur-sm border-white/20 shadow-xl">
+            <CardHeader className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-t-lg p-4 sm:p-6">
+              <CardTitle className="flex items-center gap-2 text-slate-800 text-lg sm:text-xl">
+                {editingId ? <Edit className="h-4 w-4 sm:h-5 sm:w-5" /> : <Plus className="h-4 w-4 sm:h-5 sm:w-5" />}
+                <span className="break-words">{editingId ? 'Modifier l\'œuvre' : 'Ajouter une nouvelle œuvre'}</span>
               </CardTitle>
-              <CardDescription className="text-slate-600">
+              <CardDescription className="text-slate-600 text-sm">
                 Remplissez les détails de l'œuvre d'art
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-4 sm:p-6">
+            <CardContent className="p-3 sm:p-6">
               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {/* Title */}
                   <div className="space-y-2">
                     <Label htmlFor="title">Titre *</Label>
@@ -578,6 +581,17 @@ const AdminDashboard: React.FC = () => {
                       onChange={(e) => setFormData({...formData, title: e.target.value})}
                       placeholder="Nom de l'œuvre"
                       required
+                    />
+                  </div>
+
+                  {/* Artist Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="artist_name">Nom de l'Artiste</Label>
+                    <Input
+                      id="artist_name"
+                      value={formData.artist_name}
+                      onChange={(e) => setFormData({...formData, artist_name: e.target.value})}
+                      placeholder="Nom de l'artiste"
                     />
                   </div>
 
@@ -648,8 +662,8 @@ const AdminDashboard: React.FC = () => {
                 </div>
 
                 {/* Multiple Image Upload Section */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <Label className="text-base font-semibold text-slate-700">📸 Images de l'œuvre</Label>
                     <div className="text-xs text-slate-500 bg-blue-50 px-2 py-1 rounded">
                       💡 Astuce: Vous pouvez uploader plusieurs images (jusqu'à 50MB chacune)
@@ -657,18 +671,18 @@ const AdminDashboard: React.FC = () => {
                   </div>
                   
                   {/* Upload Area */}
-                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 bg-slate-50/50 hover:bg-slate-100/50 transition-colors">
+                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-3 sm:p-6 bg-slate-50/50 hover:bg-slate-100/50 transition-colors">
                     <div className="text-center">
                       {previewImages.length > 0 ? (
                         <div className="space-y-4">
                           {/* Image Grid */}
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                             {previewImages.map((image, index) => (
                               <div key={index} className="relative group">
                                 <img 
                                   src={image} 
                                   alt={`Preview ${index + 1}`} 
-                                  className="w-full h-32 object-cover rounded-lg shadow-md"
+                                  className="w-full h-24 sm:h-32 object-cover rounded-lg shadow-md"
                                 />
                                 <Button
                                   type="button"
@@ -768,7 +782,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
 
                 {/* Tags and Materials */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="tags">Tags</Label>
                     <Input
@@ -791,7 +805,7 @@ const AdminDashboard: React.FC = () => {
                 </div>
 
                 {/* Switches */}
-                <div className="flex gap-6">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                   <div className="flex items-center space-x-2">
                     <Switch
                       id="available"
@@ -891,7 +905,7 @@ const AdminDashboard: React.FC = () => {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                 {artworks.map((artwork) => (
                   <Card key={artwork.id} className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-300 border-0">
                     <div className="aspect-square bg-slate-100 relative group">
@@ -946,14 +960,14 @@ const AdminDashboard: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="flex gap-2">
+                      <div className="flex gap-1 sm:gap-2">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleEdit(artwork)}
-                                  className="flex-1 text-xs sm:text-sm border-yellow-200 text-yellow-700 hover:bg-yellow-50"
+                          className="flex-1 text-xs sm:text-sm border-yellow-200 text-yellow-700 hover:bg-yellow-50 min-h-[32px]"
                         >
-                          <Edit className="h-3 w-3 mr-1" />
+                          <Edit className="h-3 w-3 sm:mr-1" />
                           <span className="hidden sm:inline">Modifier</span>
                           <span className="sm:hidden">Edit</span>
                         </Button>
@@ -961,7 +975,7 @@ const AdminDashboard: React.FC = () => {
                           size="sm"
                           variant="destructive"
                           onClick={() => handleDelete(artwork.id)}
-                          className="px-2 sm:px-3"
+                          className="px-2 sm:px-3 min-h-[32px]"
                         >
                           <Trash2 className="h-3 w-3" />
                         </Button>
@@ -973,6 +987,11 @@ const AdminDashboard: React.FC = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Reviews Section */}
+        <div className="mt-8">
+          <AdminReviewsSection />
+        </div>
       </div>
     </div>
   );

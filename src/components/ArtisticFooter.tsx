@@ -2,9 +2,16 @@ import React from 'react';
 import { Button } from './ui/button';
 import { Mail, MapPin, Phone, Instagram, Facebook, Twitter, Palette, Brush, Sparkles, Award, Globe } from 'lucide-react';
 import Logo from './Logo';
+import { useArtwork } from '@/contexts/ArtworkContext';
 
 const ArtisticFooter: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const { artworks } = useArtwork();
+  
+  // Get the artist name from the first artwork or use default
+  const artistName = artworks.length > 0 && artworks[0].artist_name 
+    ? artworks[0].artist_name 
+    : 'Mamany-Art';
 
   const footerLinks = {
     navigation: [
@@ -80,7 +87,7 @@ const ArtisticFooter: React.FC = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-display font-semibold text-gray-900">
-                    Oum Hind F. Douirani
+                    {artistName}
                   </h3>
                   <p className="text-sm text-gray-600 font-body">
                     Artiste Peintre
@@ -201,7 +208,7 @@ const ArtisticFooter: React.FC = () => {
           <div className="container mx-auto px-6 py-6">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
               <div className="flex items-center space-x-2 text-gray-600">
-                <span className="font-body">© {currentYear} Oum Hind F. Douirani. Tous droits réservés.</span>
+                <span className="font-body">© {currentYear} {artistName}. Tous droits réservés.</span>
               </div>
               
               <div className="flex items-center space-x-4">

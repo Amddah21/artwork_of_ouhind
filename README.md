@@ -223,7 +223,7 @@ This project is licensed under the MIT License.
 
 ## 👨‍💻 **Developer**
 
-**Oum Hind F. Douirani**
+**Mamany Art**
 
 - **Email:** omhind53@gmail.com
 - **GitHub:** [@Amddah21](https://github.com/Amddah21)

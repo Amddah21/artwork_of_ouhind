@@ -14,8 +14,8 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
-  const [email, setEmail] = useState('admin@portfolio.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { signIn, isAdmin } = useAuth();
@@ -28,12 +28,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
 
     try {
       await signIn(email, password);
-      // No success message - just close the form
+      
+      // Check if user is admin after login
+      const isUserAdmin = email === 'omhind53@gmail.com' && password === 'admin123';
+      
+      // Show success message
+      toast({
+        title: "Connexion réussie",
+        description: isUserAdmin ? "Bienvenue dans l'interface admin!" : "Connexion réussie!",
+      });
+      
       onSuccess?.();
       onClose();
       
-      // Rediriger automatiquement vers l'interface admin
-      navigate('/admin');
+      // Only redirect admin users to dashboard
+      if (isUserAdmin) {
+        navigate('/admin');
+      }
+      // Regular users stay on current page
     } catch (error) {
       toast({
         title: "Login Failed",
@@ -60,7 +72,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
           </Button>
           <CardTitle>Connexion Administrateur</CardTitle>
           <CardDescription>
-            Connectez-vous pour accéder au panneau d'administration. Vous serez automatiquement redirigé vers l'interface admin après connexion.
+            Connectez-vous avec vos identifiants. Les administrateurs seront redirigés vers le panneau d'administration.
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -2,10 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button } from './ui/button';
 import { ArrowRight, Palette, Award, Users, Globe, Brush, Sparkles } from 'lucide-react';
 import Logo from './Logo';
+import { useArtwork } from '@/contexts/ArtworkContext';
 
 const Hero: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
+  const { artworks } = useArtwork();
+  
+  // Get the artist name from the first artwork or use default
+  const artistName = artworks.length > 0 && artworks[0].artist_name 
+    ? artworks[0].artist_name 
+    : 'Mamany-Art';
 
   useEffect(() => {
     setIsLoaded(true);
@@ -108,7 +115,7 @@ const Hero: React.FC = () => {
             }`} style={{ animationDelay: '0.3s' }}>
               <div className="ink-reveal">
                 <h1 className="heading-xl text-gradient">
-                  Oum Hind F. Douirani
+                  {artistName}
                 </h1>
               </div>
               <p className="text-xl leading-relaxed max-w-2xl font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
@@ -192,8 +199,8 @@ const Hero: React.FC = () => {
               <div className="relative rounded-3xl overflow-hidden painterly-shadow">
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 via-pink-400/10 to-transparent rounded-3xl" />
                 <img
-                  src="/slider.JPG"
-                  alt="Artwork by Oum Hind F. Douirani"
+                  src="/sedibatr.JPG"
+                  alt="Artwork by Mamany-Art"
                   className="w-full h-96 object-cover transition-transform duration-700 hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
@@ -210,7 +217,7 @@ const Hero: React.FC = () => {
                     "L'art est l'expression de l'âme à travers la couleur et la forme."
                   </blockquote>
                   <div className="mt-3 text-sm font-medium font-body" style={{ color: 'hsl(38, 95%, 60%)' }}>
-                    - Oum Hind F. Douirani
+                    - {artistName}
                   </div>
                   
                   {/* Decorative brush stroke */}

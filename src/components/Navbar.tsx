@@ -48,7 +48,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Logo size="md" className="text-foreground" />
-            <h1 className="font-serif text-2xl font-bold text-foreground">Artiste OmHind</h1>
+            <h1 className="font-serif text-2xl font-bold text-foreground">Artiste Mamany-Art</h1>
           </div>
 
           {/* Desktop Navigation */}

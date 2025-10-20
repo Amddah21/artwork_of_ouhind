@@ -79,7 +79,8 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(true);
       
       // Check if Supabase is properly configured
-      if (supabaseUrl && supabaseAnonKey) {
+      if (supabaseUrl && supabaseAnonKey && supabaseUrl !== 'https://your-project.supabase.co' && supabaseAnonKey !== 'your-anon-key') {
+        console.log('🎨 [ArtworkContext] Loading artworks from Supabase...');
         const { data: artworksData, error: artworksError } = await supabase
           .from('artworks')
           .select('*')
@@ -112,15 +113,19 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
         );
 
         setArtworks(artworksWithImages);
+        console.log('🎨 [ArtworkContext] Loaded', artworksWithImages.length, 'artworks from Supabase');
       } else {
         // Fallback to localStorage for development
-        console.log('Supabase not configured, using localStorage fallback');
+        console.log('🎨 [ArtworkContext] Supabase not configured, using localStorage fallback');
         const storedArtworks = localStorage.getItem('artspark-artworks');
         if (storedArtworks) {
-          setArtworks(JSON.parse(storedArtworks));
+          const parsedArtworks = JSON.parse(storedArtworks);
+          setArtworks(parsedArtworks);
+          console.log('🎨 [ArtworkContext] Loaded', parsedArtworks.length, 'artworks from localStorage');
         } else {
           // Start with empty gallery - user will add artworks through dashboard
           setArtworks([]);
+          console.log('🎨 [ArtworkContext] No artworks found in localStorage, starting with empty gallery');
         }
       }
     } catch (error) {
@@ -132,16 +137,20 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const addArtwork = async (artwork: Omit<Artwork, 'id' | 'created_at' | 'updated_at' | 'views' | 'images'>, images?: string[]) => {
     // Check if Supabase is properly configured
-    if (!supabaseUrl || !supabaseAnonKey) {
+    if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
       // Fallback to localStorage for development
-      console.log('Supabase not configured, using localStorage fallback for addArtwork');
+      console.log('🎨 [ArtworkContext] Supabase not configured, using localStorage fallback for addArtwork');
+      console.log('🎨 [ArtworkContext] Artwork data:', artwork);
+      console.log('🎨 [ArtworkContext] Images:', images);
+      
+      const artworkId = Date.now().toString();
       const newArtwork: Artwork = {
         ...artwork,
-        id: Date.now().toString(),
+        id: artworkId,
         views: 0,
         images: images?.map((url, index) => ({
           id: Date.now() + index,
-          artwork_id: Date.now().toString(),
+          artwork_id: artworkId,
           image_url: url,
           display_order: index,
           created_at: new Date().toISOString(),
@@ -151,10 +160,12 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
         updated_at: new Date().toISOString()
       };
       
+      console.log('🎨 [ArtworkContext] Created new artwork:', newArtwork);
+      
       const updatedArtworks = [newArtwork, ...artworks];
       setArtworks(updatedArtworks);
       localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
-      console.log('Artwork saved to localStorage successfully, total artworks:', updatedArtworks.length);
+      console.log('🎨 [ArtworkContext] Artwork saved to localStorage successfully, total artworks:', updatedArtworks.length);
       return; // Exit early - no error thrown
     }
 
@@ -200,7 +211,41 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateArtwork = async (id: string, artwork: Partial<Omit<Artwork, 'id' | 'created_at' | 'updated_at'>>) => {
+  const updateArtwork = async (id: string, artwork: Partial<Omit<Artwork, 'id' | 'created_at' | 'updated_at'>>, images?: string[]) => {
+    // Check if Supabase is properly configured
+    if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
+      // Fallback to localStorage for development
+      console.log('🎨 [ArtworkContext] Supabase not configured, using localStorage fallback for updateArtwork');
+      
+      const updatedArtworks = artworks.map(a => {
+        if (a.id === id) {
+          const updatedArtwork = {
+            ...a,
+            ...artwork,
+            updated_at: new Date().toISOString(),
+            // Update images if provided
+            images: images ? images.map((url, index) => ({
+              id: Date.now() + index,
+              artwork_id: id,
+              image_url: url,
+              display_order: index,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })) : a.images,
+            // Update primary image_url if images are provided
+            image_url: images && images.length > 0 ? images[0] : a.image_url
+          };
+          return updatedArtwork;
+        }
+        return a;
+      });
+      
+      setArtworks(updatedArtworks);
+      localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
+      console.log('🎨 [ArtworkContext] Artwork updated in localStorage successfully');
+      return;
+    }
+
     try {
       const { data, error } = await supabase
         .from('artworks')
@@ -224,9 +269,9 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const deleteArtwork = async (id: string) => {
     try {
       // Check if Supabase is properly configured
-      if (!supabaseUrl || !supabaseAnonKey) {
+      if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
         // Fallback to localStorage for development
-        console.log('Supabase not configured, using localStorage fallback for deleteArtwork');
+        console.log('🎨 [ArtworkContext] Supabase not configured, using localStorage fallback for deleteArtwork');
         const storedArtworks = localStorage.getItem('artspark-artworks');
         if (storedArtworks) {
           const artworks = JSON.parse(storedArtworks);
@@ -268,19 +313,19 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       // Mark as viewed in this session
       sessionStorage.setItem(viewedKey, 'true');
 
-      if (!supabaseUrl || !supabaseAnonKey) {
+      if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
         // Fallback to localStorage for development
-        console.log('Supabase not configured, incrementing views locally');
-        setArtworks(prev => prev.map(a => 
-          a.id === id ? { ...a, views: a.views + 1 } : a
-        ));
+        console.log('🎨 [ArtworkContext] Supabase not configured, incrementing views locally');
         
-        // Update localStorage
-        const updatedArtworks = artworks.map(a => 
-          a.id === id ? { ...a, views: a.views + 1 } : a
-        );
-        localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
-        console.log(`View incremented locally for artwork ${id}`);
+        // Update state and localStorage in one go
+        setArtworks(prev => {
+          const updatedArtworks = prev.map(a => 
+            a.id === id ? { ...a, views: a.views + 1 } : a
+          );
+          localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
+          console.log(`View incremented locally for artwork ${id}`);
+          return updatedArtworks;
+        });
         return;
       }
 
@@ -288,23 +333,34 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       const { error } = await supabase.rpc('increment_views', { artwork_id: id });
       
       if (error) {
-        console.error('Error incrementing views:', error);
-        // Fallback: update locally
-        setArtworks(prev => prev.map(a => 
-          a.id === id ? { ...a, views: a.views + 1 } : a
-        ));
-        console.log(`View incremented locally (fallback) for artwork ${id}`);
+        console.error('Error incrementing views with RPC, trying direct update:', error);
+        
+        // Fallback: try direct update
+        const { error: updateError } = await supabase
+          .from('artworks')
+          .update({ views: supabase.raw('views + 1') })
+          .eq('id', id);
+          
+        if (updateError) {
+          console.error('Error with direct update, falling back to local:', updateError);
+          // Final fallback: update locally
+          setArtworks(prev => prev.map(a => 
+            a.id === id ? { ...a, views: a.views + 1 } : a
+          ));
+          console.log(`View incremented locally (fallback) for artwork ${id}`);
+        } else {
+          // Update local state immediately for better UX
+          setArtworks(prev => prev.map(a => 
+            a.id === id ? { ...a, views: a.views + 1 } : a
+          ));
+          console.log(`View incremented in database (direct update) for artwork ${id}`);
+        }
       } else {
         // Update local state immediately for better UX
         setArtworks(prev => prev.map(a => 
           a.id === id ? { ...a, views: a.views + 1 } : a
         ));
-        console.log(`View incremented in database for artwork ${id}`);
-        
-        // Also refresh from database to ensure accuracy
-        setTimeout(async () => {
-          await loadArtworks();
-        }, 1000);
+        console.log(`View incremented in database (RPC) for artwork ${id}`);
       }
     } catch (error) {
       console.error('Error incrementing views:', error);
@@ -405,9 +461,9 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const clearAllArtworks = async () => {
     try {
-      if (!supabaseUrl || !supabaseAnonKey) {
+      if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
         // Fallback to localStorage
-        console.log('Supabase not configured, clearing localStorage');
+        console.log('🎨 [ArtworkContext] Supabase not configured, clearing localStorage');
         localStorage.removeItem('artspark-artworks');
         setArtworks([]);
         console.log('All artworks cleared from localStorage');
@@ -446,15 +502,18 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   const resetAllViews = async () => {
     try {
-      if (!supabaseUrl || !supabaseAnonKey) {
+      if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
         // Fallback to localStorage
-        console.log('Supabase not configured, resetting views locally');
-        setArtworks(prev => prev.map(artwork => ({ ...artwork, views: 0 })));
+        console.log('🎨 [ArtworkContext] Supabase not configured, resetting views locally');
         
-        // Update localStorage
-        const updatedArtworks = artworks.map(artwork => ({ ...artwork, views: 0 }));
-        localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
-        console.log('All view counts reset locally');
+        // Update state first
+        setArtworks(prev => {
+          const updatedArtworks = prev.map(artwork => ({ ...artwork, views: 0 }));
+          // Update localStorage with the updated artworks
+          localStorage.setItem('artspark-artworks', JSON.stringify(updatedArtworks));
+          console.log('All view counts reset locally');
+          return updatedArtworks;
+        });
         return;
       }
 
@@ -465,13 +524,16 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
         .neq('id', ''); // Update all artworks
 
       if (error) {
-        console.error('Error resetting views:', error);
-        throw error;
+        console.error('Error resetting views in database:', error);
+        // Don't throw error, just log it and continue with local update
+        console.log('Continuing with local view reset...');
+      } else {
+        console.log('All view counts reset in database');
       }
 
-      // Update local state
+      // Update local state regardless of database success
       setArtworks(prev => prev.map(artwork => ({ ...artwork, views: 0 })));
-      console.log('All view counts reset in database');
+      console.log('All view counts reset locally');
     } catch (error) {
       console.error('Error resetting views:', error);
       throw error;

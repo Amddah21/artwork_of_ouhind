@@ -7,6 +7,8 @@ import { ArtworkProvider } from "@/contexts/ArtworkContext";
 import { ReviewProvider } from "@/contexts/ReviewContext";
 import { RatingProvider } from "@/contexts/RatingContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { GalleryProvider } from "@/contexts/GalleryContext";
+import { useCopyrightProtection } from "@/hooks/useCopyrightProtection";
 import ArtisticNavbar from "@/components/ArtisticNavbar";
 import ArtisticFooter from "@/components/ArtisticFooter";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -20,38 +22,58 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Inner component that uses the copyright protection hook
+const AppContent = () => {
+  // Initialize global copyright protection
+  useCopyrightProtection({
+    enableRightClickProtection: true,
+    enableDragProtection: true,
+    enableKeyboardProtection: true,
+    enablePrintProtection: true,
+    enableScreenshotProtection: true,
+    showProtectionMessages: true,
+    protectionMessage: '🛡️ Image protégée par copyright - © Mamany-Art'
+  });
+
+  return (
+    <BrowserRouter>
+      <div className="min-h-screen flex flex-col">
+        <ArtisticNavbar />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/artwork/:id" element={<ArtworkDetail />} />
+            <Route path="/gallery/:galleryId" element={<GalleryDetail />} />
+            <Route path="/voting" element={<Voting />} />
+            <Route path="/comments" element={<Comments />} />
+            <Route path="/admin" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <ArtisticFooter />
+      </div>
+    </BrowserRouter>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
         <ArtworkProvider>
-          <ReviewProvider>
-            <RatingProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <div className="min-h-screen flex flex-col">
-                  <ArtisticNavbar />
-                  <main className="flex-1">
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/artwork/:id" element={<ArtworkDetail />} />
-                      <Route path="/gallery/:galleryId" element={<GalleryDetail />} />
-                      <Route path="/voting" element={<Voting />} />
-                      <Route path="/comments" element={<Comments />} />
-                      <Route path="/admin" element={
-                        <ProtectedRoute requireAdmin={true}>
-                          <AdminDashboard />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                  <ArtisticFooter />
-                </div>
-              </BrowserRouter>
-            </RatingProvider>
-          </ReviewProvider>
+          <GalleryProvider>
+            <ReviewProvider>
+              <RatingProvider>
+                <Toaster />
+                <Sonner />
+                <AppContent />
+              </RatingProvider>
+            </ReviewProvider>
+          </GalleryProvider>
         </ArtworkProvider>
       </AuthProvider>
     </TooltipProvider>

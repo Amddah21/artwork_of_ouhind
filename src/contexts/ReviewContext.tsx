@@ -10,6 +10,7 @@ export interface Review {
   comment: string;
   helpful: number; // number of helpful votes
   verified: boolean; // verified purchase
+  approved: boolean; // admin approval status
   created_at: string;
   updated_at: string;
 }
@@ -22,17 +23,20 @@ type ReviewAction =
   | { type: 'ADD_REVIEW'; payload: Review }
   | { type: 'DELETE_REVIEW'; payload: string }
   | { type: 'MARK_HELPFUL'; payload: string }
+  | { type: 'APPROVE_REVIEW'; payload: string }
   | { type: 'LOAD_REVIEWS'; payload: Review[] };
 
 interface ReviewContextType {
   state: ReviewState;
   dispatch: React.Dispatch<ReviewAction>;
-  addReview: (review: Omit<Review, 'id' | 'created_at' | 'updated_at' | 'helpful' | 'verified'>) => Promise<void>;
+  addReview: (review: Omit<Review, 'id' | 'created_at' | 'updated_at' | 'helpful' | 'verified' | 'approved'>) => Promise<void>;
   deleteReview: (id: string) => Promise<void>;
   markHelpful: (id: string) => Promise<void>;
+  approveReview: (id: string) => Promise<void>;
   getArtworkReviews: (artworkId: string) => Review[];
   getArtworkRating: (artworkId: string) => { average: number; count: number; distribution: number[] };
   loadReviews: () => Promise<void>;
+  getAllReviews: () => Review[];
 }
 
 const ReviewContext = createContext<ReviewContextType | null>(null);
@@ -40,20 +44,33 @@ const ReviewContext = createContext<ReviewContextType | null>(null);
 const reviewReducer = (state: ReviewState, action: ReviewAction): ReviewState => {
   switch (action.type) {
     case 'ADD_REVIEW':
+      const newReviews = [...state.reviews, action.payload];
+      // Save to localStorage
+      localStorage.setItem('artspark-reviews', JSON.stringify(newReviews));
       return {
         ...state,
-        reviews: [...state.reviews, action.payload]
+        reviews: newReviews
       };
     case 'DELETE_REVIEW':
+      const filteredReviews = state.reviews.filter(r => r.id !== action.payload);
+      // Save to localStorage
+      localStorage.setItem('artspark-reviews', JSON.stringify(filteredReviews));
       return {
         ...state,
-        reviews: state.reviews.filter(r => r.id !== action.payload)
+        reviews: filteredReviews
       };
     case 'MARK_HELPFUL':
       return {
         ...state,
         reviews: state.reviews.map(r =>
           r.id === action.payload ? { ...r, helpful: r.helpful + 1 } : r
+        )
+      };
+    case 'APPROVE_REVIEW':
+      return {
+        ...state,
+        reviews: state.reviews.map(r =>
+          r.id === action.payload ? { ...r, approved: true } : r
         )
       };
     case 'LOAD_REVIEWS':
@@ -80,6 +97,25 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
 
   const loadReviews = async () => {
     try {
+      // Check if Supabase is properly configured
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
+        // Fallback to localStorage for development
+        console.log('🎨 [ReviewContext] Supabase not configured, loading reviews from localStorage');
+        const storedReviews = localStorage.getItem('artspark-reviews');
+        if (storedReviews) {
+          const parsedReviews = JSON.parse(storedReviews);
+          dispatch({ type: 'LOAD_REVIEWS', payload: parsedReviews });
+          console.log('Loaded', parsedReviews.length, 'reviews from localStorage');
+        } else {
+          dispatch({ type: 'LOAD_REVIEWS', payload: [] });
+          console.log('No reviews found in localStorage');
+        }
+        return;
+      }
+
       const { data, error } = await supabase
         .from('reviews')
         .select('*')
@@ -91,29 +127,62 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
       }
 
       dispatch({ type: 'LOAD_REVIEWS', payload: data || [] });
+      console.log('Loaded', (data || []).length, 'reviews from Supabase');
     } catch (error) {
       console.error('Error loading reviews:', error);
     }
   };
 
-  const addReview = async (review: Omit<Review, 'id' | 'created_at' | 'updated_at' | 'helpful' | 'verified'>) => {
+  const addReview = async (review: Omit<Review, 'id' | 'created_at' | 'updated_at' | 'helpful' | 'verified' | 'approved'>) => {
     try {
+      // Check if Supabase is properly configured
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
+        // Fallback to localStorage for development
+        console.log('🎨 [ReviewContext] Supabase not configured, using localStorage fallback for addReview');
+        
+        const newReview: Review = {
+          ...review,
+          id: Date.now().toString(),
+          helpful: 0,
+          verified: false,
+          approved: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        
+        dispatch({ type: 'ADD_REVIEW', payload: newReview });
+        console.log('Review added to localStorage successfully');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('reviews')
         .insert([{
           ...review,
           helpful: 0,
-          verified: false
+          verified: false,
+          approved: false // New reviews need admin approval
         }])
         .select()
         .single();
 
       if (error) {
-        console.error('Error adding review:', error);
-        throw error;
+        console.error('Error adding review to Supabase:', error);
+        // Provide more specific error message
+        if (error.code === '23505') {
+          throw new Error('Vous avez déjà laissé un avis pour cette œuvre.');
+        } else if (error.code === '23503') {
+          throw new Error('Cette œuvre n\'existe plus.');
+        } else {
+          throw new Error('Erreur lors de la sauvegarde de votre avis. Veuillez réessayer.');
+        }
       }
 
       dispatch({ type: 'ADD_REVIEW', payload: data });
+      console.log('Review added to Supabase successfully');
     } catch (error) {
       console.error('Error adding review:', error);
       throw error;
@@ -122,6 +191,18 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteReview = async (id: string) => {
     try {
+      // Check if Supabase is properly configured
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
+        // Fallback to localStorage for development
+        console.log('🎨 [ReviewContext] Supabase not configured, deleting review locally');
+        dispatch({ type: 'DELETE_REVIEW', payload: id });
+        console.log('Review deleted from localStorage successfully');
+        return;
+      }
+
       const { error } = await supabase
         .from('reviews')
         .delete()
@@ -133,6 +214,7 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
       }
 
       dispatch({ type: 'DELETE_REVIEW', payload: id });
+      console.log('Review deleted from Supabase successfully');
     } catch (error) {
       console.error('Error deleting review:', error);
       throw error;
@@ -170,9 +252,33 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const approveReview = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .update({ approved: true })
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error approving review:', error);
+        throw error;
+      }
+
+      dispatch({ type: 'APPROVE_REVIEW', payload: id });
+    } catch (error) {
+      console.error('Error approving review:', error);
+      throw error;
+    }
+  };
+
   const getArtworkReviews = (artworkId: string): Review[] => {
     return state.reviews
-      .filter(r => r.artwork_id === artworkId)
+      .filter(r => r.artwork_id === artworkId && r.approved)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  };
+
+  const getAllReviews = (): Review[] => {
+    return state.reviews
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   };
 
@@ -203,9 +309,11 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
       addReview,
       deleteReview,
       markHelpful,
+      approveReview,
       getArtworkReviews,
       getArtworkRating,
-      loadReviews
+      loadReviews,
+      getAllReviews
     }}>
       {children}
     </ReviewContext.Provider>

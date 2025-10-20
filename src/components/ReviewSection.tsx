@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ThumbsUp, Trash2, CheckCircle } from 'lucide-react';
+import { ThumbsUp, Trash2, CheckCircle, MessageCircle, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,7 @@ import { useReview } from '@/contexts/ReviewContext';
 import RatingDisplay from './RatingDisplay';
 
 interface ReviewSectionProps {
-  artworkId: number;
+  artworkId: string;
   artworkTitle: string;
 }
 
@@ -27,31 +27,50 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
     rating: 0,
     comment: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [sortBy, setSortBy] = useState<'recent' | 'helpful' | 'highest' | 'lowest'>('recent');
 
-  const handleSubmitReview = (e: React.FormEvent) => {
+  const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
     if (formData.rating === 0 || !formData.userName || !formData.comment) {
-      alert('Veuillez remplir tous les champs et donner une note');
+      alert('Veuillez remplir tous les champs obligatoires et donner une note');
       return;
     }
 
-    addReview({
-      artworkId,
-      userName: formData.userName,
-      userEmail: formData.userEmail,
-      rating: formData.rating,
-      comment: formData.comment
-    });
+    // Ensure email is provided (required by database)
+    if (!formData.userEmail || formData.userEmail.trim() === '') {
+      alert('Veuillez fournir une adresse email valide');
+      return;
+    }
 
-    // Reset form
-    setFormData({
-      userName: '',
-      userEmail: '',
-      rating: 0,
-      comment: ''
-    });
-    setShowForm(false);
+    setIsSubmitting(true);
+    try {
+      await addReview({
+        artwork_id: artworkId,
+        user_name: formData.userName.trim(),
+        user_email: formData.userEmail.trim(),
+        rating: formData.rating,
+        comment: formData.comment.trim()
+      });
+
+      // Reset form
+      setFormData({
+        userName: '',
+        userEmail: '',
+        rating: 0,
+        comment: ''
+      });
+      setShowForm(false);
+      alert('✅ Votre avis a été soumis avec succès ! Il sera publié après approbation par l\'administrateur.');
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la soumission de votre avis. Veuillez réessayer.';
+      alert(`❌ ${errorMessage}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -82,11 +101,14 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
   return (
     <div className="space-y-6">
       {/* Rating Overview */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Évaluations et Avis</CardTitle>
+      <Card className="bg-white/90 backdrop-blur-sm border-white/20 shadow-xl">
+        <CardHeader className="bg-gradient-to-r from-slate-50 to-yellow-50 rounded-t-lg">
+          <CardTitle className="text-slate-800 flex items-center gap-2">
+            <Star className="h-5 w-5 text-yellow-600" />
+            Évaluations et Avis
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Average Rating */}
             <div className="flex flex-col items-center justify-center p-6 bg-muted rounded-lg">
@@ -126,22 +148,28 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
 
       {/* Write Review Button */}
       {!showForm && (
-        <Button
-          onClick={() => setShowForm(true)}
-          className="w-full md:w-auto"
-          variant="outline"
-        >
-          Écrire un avis
-        </Button>
+        <div className="flex justify-center">
+          <Button
+            onClick={() => setShowForm(true)}
+            className="w-full md:w-auto bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+            size="lg"
+          >
+            <MessageCircle className="h-5 w-5 mr-2" />
+            Écrire un avis
+          </Button>
+        </div>
       )}
 
       {/* Review Form */}
       {showForm && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Votre avis sur "{artworkTitle}"</CardTitle>
+        <Card className="bg-white/90 backdrop-blur-sm border-white/20 shadow-xl">
+          <CardHeader className="bg-gradient-to-r from-slate-50 to-yellow-50 rounded-t-lg">
+            <CardTitle className="text-slate-800 flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-yellow-600" />
+              Votre avis sur "{artworkTitle}"
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <form onSubmit={handleSubmitReview} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -151,15 +179,18 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
                     value={formData.userName}
                     onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
                     required
+                    placeholder="Votre nom complet"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="userEmail">Email</Label>
+                  <Label htmlFor="userEmail">Email *</Label>
                   <Input
                     id="userEmail"
                     type="email"
                     value={formData.userEmail}
                     onChange={(e) => setFormData({ ...formData, userEmail: e.target.value })}
+                    required
+                    placeholder="votre@email.com"
                   />
                 </div>
               </div>
@@ -188,14 +219,32 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
                 />
               </div>
 
-              <div className="flex gap-2">
-                <Button type="submit">Publier l'avis</Button>
+              <div className="flex gap-3 justify-end">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setShowForm(false)}
+                  disabled={isSubmitting}
+                  className="border-slate-300 text-slate-600 hover:bg-slate-50"
                 >
                   Annuler
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Publication...
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Publier l'avis
+                    </>
+                  )}
                 </Button>
               </div>
             </form>
@@ -238,7 +287,7 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-semibold">{review.userName}</h4>
+                        <h4 className="font-semibold">{review.user_name}</h4>
                         {review.verified && (
                           <Badge variant="secondary" className="flex items-center gap-1">
                             <CheckCircle className="w-3 h-3" />
@@ -250,7 +299,7 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">
-                        {formatDate(review.date)}
+                        {formatDate(review.created_at)}
                       </p>
                     </div>
                   </div>
@@ -291,11 +340,28 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
       )}
 
       {reviews.length === 0 && !showForm && (
-        <Card>
+        <Card className="bg-white/90 backdrop-blur-sm border-white/20 shadow-xl">
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground mb-4">
-              Aucun avis pour le moment. Soyez le premier à donner votre avis !
-            </p>
+            <div className="flex flex-col items-center gap-4">
+              <div className="p-4 bg-yellow-100 rounded-full">
+                <MessageCircle className="h-8 w-8 text-yellow-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                  Aucun avis pour le moment
+                </h3>
+                <p className="text-slate-600 mb-4">
+                  Soyez le premier à donner votre avis sur cette œuvre !
+                </p>
+                <Button
+                  onClick={() => setShowForm(true)}
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Écrire le premier avis
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
       )}

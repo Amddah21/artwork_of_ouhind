@@ -161,7 +161,90 @@ const CommerceContact: React.FC = () => {
             <Card className="painterly-card p-6">
               <div className="space-y-4">
                 
-                <div className="flex items-center space-x-4">
+                <div 
+                  className="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-all duration-300"
+                  onClick={() => {
+                    const address = "BP 2595 RABAT CENTRAL/RABAT";
+                    const encodedAddress = encodeURIComponent(address);
+                    
+                    // Créer un modal personnalisé pour choisir l'application
+                    const modal = document.createElement('div');
+                    modal.style.cssText = `
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 100%;
+                      background: rgba(0,0,0,0.5);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      z-index: 9999;
+                    `;
+                    
+                    const modalContent = document.createElement('div');
+                    modalContent.style.cssText = `
+                      background: white;
+                      padding: 30px;
+                      border-radius: 12px;
+                      text-align: center;
+                      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                      max-width: 400px;
+                      width: 90%;
+                    `;
+                    
+                    modalContent.innerHTML = `
+                      <h3 style="margin-bottom: 20px; color: #333; font-size: 18px;">Choisissez votre application de navigation</h3>
+                      <p style="margin-bottom: 25px; color: #666; font-size: 14px;">BP 2595 RABAT CENTRAL/RABAT</p>
+                      <div style="display: flex; gap: 15px; justify-content: center;">
+                        <button id="googleMapsBtn" style="
+                          background: #4285f4;
+                          color: white;
+                          border: none;
+                          padding: 12px 24px;
+                          border-radius: 8px;
+                          cursor: pointer;
+                          font-size: 14px;
+                          font-weight: 500;
+                        ">Google Maps</button>
+                        <button id="wazeBtn" style="
+                          background: #33ccff;
+                          color: white;
+                          border: none;
+                          padding: 12px 24px;
+                          border-radius: 8px;
+                          cursor: pointer;
+                          font-size: 14px;
+                          font-weight: 500;
+                        ">Waze</button>
+                      </div>
+                    `;
+                    
+                    modal.appendChild(modalContent);
+                    document.body.appendChild(modal);
+                    
+                    // Google Maps button
+                    document.getElementById('googleMapsBtn').onclick = () => {
+                      const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+                      window.open(googleMapsUrl, '_blank');
+                      document.body.removeChild(modal);
+                    };
+                    
+                    // Waze button
+                    document.getElementById('wazeBtn').onclick = () => {
+                      const wazeUrl = `https://waze.com/ul?q=${encodedAddress}&navigate=yes`;
+                      window.open(wazeUrl, '_blank');
+                      document.body.removeChild(modal);
+                    };
+                    
+                    // Close modal when clicking outside
+                    modal.onclick = (e) => {
+                      if (e.target === modal) {
+                        document.body.removeChild(modal);
+                      }
+                    };
+                  }}
+                >
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
@@ -169,13 +252,18 @@ const CommerceContact: React.FC = () => {
                     <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
                       Adresse
                     </h4>
-                    <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                    <p className="text-sm font-body hover:text-blue-600 transition-colors" style={{ color: 'hsl(240, 10%, 35%)' }}>
                       BP 2595 RABAT CENTRAL/RABAT
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
+                <div 
+                  className="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-all duration-300"
+                  onClick={() => {
+                    window.open('tel:+212666672756', '_self');
+                  }}
+                >
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center">
                     <Phone className="w-6 h-6 text-white" />
                   </div>
@@ -183,13 +271,18 @@ const CommerceContact: React.FC = () => {
                     <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
                       Téléphone
                     </h4>
-                    <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                    <p className="text-sm font-body hover:text-green-600 transition-colors" style={{ color: 'hsl(240, 10%, 35%)' }}>
                       +212-666 67 27 56
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
+                <div 
+                  className="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-all duration-300"
+                  onClick={() => {
+                    window.open('mailto:omhind53@gmail.com', '_self');
+                  }}
+                >
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                     <Mail className="w-6 h-6 text-white" />
                   </div>
@@ -197,13 +290,16 @@ const CommerceContact: React.FC = () => {
                     <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
                       Email
                     </h4>
-                    <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                    <p className="text-sm font-body hover:text-orange-600 transition-colors" style={{ color: 'hsl(240, 10%, 35%)' }}>
                       omhind53@gmail.com
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
+                <div 
+                  className="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-all duration-300"
+                  onClick={handleInstagramContact}
+                >
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
                     <Instagram className="w-6 h-6 text-white" />
                   </div>
@@ -211,13 +307,16 @@ const CommerceContact: React.FC = () => {
                     <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
                       Instagram
                     </h4>
-                    <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                    <p className="text-sm font-body hover:text-pink-600 transition-colors" style={{ color: 'hsl(240, 10%, 35%)' }}>
                       @fatydouirani
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
+                <div 
+                  className="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-all duration-300"
+                  onClick={handleFacebookContact}
+                >
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
                     <Facebook className="w-6 h-6 text-white" />
                   </div>
@@ -225,7 +324,7 @@ const CommerceContact: React.FC = () => {
                     <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
                       Facebook
                     </h4>
-                    <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                    <p className="text-sm font-body hover:text-blue-600 transition-colors" style={{ color: 'hsl(240, 10%, 35%)' }}>
                       faty oumhind douirani
                     </p>
                   </div>

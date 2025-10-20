@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, Shield, Eye, EyeOff } from 'lucide-react';
 import WatermarkOverlay from './WatermarkOverlay';
 
 interface ProtectedImageProps {
@@ -22,17 +22,31 @@ const ProtectedImage = ({
   watermarkPosition = 'center'
 }: ProtectedImageProps) => {
   const [showProtection, setShowProtection] = useState(false);
+  const [isBlurred, setIsBlurred] = useState(false);
+  const [protectionMessage, setProtectionMessage] = useState('');
   const imgRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const showProtectionMessage = (message: string) => {
+      setProtectionMessage(message);
+      setShowProtection(true);
+      setIsBlurred(true);
+      setTimeout(() => {
+        setShowProtection(false);
+        setIsBlurred(false);
+        setProtectionMessage('');
+      }, 3000);
+    };
+
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
-      setShowProtection(true);
-      setTimeout(() => setShowProtection(false), 2000);
+      showProtectionMessage('❌ Clic droit désactivé - Image protégée par copyright');
     };
 
     const handleDragStart = (e: DragEvent) => {
       e.preventDefault();
+      showProtectionMessage('❌ Glisser-déposer désactivé - Image protégée');
     };
 
     const handleSelectStart = (e: Event) => {
@@ -40,39 +54,81 @@ const ProtectedImage = ({
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Disable common screenshot shortcuts
+      // Disable common screenshot and save shortcuts
       if (
         (e.ctrlKey && e.shiftKey && e.key === 'S') || // Ctrl+Shift+S
         (e.metaKey && e.shiftKey && e.key === '4') || // Cmd+Shift+4 (Mac)
         (e.metaKey && e.shiftKey && e.key === '3') || // Cmd+Shift+3 (Mac)
         (e.key === 'F12') || // F12 (DevTools)
         (e.ctrlKey && e.key === 'u') || // Ctrl+U (View Source)
-        (e.ctrlKey && e.key === 's') // Ctrl+S (Save)
+        (e.ctrlKey && e.key === 's') || // Ctrl+S (Save)
+        (e.ctrlKey && e.key === 'c') || // Ctrl+C (Copy)
+        (e.ctrlKey && e.key === 'v') || // Ctrl+V (Paste)
+        (e.ctrlKey && e.key === 'a') || // Ctrl+A (Select All)
+        (e.ctrlKey && e.key === 'p') || // Ctrl+P (Print)
+        (e.metaKey && e.key === 's') || // Cmd+S (Mac Save)
+        (e.metaKey && e.key === 'c') || // Cmd+C (Mac Copy)
+        (e.metaKey && e.key === 'a') || // Cmd+A (Mac Select All)
+        (e.altKey && e.key === 'PrintScreen') // Alt+PrintScreen
       ) {
         e.preventDefault();
-        setShowProtection(true);
-        setTimeout(() => setShowProtection(false), 2000);
+        showProtectionMessage('❌ Raccourci clavier désactivé - Image protégée par copyright');
       }
     };
 
+    const handleMouseLeave = () => {
+      // Blur image when mouse leaves to prevent screenshots
+      setIsBlurred(true);
+      setTimeout(() => setIsBlurred(false), 1000);
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      // Prevent long press on mobile
+      e.preventDefault();
+    };
+
     const img = imgRef.current;
-    if (img) {
+    const container = containerRef.current;
+    
+    if (img && container) {
       img.addEventListener('contextmenu', handleContextMenu);
       img.addEventListener('dragstart', handleDragStart);
       img.addEventListener('selectstart', handleSelectStart);
+      img.addEventListener('touchstart', handleTouchStart, { passive: false });
+      container.addEventListener('mouseleave', handleMouseLeave);
       document.addEventListener('keydown', handleKeyDown);
 
       return () => {
         img.removeEventListener('contextmenu', handleContextMenu);
         img.removeEventListener('dragstart', handleDragStart);
         img.removeEventListener('selectstart', handleSelectStart);
+        img.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('mouseleave', handleMouseLeave);
         document.removeEventListener('keydown', handleKeyDown);
       };
     }
   }, []);
 
   return (
-    <div className="relative inline-block">
+    <div 
+      ref={containerRef}
+      className="relative inline-block overflow-hidden"
+      style={{
+        filter: isBlurred ? 'blur(3px)' : 'none',
+        transition: 'filter 0.3s ease-in-out'
+      }}
+    >
+      {/* Copyright Protection Overlay - Always visible */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
+          <Shield className="w-3 h-3 inline mr-1" />
+          © Mamany-Art
+        </div>
+        <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+          Droits réservés
+        </div>
+      </div>
+
       <img
         ref={imgRef}
         src={src}
@@ -87,7 +143,9 @@ const ProtectedImage = ({
           pointerEvents: 'auto',
           WebkitTouchCallout: 'none',
           WebkitUserDrag: 'none',
-          KhtmlUserSelect: 'none'
+          KhtmlUserSelect: 'none',
+          outline: 'none',
+          border: 'none'
         } as React.CSSProperties}
         onClick={onClick}
         draggable={false}
@@ -99,17 +157,23 @@ const ProtectedImage = ({
         }}
       />
       
-      {/* Protection Overlay */}
+      {/* Enhanced Protection Overlay */}
       {showProtection && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10 rounded">
-          <div className="bg-white p-4 rounded-lg shadow-lg text-center">
-            <Lock className="w-8 h-8 mx-auto mb-2 text-red-500" />
-            <p className="text-sm font-medium text-gray-800">
-              Image protégée
+        <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-30 rounded">
+          <div className="bg-white p-6 rounded-lg shadow-2xl text-center max-w-sm mx-4">
+            <div className="flex justify-center mb-3">
+              <Shield className="w-12 h-12 text-red-500" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">
+              Image Protégée
+            </h3>
+            <p className="text-sm text-gray-600 mb-3">
+              {protectionMessage}
             </p>
-            <p className="text-xs text-gray-600">
-              Droits d'auteur réservés
-            </p>
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+              <Lock className="w-3 h-3" />
+              <span>Copyright © Mamany-Art - Tous droits réservés</span>
+            </div>
           </div>
         </div>
       )}
@@ -118,18 +182,28 @@ const ProtectedImage = ({
       {showWatermark && (
         <WatermarkOverlay 
           position={watermarkPosition}
-          opacity={0.4}
+          opacity={0.6}
         />
       )}
 
-      {/* Invisible watermark overlay */}
+      {/* Enhanced Invisible Watermark Pattern */}
       <div 
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-10"
         style={{
           background: 'transparent',
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='50' y='50' font-family='Arial' font-size='12' fill='rgba(0,0,0,0.02)' text-anchor='middle' dominant-baseline='middle'%3E© Omhind Fatima Douirani%3C/text%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ctext x='100' y='100' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='rgba(0,0,0,0.03)' text-anchor='middle' dominant-baseline='middle' transform='rotate(-45 100 100)'%3E© Mamany-Art 2025%3C/text%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat',
-          opacity: 0.1
+          opacity: 0.15,
+          mixBlendMode: 'multiply'
+        }}
+      />
+
+      {/* Additional Protection Layer */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-5"
+        style={{
+          background: 'linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.02) 75%), linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.02) 75%)',
+          backgroundSize: '20px 20px'
         }}
       />
     </div>
