@@ -174,7 +174,7 @@ const GalleryDetail: React.FC = () => {
             <Button onClick={() => window.location.reload()} className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
               Réessayer
             </Button>
-            <Button onClick={() => navigate('/portfolio')} variant="outline">
+            <Button onClick={() => navigate('/')} variant="outline">
               Retour au Portfolio
             </Button>
           </div>
@@ -191,7 +191,7 @@ const GalleryDetail: React.FC = () => {
           <h1 className="text-2xl font-bold text-slate-800 mb-4">Galerie non trouvée</h1>
           <p className="text-slate-600 mb-6">Cette galerie n'existe pas ou a été supprimée.</p>
           <div className="space-x-4">
-            <Button onClick={() => navigate('/portfolio')} className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
+            <Button onClick={() => navigate('/')} className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
               Retour au Portfolio
             </Button>
             <Button onClick={() => window.location.reload()} variant="outline">
@@ -211,8 +211,12 @@ const GalleryDetail: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 pt-4 sm:pt-8 pb-2 sm:pb-4">
         <Button
           variant="ghost"
-          onClick={() => navigate('/portfolio')}
-          className="mb-4 sm:mb-6 hover-painterly-lift text-sm sm:text-base"
+          onClick={() => {
+            console.log('Navigation button clicked, navigating to home page');
+            navigate('/');
+          }}
+          className="mb-4 sm:mb-6 hover-painterly-lift text-sm sm:text-base cursor-pointer"
+          disabled={false}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           <span className="hidden sm:inline">Retour au Portfolio</span>
@@ -356,7 +360,7 @@ const GalleryDetail: React.FC = () => {
             {categoryArtworks.length > 6 && (
               <div className="text-center mt-8">
                 <Button 
-                  onClick={() => navigate('/portfolio')}
+                  onClick={() => navigate('/')}
                   variant="outline"
                   className="border-2"
                   style={{ borderColor: 'hsl(38, 95%, 60%)' }}
