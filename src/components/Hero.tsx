@@ -93,10 +93,10 @@ const Hero: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-20 relative z-10">
-        <div className="grid lg:grid-cols-5 gap-12 items-center">
+      <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-20 relative z-10">
+        <div className="grid lg:grid-cols-5 gap-8 sm:gap-12 items-center">
           {/* Left Side - 60% (3 columns) */}
-          <div className="lg:col-span-3 space-y-8">
+          <div className="lg:col-span-3 space-y-6 sm:space-y-8">
             {/* Artist Badge with ink reveal */}
             <div className={`inline-flex items-center space-x-2 px-6 py-3 rounded-full painterly-card transition-all duration-1000 ${
               isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
@@ -124,13 +124,13 @@ const Hero: React.FC = () => {
             </div>
 
             {/* CTA Buttons with paint splash effect */}
-            <div className={`flex flex-col sm:flex-row gap-6 transition-all duration-1000 ${
+            <div className={`flex flex-col sm:flex-row gap-3 sm:gap-6 transition-all duration-1000 ${
               isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '0.6s' }}>
               <Button 
                 size="lg" 
                 onClick={handleExploreGallery}
-                className="group hover-painterly-lift paint-splash relative overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95"
+                className="group hover-painterly-lift paint-splash relative overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 w-full sm:w-auto"
                 style={{ 
                   background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
                   color: 'hsl(45, 100%, 97%)',
@@ -138,7 +138,7 @@ const Hero: React.FC = () => {
                   boxShadow: '0 8px 32px hsl(38, 95%, 60%, 0.3)'
                 }}
               >
-                <span className="relative z-10 font-body font-medium">
+                <span className="relative z-10 font-body font-medium text-sm sm:text-base">
                   Explorer la Galerie
                   <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </span>
@@ -147,7 +147,7 @@ const Hero: React.FC = () => {
                 variant="outline" 
                 size="lg" 
                 onClick={handleViewWorks}
-                className="hover-ink-flow painterly-card transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+                className="hover-ink-flow painterly-card transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg w-full sm:w-auto"
                 style={{ 
                   borderColor: 'hsl(330, 20%, 88%)',
                   color: 'hsl(240, 10%, 15%)',
@@ -155,12 +155,12 @@ const Hero: React.FC = () => {
                   backdropFilter: 'blur(10px)'
                 }}
               >
-                <span className="font-body font-medium">Voir les Œuvres</span>
+                <span className="font-body font-medium text-sm sm:text-base">Voir les Œuvres</span>
               </Button>
             </div>
 
             {/* Stats with staggered animation */}
-            <div className={`grid grid-cols-3 gap-6 pt-8 transition-all duration-1000 ${
+            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 transition-all duration-1000 ${
               isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '0.9s' }}>
               {[
@@ -172,16 +172,16 @@ const Hero: React.FC = () => {
                 return (
                   <div 
                     key={index}
-                    className="text-center painterly-card p-6 hover-watercolor-blend"
+                    className="text-center painterly-card p-4 sm:p-6 hover-watercolor-blend"
                     style={{ animationDelay: `${1.2 + index * 0.1}s` }}
                   >
-                    <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
-                      <IconComponent className="w-6 h-6 text-white" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-3 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+                      <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <div className="text-2xl font-bold text-gradient font-display">
+                    <div className="text-xl sm:text-2xl font-bold text-gradient font-display">
                       {stat.number}
                     </div>
-                    <div className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                    <div className="text-xs sm:text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
                       {stat.label}
                     </div>
                   </div>
