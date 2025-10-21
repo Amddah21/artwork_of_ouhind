@@ -93,44 +93,44 @@ const Hero: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-20 relative z-10">
-        <div className="grid lg:grid-cols-5 gap-8 sm:gap-12 items-center">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-20 relative z-10">
+        <div className="grid lg:grid-cols-5 gap-6 sm:gap-12 items-center">
           {/* Left Side - 60% (3 columns) */}
-          <div className="lg:col-span-3 space-y-6 sm:space-y-8">
+          <div className="lg:col-span-3 space-y-4 sm:space-y-8">
             {/* Artist Badge with ink reveal */}
-            <div className={`inline-flex items-center space-x-2 px-6 py-3 rounded-full painterly-card transition-all duration-1000 ${
+            <div className={`inline-flex items-center space-x-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full painterly-card transition-all duration-1000 ${
               isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
             }`}>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
-                <Palette className="w-4 h-4 text-white" />
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+                <Palette className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
               </div>
-              <span className="text-sm font-medium font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+              <span className="text-xs sm:text-sm font-medium font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
                 Artiste Peintre Professionnelle
               </span>
             </div>
 
             {/* Main Heading with ink reveal animation */}
-            <div className={`space-y-6 transition-all duration-1200 ${
+            <div className={`space-y-3 sm:space-y-6 transition-all duration-1200 ${
               isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-12'
             }`} style={{ animationDelay: '0.3s' }}>
               <div className="ink-reveal">
-                <h1 className="heading-xl text-gradient">
+                <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-display leading-tight text-gradient">
                   {artistName}
                 </h1>
               </div>
-              <p className="text-xl leading-relaxed max-w-2xl font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+              <p className="text-base sm:text-xl leading-relaxed max-w-2xl font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
                 Artiste peintre passionnée, je crée des œuvres qui capturent l'essence de la beauté et de l'émotion à travers des techniques mixtes et une palette de couleurs vibrantes.
               </p>
             </div>
 
             {/* CTA Buttons with enhanced styling */}
-            <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 transition-all duration-1000 ${
+            <div className={`flex flex-col sm:flex-row gap-3 sm:gap-6 transition-all duration-1000 ${
               isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '0.6s' }}>
               <Button 
                 size="lg" 
                 onClick={handleExploreGallery}
-                className="group relative overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-transparent hover:border-yellow-400/30"
+                className="group relative overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 rounded-2xl border-2 border-transparent hover:border-yellow-400/30"
                 style={{ 
                   background: 'linear-gradient(135deg, hsl(38, 95%, 65%) 0%, hsl(38, 95%, 55%) 50%, hsl(38, 95%, 60%) 100%)',
                   color: 'hsl(45, 100%, 97%)',
@@ -149,7 +149,7 @@ const Hero: React.FC = () => {
                 variant="outline" 
                 size="lg" 
                 onClick={handleViewWorks}
-                className="group relative overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 hover:shadow-xl w-full sm:w-auto px-8 py-4 rounded-2xl border-2"
+                className="group relative overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 hover:shadow-xl w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 rounded-2xl border-2"
                 style={{ 
                   borderColor: 'hsl(38, 95%, 70%)',
                   color: 'hsl(240, 10%, 15%)',
@@ -168,7 +168,7 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Stats with staggered animation */}
-            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 transition-all duration-1000 ${
+            <div className={`grid grid-cols-3 gap-2 sm:gap-6 pt-4 sm:pt-8 transition-all duration-1000 ${
               isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '0.9s' }}>
               {[
@@ -180,16 +180,16 @@ const Hero: React.FC = () => {
                 return (
                   <div 
                     key={index}
-                    className="text-center painterly-card p-4 sm:p-6 hover-watercolor-blend"
+                    className="text-center painterly-card p-2 sm:p-6 hover-watercolor-blend"
                     style={{ animationDelay: `${1.2 + index * 0.1}s` }}
                   >
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-3 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
-                      <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <div className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-1 sm:mb-3 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+                      <IconComponent className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <div className="text-xl sm:text-2xl font-bold text-gradient font-display">
+                    <div className="text-lg sm:text-2xl font-bold text-gradient font-display">
                       {stat.number}
                     </div>
-                    <div className="text-xs sm:text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                    <div className="text-xs sm:text-sm font-body leading-tight" style={{ color: 'hsl(240, 10%, 35%)' }}>
                       {stat.label}
                     </div>
                   </div>
@@ -209,7 +209,7 @@ const Hero: React.FC = () => {
                 <img
                   src="/sedibatr.JPG"
                   alt="Artwork by Mamany-Art"
-                  className="w-full h-96 object-cover transition-transform duration-700 hover:scale-105"
+                  className="w-full h-64 sm:h-96 object-cover transition-transform duration-700 hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                 
