@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,6 +37,10 @@ const Contact = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleFacebookContact = () => {
+    window.open('https://www.facebook.com/fatyomhind', '_blank');
   };
 
   return (
@@ -192,6 +196,22 @@ const Contact = () => {
               {isSubmitting ? "Envoi en cours..." : "Envoyer le Message"}
             </Button>
           </form>
+          
+          {/* Social Media Contact Section */}
+          <div className="mt-12 text-center">
+            <h3 className="text-xl font-semibold text-foreground mb-6">
+              Ou contactez-moi directement sur les réseaux sociaux
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                onClick={handleFacebookContact}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <Facebook className="w-4 h-4 mr-2" />
+                Facebook
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Eye, Calendar, Palette, Tag, Share2, MessageCircle, Star, Phone, Mail, Loader2 } from 'lucide-react';
+import { ArrowLeft, Eye, Calendar, Palette, Tag, Share2, MessageCircle, Star, Phone, Mail, Loader2, Facebook } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -140,6 +140,10 @@ const GalleryDetail: React.FC = () => {
     const body = `Bonjour,\n\nJe suis intéressé(e) par la galerie "${galleryData.name}".\n\nPourriez-vous me donner plus d'informations sur cette collection et discuter de sa valeur artistique ?\n\nCordialement,`;
     const mailtoUrl = `mailto:omhind53@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(mailtoUrl);
+  };
+
+  const handleFacebookContact = () => {
+    window.open('https://www.facebook.com/fatyomhind', '_blank');
   };
 
   const handleGalleryClick = (gallerySlug: string) => {
@@ -304,6 +308,13 @@ const GalleryDetail: React.FC = () => {
               >
                 <Mail className="w-4 h-4 mr-2" />
                 Email
+              </Button>
+              <Button 
+                onClick={handleFacebookContact}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base py-2 sm:py-3"
+              >
+                <Facebook className="w-4 h-4 mr-2" />
+                Facebook
               </Button>
             </div>
           </Card>

@@ -22,7 +22,7 @@ const CommerceContact: React.FC = () => {
   };
 
   const handleFacebookContact = () => {
-    window.open('https://facebook.com/faty oumhind douirani', '_blank');
+    window.open('https://www.facebook.com/fatyomhind', '_blank');
   };
 
   return (
