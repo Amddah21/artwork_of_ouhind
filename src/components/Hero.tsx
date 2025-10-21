@@ -123,39 +123,47 @@ const Hero: React.FC = () => {
               </p>
             </div>
 
-            {/* CTA Buttons with paint splash effect */}
-            <div className={`flex flex-col sm:flex-row gap-3 sm:gap-6 transition-all duration-1000 ${
+            {/* CTA Buttons with enhanced styling */}
+            <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 transition-all duration-1000 ${
               isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '0.6s' }}>
               <Button 
                 size="lg" 
                 onClick={handleExploreGallery}
-                className="group hover-painterly-lift paint-splash relative overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 w-full sm:w-auto"
+                className="group relative overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-transparent hover:border-yellow-400/30"
                 style={{ 
-                  background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
+                  background: 'linear-gradient(135deg, hsl(38, 95%, 65%) 0%, hsl(38, 95%, 55%) 50%, hsl(38, 95%, 60%) 100%)',
                   color: 'hsl(45, 100%, 97%)',
-                  border: 'none',
-                  boxShadow: '0 8px 32px hsl(38, 95%, 60%, 0.3)'
+                  boxShadow: '0 12px 40px hsl(38, 95%, 60%, 0.4), 0 4px 16px hsl(38, 95%, 60%, 0.2)',
+                  fontWeight: '600'
                 }}
               >
-                <span className="relative z-10 font-body font-medium text-sm sm:text-base">
+                {/* Animated background effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                <span className="relative z-10 font-body font-semibold text-sm sm:text-base flex items-center justify-center">
                   Explorer la Galerie
-                  <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="ml-2 w-4 h-4 transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110" />
                 </span>
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
                 onClick={handleViewWorks}
-                className="hover-ink-flow painterly-card transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg w-full sm:w-auto"
+                className="group relative overflow-hidden transition-all duration-500 hover:scale-105 active:scale-95 hover:shadow-xl w-full sm:w-auto px-8 py-4 rounded-2xl border-2"
                 style={{ 
-                  borderColor: 'hsl(330, 20%, 88%)',
+                  borderColor: 'hsl(38, 95%, 70%)',
                   color: 'hsl(240, 10%, 15%)',
-                  backgroundColor: 'transparent',
-                  backdropFilter: 'blur(10px)'
+                  backgroundColor: 'hsla(45, 100%, 97%, 0.8)',
+                  backdropFilter: 'blur(12px)',
+                  fontWeight: '600',
+                  boxShadow: '0 8px 32px hsla(38, 95%, 60%, 0.15)'
                 }}
               >
-                <span className="font-body font-medium text-sm sm:text-base">Voir les Œuvres</span>
+                {/* Subtle hover effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 via-orange-400/5 to-yellow-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <span className="relative z-10 font-body font-semibold text-sm sm:text-base flex items-center justify-center">
+                  Voir les Œuvres
+                </span>
               </Button>
             </div>
 
