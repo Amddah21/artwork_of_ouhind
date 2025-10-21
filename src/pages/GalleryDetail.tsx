@@ -215,12 +215,21 @@ const GalleryDetail: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 pt-4 sm:pt-8 pb-2 sm:pb-4">
         <Button
           variant="ghost"
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             console.log('Navigation button clicked, navigating to home page');
             navigate('/');
           }}
-          className="mb-4 sm:mb-6 hover-painterly-lift text-sm sm:text-base cursor-pointer"
+          onTouchEnd={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Navigation button touched, navigating to home page');
+            navigate('/');
+          }}
+          className="mb-4 sm:mb-6 hover-painterly-lift text-sm sm:text-base cursor-pointer touch-manipulation"
           disabled={false}
+          style={{ touchAction: 'manipulation' }}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           <span className="hidden sm:inline">Retour au Portfolio</span>

@@ -26,6 +26,25 @@ All colors MUST be HSL.
     -webkit-touch-callout: none;
   }
   
+  /* Improve touch interactions for buttons */
+  button, .btn, [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Ensure proper touch targets */
+  @media (max-width: 768px) {
+    button, .btn, [role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+  
   html {
     /* Prevent horizontal scroll on mobile */
     overflow-x: hidden;

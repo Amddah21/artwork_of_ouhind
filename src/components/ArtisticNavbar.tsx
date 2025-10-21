@@ -181,8 +181,18 @@ const ArtisticNavbar: React.FC = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden bg-white/80 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 p-2"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsMenuOpen(!isMenuOpen);
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsMenuOpen(!isMenuOpen);
+              }}
+              className="lg:hidden bg-white/80 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 p-2 touch-manipulation"
+              style={{ touchAction: 'manipulation' }}
             >
               {isMenuOpen ? (
                 <X className="w-4 h-4 text-gray-700" />
@@ -240,12 +250,22 @@ const ArtisticNavbar: React.FC = () => {
                     <Button
                       key={item.id}
                       variant="ghost"
-                      onClick={() => handleNavClick(item.href)}
-                      className={`w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 ${
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleNavClick(item.href);
+                      }}
+                      onTouchEnd={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleNavClick(item.href);
+                      }}
+                      className={`w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 touch-manipulation ${
                         isActiveItem
                           ? 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 shadow-lg'
                           : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
                       }`}
+                      style={{ touchAction: 'manipulation' }}
                     >
                       <IconComponent className={`w-5 h-5 mr-3 ${
                         isActiveItem ? 'text-gray-800' : 'text-current'
