@@ -59,7 +59,7 @@ export const useCopyrightProtection = (options: ProtectionOptions = {}) => {
     
     e.preventDefault();
     e.stopPropagation();
-    showProtectionMessage('❌ Clic droit désactivé - Image protégée par copyright');
+    showProtectionMessage('❌ Vous ne pouvez pas télécharger l\'image, elle est protégée');
     return false;
   }, [config.enableRightClickProtection, showProtectionMessage]);
 

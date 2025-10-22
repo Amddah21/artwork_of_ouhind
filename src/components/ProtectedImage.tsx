@@ -41,7 +41,7 @@ const ProtectedImage = ({
 
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
-      showProtectionMessage('❌ Clic droit désactivé - Image protégée par copyright');
+      showProtectionMessage('❌ Vous ne pouvez pas télécharger l\'image, elle est protégée');
     };
 
     const handleDragStart = (e: DragEvent) => {
