@@ -293,31 +293,31 @@ const GalleryDetail: React.FC = () => {
         }`} style={{ animationDelay: '0.2s' }}>
           <Card className="painterly-card p-4 sm:p-8 text-center">
             <h2 className="text-xl sm:text-2xl font-bold font-display mb-2" style={{ color: 'hsl(240, 10%, 15%)' }}>
-              Intéressé par cette galerie ?
-            </h2>
+                  Intéressé par cette galerie ?
+                </h2>
             <p className="text-slate-600 mb-4 sm:mb-6 font-body text-sm sm:text-base">
-              Contactez-moi pour discuter de cette collection et de sa valeur artistique
-            </p>
+                  Contactez-moi pour discuter de cette collection et de sa valeur artistique
+                </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-              <Button 
-                onClick={handleWhatsAppContact}
+                <Button 
+                  onClick={handleWhatsAppContact}
                 className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base py-2 sm:py-3"
-              >
-                <Phone className="w-4 h-4 mr-2" />
-                WhatsApp
-              </Button>
-              <Button 
+                >
+                  <Phone className="w-4 h-4 mr-2" />
+                  WhatsApp
+                </Button>
+                <Button 
                 onClick={handleEmailContact}
-                variant="outline"
+                  variant="outline"
                 className="border-2 hover:bg-slate-50 transition-all duration-300 text-sm sm:text-base py-2 sm:py-3"
-                style={{ 
+                  style={{ 
                   borderColor: 'hsl(38, 95%, 60%)',
-                  color: 'hsl(240, 10%, 15%)'
-                }}
-              >
-                <Mail className="w-4 h-4 mr-2" />
-                Email
-              </Button>
+                    color: 'hsl(240, 10%, 15%)'
+                  }}
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Email
+                </Button>
               <Button 
                 onClick={handleFacebookContact}
                 className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base py-2 sm:py-3"
@@ -372,9 +372,9 @@ const GalleryDetail: React.FC = () => {
                       <Badge variant="outline" className="text-xs">
                         {artwork.category}
                       </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
+              </div>
+            </CardContent>
+          </Card>
               ))}
             </div>
             {categoryArtworks.length > 6 && (
@@ -389,13 +389,13 @@ const GalleryDetail: React.FC = () => {
                 </Button>
               </div>
             )}
-          </div>
+        </div>
         )}
 
         {/* Other Galleries */}
         {otherGalleries.length > 0 && (
-          <div className={`transition-all duration-1000 ${
-            isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
+        <div className={`transition-all duration-1000 ${
+          isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
           }`} style={{ animationDelay: '0.6s' }}>
             <h2 className="text-2xl font-bold font-display mb-6 text-center" style={{ color: 'hsl(240, 10%, 15%)' }}>
               Découvrir d'autres galeries
@@ -403,62 +403,62 @@ const GalleryDetail: React.FC = () => {
             <p className="text-slate-600 text-center mb-8 font-body">
               Explorez nos autres collections d'œuvres d'art
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {otherGalleries.slice(0, 3).map((gallery, index) => (
-                <Card 
-                  key={gallery.id}
+              <Card
+                key={gallery.id}
                   className="painterly-card overflow-hidden hover:shadow-xl transition-all duration-500 cursor-pointer group"
-                  onClick={() => handleGalleryClick(gallery.slug)}
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <ProtectedImage
-                      src={gallery.featuredImage}
-                      alt={gallery.name}
+                onClick={() => handleGalleryClick(gallery.slug)}
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <ProtectedImage
+                    src={gallery.featuredImage}
+                    alt={gallery.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
+                  />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent">
-                      <div className="absolute bottom-4 left-4 right-4">
+                    <div className="absolute bottom-4 left-4 right-4">
                         <Badge className="mb-2" style={{
-                          backgroundColor: 'rgba(251, 191, 36, 0.1)',
-                          color: 'hsl(38, 95%, 60%)'
-                        }}>
+                      backgroundColor: 'rgba(251, 191, 36, 0.1)',
+                      color: 'hsl(38, 95%, 60%)'
+                    }}>
                           {gallery.name}
-                        </Badge>
+                    </Badge>
                         <p className="text-white text-sm">
                           {gallery.artworkCount} œuvres
                         </p>
+                  </div>
+                  </div>
+                </div>
+
+                <CardContent className="p-6">
+                  <div className="space-y-3">
+                    <div>
+                      <h3 className="text-xl font-bold font-display mb-1" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                        {gallery.name}
+                      </h3>
+                      <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                        {gallery.description}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" style={{ color: 'hsl(38, 95%, 60%)' }} />
+                        <span style={{ color: 'hsl(240, 10%, 35%)' }}>{gallery.year}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Palette className="w-4 h-4" style={{ color: 'hsl(38, 95%, 60%)' }} />
+                        <span style={{ color: 'hsl(240, 10%, 35%)' }}>{gallery.category}</span>
                       </div>
                     </div>
                   </div>
-
-                  <CardContent className="p-6">
-                    <div className="space-y-3">
-                      <div>
-                        <h3 className="text-xl font-bold font-display mb-1" style={{ color: 'hsl(240, 10%, 15%)' }}>
-                          {gallery.name}
-                        </h3>
-                        <p className="text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
-                          {gallery.description}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4" style={{ color: 'hsl(38, 95%, 60%)' }} />
-                          <span style={{ color: 'hsl(240, 10%, 35%)' }}>{gallery.year}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Palette className="w-4 h-4" style={{ color: 'hsl(38, 95%, 60%)' }} />
-                          <span style={{ color: 'hsl(240, 10%, 35%)' }}>{gallery.category}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
+        </div>
         )}
       </div>
     </div>
