@@ -221,21 +221,27 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
   };
 
   const loadFromSupabase = async () => {
-    // Load categories first
-    const categories = await ApiService.getCategories();
-    dispatch({ type: 'SET_CATEGORIES', payload: categories });
+    // Add timeout to prevent long loading
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Supabase connection timeout')), 3000)
+    );
     
-    // Load gallery data for each category
-    const galleries: Gallery[] = [];
-    for (const { category } of categories) {
-      try {
-        const galleryData = await ApiService.getGalleryData(category);
-        if (galleryData) {
-          const artworks = await ApiService.getArtworksByCategory(category);
-          galleries.push({
-            ...galleryData,
-            artworks: artworks || []
-          });
+    const supabasePromise = (async () => {
+      // Load categories first
+      const categories = await ApiService.getCategories();
+      dispatch({ type: 'SET_CATEGORIES', payload: categories });
+      
+      // Load gallery data for each category
+      const galleries: Gallery[] = [];
+      for (const { category } of categories) {
+        try {
+          const galleryData = await ApiService.getGalleryData(category);
+          if (galleryData) {
+            const artworks = await ApiService.getArtworksByCategory(category);
+            galleries.push({
+              ...galleryData,
+              artworks: artworks || []
+            });
         }
       } catch (error) {
         console.error(`Error loading gallery for category ${category}:`, error);
@@ -244,6 +250,8 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
     }
     
     dispatch({ type: 'SET_GALLERIES', payload: galleries });
+    
+    await Promise.race([supabasePromise, timeoutPromise]);
   };
 
   const generateGalleryDescription = (category: string): string => {

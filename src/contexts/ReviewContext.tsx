@@ -116,10 +116,17 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      const { data, error } = await supabase
+      // Add timeout to prevent long loading
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Supabase connection timeout')), 3000)
+      );
+      
+      const supabasePromise = supabase
         .from('reviews')
         .select('*')
         .order('created_at', { ascending: false });
+
+      const { data, error } = await Promise.race([supabasePromise, timeoutPromise]) as any;
 
       if (error) {
         console.error('Error loading reviews:', error);
@@ -129,7 +136,18 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ type: 'LOAD_REVIEWS', payload: data || [] });
       console.log('Loaded', (data || []).length, 'reviews from Supabase');
     } catch (error) {
-      console.error('Error loading reviews:', error);
+      console.error('Error loading reviews, falling back to localStorage:', error);
+      
+      // Fallback to localStorage if Supabase fails
+      const storedReviews = localStorage.getItem('artspark-reviews');
+      if (storedReviews) {
+        const parsedReviews = JSON.parse(storedReviews);
+        dispatch({ type: 'LOAD_REVIEWS', payload: parsedReviews });
+        console.log('Fallback: Loaded', parsedReviews.length, 'reviews from localStorage');
+      } else {
+        dispatch({ type: 'LOAD_REVIEWS', payload: [] });
+        console.log('Fallback: No reviews found in localStorage');
+      }
     }
   };
 
@@ -158,7 +176,12 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      const { data, error } = await supabase
+      // Add timeout to prevent long loading
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Supabase connection timeout')), 3000)
+      );
+      
+      const supabasePromise = supabase
         .from('reviews')
         .insert([{
           ...review,
@@ -168,6 +191,8 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
         }])
         .select()
         .single();
+
+      const { data, error } = await Promise.race([supabasePromise, timeoutPromise]) as any;
 
       if (error) {
         console.error('Error adding review to Supabase:', error);
@@ -184,8 +209,21 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ type: 'ADD_REVIEW', payload: data });
       console.log('Review added to Supabase successfully');
     } catch (error) {
-      console.error('Error adding review:', error);
-      throw error;
+      console.error('Error adding review, falling back to localStorage:', error);
+      
+      // Fallback to localStorage if Supabase fails
+      const newReview: Review = {
+        ...review,
+        id: Date.now().toString(),
+        helpful: 0,
+        verified: false,
+        approved: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      dispatch({ type: 'ADD_REVIEW', payload: newReview });
+      console.log('Review added to localStorage fallback successfully');
     }
   };
 
