@@ -72,7 +72,7 @@ const ProtectedImage = ({
         (e.altKey && e.key === 'PrintScreen') // Alt+PrintScreen
       ) {
         e.preventDefault();
-        showProtectionMessage('❌ Raccourci clavier désactivé - Image protégée par copyright');
+        showProtectionMessage('❌ Capture d\'écran et outils bloqués - Image protégée');
       }
     };
 
@@ -87,6 +87,18 @@ const ProtectedImage = ({
       e.preventDefault();
     };
 
+    // Screenshot detection and prevention
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        showProtectionMessage('❌ Capture d\'écran détectée - Image protégée');
+      }
+    };
+
+    // Detect if user tries to take screenshot or use dev tools
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      showProtectionMessage('❌ Tentative de capture détectée - Image protégée');
+    };
+
     const img = imgRef.current;
     const container = containerRef.current;
     
@@ -97,6 +109,8 @@ const ProtectedImage = ({
       img.addEventListener('touchstart', handleTouchStart, { passive: false });
       container.addEventListener('mouseleave', handleMouseLeave);
       document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      window.addEventListener('beforeunload', handleBeforeUnload);
 
       return () => {
         img.removeEventListener('contextmenu', handleContextMenu);
@@ -105,6 +119,8 @@ const ProtectedImage = ({
         img.removeEventListener('touchstart', handleTouchStart);
         container.removeEventListener('mouseleave', handleMouseLeave);
         document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        window.removeEventListener('beforeunload', handleBeforeUnload);
       };
     }
   }, []);
@@ -112,7 +128,7 @@ const ProtectedImage = ({
   return (
     <div 
       ref={containerRef}
-      className="relative inline-block overflow-hidden"
+      className="relative inline-block overflow-hidden protected-image screenshot-protection"
       style={{
         filter: isBlurred ? 'blur(3px)' : 'none',
         transition: 'filter 0.3s ease-in-out'
