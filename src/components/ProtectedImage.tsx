@@ -178,19 +178,19 @@ const ProtectedImage = ({
       {/* Enhanced Protection Overlay */}
       {showProtection && (
         <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-30 rounded">
-          <div className="bg-white p-6 rounded-lg shadow-2xl text-center max-w-sm mx-4">
-            <div className="flex justify-center mb-3">
-              <Shield className="w-12 h-12 text-red-500" />
+          <div className="bg-white p-3 sm:p-4 rounded-lg shadow-2xl text-center max-w-xs sm:max-w-sm mx-2 sm:mx-4">
+            <div className="flex justify-center mb-2">
+              <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
             </div>
-            <h3 className="text-lg font-bold text-gray-800 mb-2">
+            <h3 className="text-sm sm:text-base font-bold text-gray-800 mb-1">
               Image Protégée
             </h3>
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="text-xs sm:text-sm text-gray-600 mb-2">
               {protectionMessage}
             </p>
-            <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
-              <Lock className="w-3 h-3" />
-              <span>Copyright © Mamany-Art - Tous droits réservés</span>
+            <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
+              <Lock className="w-2 h-2 sm:w-3 sm:h-3" />
+              <span>Copyright © Mamany-Art</span>
             </div>
           </div>
         </div>

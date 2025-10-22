@@ -32,13 +32,13 @@ export const useCopyrightProtection = (options: ProtectionOptions = {}) => {
     const protectionDiv = document.createElement('div');
     protectionDiv.className = 'protection-message';
     protectionDiv.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <div style="font-size: 24px;">🛡️</div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <div style="font-size: 16px;">🛡️</div>
         <div>
-          <div style="font-weight: bold; margin-bottom: 5px;">Image Protégée</div>
-          <div style="font-size: 14px;">${msg}</div>
-          <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">
-            Copyright © Mamany-Art - Tous droits réservés
+          <div style="font-weight: bold; margin-bottom: 3px; font-size: 12px;">Image Protégée</div>
+          <div style="font-size: 11px;">${msg}</div>
+          <div style="font-size: 10px; margin-top: 3px; opacity: 0.8;">
+            Copyright © Mamany-Art
           </div>
         </div>
       </div>
