@@ -237,10 +237,9 @@ const AdminDashboard: React.FC = () => {
     try {
       console.log('🎨 [AdminDashboard] Submitting artwork:', artworkData);
       console.log('🎨 [AdminDashboard] Images to save:', imagesToSave);
-      console.log('🎨 [AdminDashboard] Current artworks count before adding:', artworks.length);
+      
       if (editingId) {
         await updateArtwork(editingId, artworkData, imagesToSave);
-        await refreshGalleries(); // Refresh gallery data
         toast({
           title: "Succès",
           description: "Œuvre mise à jour avec succès",
@@ -248,16 +247,20 @@ const AdminDashboard: React.FC = () => {
         });
       } else {
         await addArtwork(artworkData, imagesToSave);
-        await refreshGalleries(); // Refresh gallery data
         toast({
           title: "Succès",
           description: "Nouvelle œuvre ajoutée avec succès",
           variant: "success",
         });
-        // Force refresh artworks list
-        await refreshArtworks();
-        console.log('Artwork added successfully, artworks refreshed');
       }
+      
+      // Refresh data in parallel for better performance
+      Promise.all([
+        refreshGalleries(),
+        refreshArtworks()
+      ]).catch(error => {
+        console.error('Error refreshing data:', error);
+      });
       resetForm();
     } catch (error: any) {
       console.error('Error saving artwork:', error);

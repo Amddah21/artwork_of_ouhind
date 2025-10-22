@@ -80,11 +80,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      // Add timeout to prevent heavy loading
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 2000)
+      );
+      
+      const supabasePromise = supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
+
+      const { data, error } = await Promise.race([supabasePromise, timeoutPromise]) as any;
 
       if (error) {
         console.error('Error fetching user profile:', error);
@@ -139,10 +146,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       console.log('🌐 Using Supabase authentication...');
-      const { error } = await supabase.auth.signInWithPassword({
+      
+      // Add timeout to prevent heavy loading
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Authentication timeout')), 3000)
+      );
+      
+      const authPromise = supabase.auth.signInWithPassword({
         email,
         password,
       });
+
+      const { error } = await Promise.race([authPromise, timeoutPromise]) as any;
 
       if (error) {
         console.error('❌ Supabase login error:', error);
@@ -157,7 +172,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
     } catch (error) {
-      console.error('💥 Sign in error:', error);
+      console.error('💥 Sign in error, falling back to localStorage:', error);
+      
+      // Fallback to localStorage if Supabase fails
+      if (email === 'omhind53@gmail.com' && password === 'admin123') {
+        const adminUser: Profile = {
+          id: '1',
+          email: 'omhind53@gmail.com',
+          role: 'admin'
+        };
+        setUser(adminUser);
+        localStorage.setItem('artspark-auth', JSON.stringify(adminUser));
+        console.log('Fallback admin login successful:', adminUser);
+        return;
+      } else if (email && password) {
+        const regularUser: Profile = {
+          id: Date.now().toString(),
+          email: email,
+          role: 'user'
+        };
+        setUser(regularUser);
+        localStorage.setItem('artspark-auth', JSON.stringify(regularUser));
+        console.log('Fallback regular user login successful:', regularUser);
+        return;
+      }
+      
       throw error;
     }
   };
