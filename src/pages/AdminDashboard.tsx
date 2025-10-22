@@ -11,6 +11,7 @@ import { Trash2, Edit, Plus, Eye, Upload, X, Image as ImageIcon, Camera, Grid3X3
 import { useToast } from '@/hooks/use-toast';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import { useGallery } from '@/contexts/GalleryContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import AdminReviewsSection from '@/components/AdminReviewsSection';
 
@@ -54,6 +55,44 @@ const AdminDashboard: React.FC = () => {
   const { artworks, addArtwork, updateArtwork, deleteArtwork, clearAllArtworks, resetAllViews, refreshArtworks } = useArtwork();
   const { refreshGalleries } = useGallery();
   const { toast } = useToast();
+  const { user, isAuthenticated, isAdmin, isLoading } = useAuth();
+  
+  // Debug authentication state
+  console.log('🔐 [AdminDashboard] Auth state:', { user, isAuthenticated, isAdmin, isLoading });
+  
+  // Show loading state if authentication is still loading
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="w-96">
+          <CardContent className="p-6 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
+            <p>Chargement du tableau de bord...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
+  // Show access denied if not authenticated or not admin
+  if (!isAuthenticated || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="w-96">
+          <CardContent className="p-6 text-center">
+            <h2 className="text-xl font-semibold mb-4">Accès Refusé</h2>
+            <p className="text-muted-foreground mb-4">
+              Vous n'avez pas les permissions nécessaires pour accéder à cette page.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Contactez l'administrateur si vous pensez qu'il s'agit d'une erreur.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [isAdding, setIsAdding] = useState(false);
@@ -237,6 +276,7 @@ const AdminDashboard: React.FC = () => {
     try {
       console.log('🎨 [AdminDashboard] Submitting artwork:', artworkData);
       console.log('🎨 [AdminDashboard] Images to save:', imagesToSave);
+      console.log('🔐 [AdminDashboard] Auth state during submission:', { user, isAuthenticated, isAdmin });
       
       if (editingId) {
         await updateArtwork(editingId, artworkData, imagesToSave);
@@ -264,6 +304,7 @@ const AdminDashboard: React.FC = () => {
       resetForm();
     } catch (error: any) {
       console.error('Error saving artwork:', error);
+      console.log('🔐 [AdminDashboard] Auth state after error:', { user, isAuthenticated, isAdmin });
       
       // Only show error if it's a real error (not localStorage fallback)
       // Check if Supabase is configured to determine if this is a real error
