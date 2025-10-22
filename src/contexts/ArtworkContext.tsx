@@ -81,10 +81,18 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       // Check if Supabase is properly configured
       if (supabaseUrl && supabaseAnonKey && supabaseUrl !== 'https://your-project.supabase.co' && supabaseAnonKey !== 'your-anon-key') {
         console.log('🎨 [ArtworkContext] Loading artworks from Supabase...');
-        const { data: artworksData, error: artworksError } = await supabase
+        
+        // Add timeout to prevent long loading
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Supabase connection timeout')), 3000)
+        );
+        
+        const supabasePromise = supabase
           .from('artworks')
           .select('*')
           .order('created_at', { ascending: false });
+
+        const { data: artworksData, error: artworksError } = await Promise.race([supabasePromise, timeoutPromise]) as any;
 
         if (artworksError) {
           console.error('Error loading artworks:', artworksError);
@@ -140,8 +148,6 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
     if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project.supabase.co' || supabaseAnonKey === 'your-anon-key') {
       // Fallback to localStorage for development
       console.log('🎨 [ArtworkContext] Supabase not configured, using localStorage fallback for addArtwork');
-      console.log('🎨 [ArtworkContext] Artwork data:', artwork);
-      console.log('🎨 [ArtworkContext] Images:', images);
       
       const artworkId = Date.now().toString();
       const newArtwork: Artwork = {
@@ -171,7 +177,12 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
     // Supabase code only runs if supabaseUrl and supabaseAnonKey are configured
     try {
-      const { data, error } = await supabase
+      // Add timeout to prevent long loading
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Supabase connection timeout')), 3000)
+      );
+      
+      const supabasePromise = supabase
         .from('artworks')
         .insert([{
           ...artwork,
@@ -179,6 +190,8 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
         }])
         .select()
         .single();
+
+      const { data, error } = await Promise.race([supabasePromise, timeoutPromise]) as any;
 
       if (error) {
         console.error('Supabase error:', error);
@@ -206,8 +219,34 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       await loadArtworks();
       console.log('Artwork added to Supabase successfully, artworks reloaded');
     } catch (error) {
-      console.error('Error adding artwork:', error);
-      throw error;
+      console.error('Error adding artwork, falling back to localStorage:', error);
+      
+      // Fallback to localStorage if Supabase fails
+      const artworkId = Date.now().toString();
+      const newArtwork: Artwork = {
+        ...artwork,
+        id: artworkId,
+        views: 0,
+        images: images?.map((url, index) => ({
+          id: Date.now() + index,
+          artwork_id: artworkId,
+          image_url: url,
+          display_order: index,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })) || [],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      console.log('🎨 [ArtworkContext] Fallback: Created new artwork:', newArtwork);
+      
+      // Update state immediately
+      setArtworks(prev => {
+        const updated = [...prev, newArtwork];
+        localStorage.setItem('artspark-artworks', JSON.stringify(updated));
+        return updated;
+      });
     }
   };
 
