@@ -17,7 +17,7 @@ const defaultOptions: ProtectionOptions = {
   enablePrintProtection: true,
   enableScreenshotProtection: true,
   showProtectionMessages: true,
-  protectionMessage: '❌ Action non autorisée - Image protégée par copyright © Mamany-Art'
+  protectionMessage: '❌ Action non autorisée - Image protégée par copyright © Omhind'
 };
 
 export const useCopyrightProtection = (options: ProtectionOptions = {}) => {
@@ -38,7 +38,7 @@ export const useCopyrightProtection = (options: ProtectionOptions = {}) => {
           <div style="font-weight: bold; margin-bottom: 3px; font-size: 12px;">Image Protégée</div>
           <div style="font-size: 11px;">${msg}</div>
           <div style="font-size: 10px; margin-top: 3px; opacity: 0.8;">
-            Copyright © Mamany-Art
+            Copyright © Omhind
           </div>
         </div>
       </div>

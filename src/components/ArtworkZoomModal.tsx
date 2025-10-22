@@ -66,7 +66,7 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
                 
                 {/* Copyright Watermark */}
                 <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded text-sm font-medium backdrop-blur-sm">
-                  © Mamany-Art
+                  © Omhind
                 </div>
               </div>
             </div>
@@ -164,7 +164,7 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
                           onClick={async () => {
                             const shareData = {
                               title: artwork.title,
-                              text: `Découvrez "${artwork.title}" par ${artwork.artist_name || 'Mamany-Art'}`,
+                              text: `Découvrez "${artwork.title}" par ${artwork.artist_name || 'Omhind'}`,
                               url: `${window.location.origin}/artwork/${artwork.id}`
                             };
 
@@ -191,7 +191,7 @@ const ArtworkZoomModal = ({ artwork, isOpen, onClose }: ArtworkZoomModalProps) =
                     {/* Copyright Notice */}
                     <div className="pt-4 border-t">
                       <p className="text-xs text-muted-foreground text-center">
-                        © {new Date().getFullYear()} Mamany-Art. Tous droits réservés.
+                        © {new Date().getFullYear()} Omhind. Tous droits réservés.
                       </p>
                       <p className="text-xs text-muted-foreground text-center mt-1">
                         Cette œuvre est protégée par le droit d'auteur.

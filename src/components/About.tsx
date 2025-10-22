@@ -20,17 +20,16 @@ const About = () => {
                 <Logo size="lg" className="text-foreground flex-shrink-0" />
                 <div className="text-center sm:text-left">
                   <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-serif font-bold text-foreground leading-tight">
-                    Oum Hind, Fatima
+                    Omhind
                   </h2>
-                  <p className="text-accent font-medium text-sm md:text-base lg:text-lg xl:text-xl">Artiste Plasticienne • Née à Safi en 1957</p>
+                  <p className="text-accent font-medium text-sm md:text-base lg:text-lg xl:text-xl">Artiste Plasticienne</p>
                 </div>
               </div>
             </div>
             
             <div className="space-y-3 md:space-y-4 lg:space-y-6">
               <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Oum Hind, Fatima</strong>, est née à Safi en 1957. 
-                Artiste plasticienne au tempérament de femme battante, elle se caractérise par de fortes valeurs 
+                <strong className="text-foreground">Omhind</strong> est une artiste plasticienne au tempérament de femme battante, elle se caractérise par de fortes valeurs 
                 et des objectifs clairs. Son travail constitue un processus édificateur de projets riches en 
                 expériences et recherches en Arts Plastiques.
               </p>
@@ -92,7 +91,7 @@ const About = () => {
                         <User className="w-12 h-12 lg:w-14 lg:h-14 text-white" />
                       </div>
                       <p className="text-sm font-accent font-bold comfort-text" style={{color: '#7A6B5A'}}>
-                        Oum Hind, Fatima
+                        Omhind
                       </p>
                       <p className="text-xs comfort-text-muted font-body">
                         Artiste Plasticienne

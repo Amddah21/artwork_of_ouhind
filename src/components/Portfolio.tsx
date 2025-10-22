@@ -31,7 +31,7 @@ interface Artwork {
 
 const Portfolio: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('Tous');
-  const [visibleArtworks, setVisibleArtworks] = useState<number>(8);
+  const [visibleArtworks, setVisibleArtworks] = useState<number>(6);
   const [isLoaded, setIsLoaded] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const portfolioRef = useRef<HTMLElement>(null);
@@ -69,7 +69,7 @@ const Portfolio: React.FC = () => {
     dimensions: artwork.size || 'Dimensions non spécifiées',
     rating: getArtworkRating(artwork.id).average || 0,
     ratingCount: getArtworkRating(artwork.id).count || 0,
-    artist: artwork.artist_name || 'Mamany-Art', // Use dynamic artist name from database
+    artist: artwork.artist_name || 'Omhind', // Use dynamic artist name from database
     colorPalette: [
       '#FF6B9D', '#C44569', '#F8B500', '#6C5CE7',
       '#00B894', '#E17055', '#74B9FF', '#A29BFE'
@@ -125,7 +125,7 @@ const Portfolio: React.FC = () => {
   };
 
   const loadMore = () => {
-    setVisibleArtworks(prev => Math.min(prev + 8, filteredArtworks.length));
+    setVisibleArtworks(prev => Math.min(prev + 6, filteredArtworks.length));
   };
 
   const handleViewGallery = (category: string) => {
@@ -156,26 +156,26 @@ const Portfolio: React.FC = () => {
   return (
     <section id="portfolio" className="py-20 watercolor-bg canvas-texture" ref={portfolioRef}>
       <div className="container mx-auto px-6">
-        {/* Section Header with artistic styling */}
-        <div className={`text-center mb-16 transition-all duration-1000 ${
+        {/* Mobile-Optimized Section Header */}
+        <div className={`text-center mb-8 sm:mb-12 transition-all duration-1000 ${
           isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
         }`}>
-          <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full painterly-card mb-6">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
-              <Palette className="w-4 h-4 text-white" />
+          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full painterly-card mb-4">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+              <Palette className="w-3 h-3 text-white" />
             </div>
-            <span className="text-sm font-medium font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+            <span className="text-xs font-medium font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
               Collection Exclusive
             </span>
           </div>
-          <h2 className="heading-lg mb-6 text-gradient">Boutique Artistique</h2>
-          <p className="text-xl max-w-3xl mx-auto leading-relaxed font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
-            Découvrez des œuvres d'art originales. Chaque pièce est unique et sa valeur artistique est inestimable. Contactez-moi pour discuter de l'acquisition.
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-gradient">Galerie</h2>
+          <p className="text-sm sm:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed font-body px-4" style={{ color: 'hsl(240, 10%, 35%)' }}>
+            Découvrez des œuvres d'art originales. Chaque pièce est unique.
           </p>
         </div>
 
-        {/* Category Filter with artistic buttons */}
-        <div className={`flex flex-wrap justify-center gap-4 mb-12 transition-all duration-1000 ${
+        {/* Mobile-Optimized Category Filter */}
+        <div className={`flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12 transition-all duration-1000 ${
           isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
         }`} style={{ animationDelay: '0.2s' }}>
           {categories.map((category) => (
@@ -189,7 +189,7 @@ const Portfolio: React.FC = () => {
                   handleViewGallery(category);
                 }
               }}
-              className="hover-painterly-lift painterly-card"
+              className="hover-painterly-lift painterly-card text-xs sm:text-sm px-3 py-2"
               style={{
                 ...(selectedCategory === category
                   ? { // Style for selected button (any category)
@@ -222,12 +222,12 @@ const Portfolio: React.FC = () => {
           ))}
         </div>
 
-        {/* Masonry-style Artworks Grid */}
-        <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
+        {/* Mobile-Optimized Artworks Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {displayedArtworks.map((artwork, index) => (
             <div
               key={artwork.id}
-              className={`group break-inside-avoid transition-all duration-1000 cursor-pointer bg-white shadow-xl hover:shadow-2xl rounded-2xl overflow-hidden border border-slate-200 hover:border-yellow-300 transform hover:scale-[1.02] ${
+              className={`group transition-all duration-1000 cursor-pointer bg-white shadow-lg hover:shadow-xl rounded-xl overflow-hidden border border-slate-200 hover:border-yellow-300 transform hover:scale-[1.02] ${
                 isLoaded ? 'animate-gallery-reveal' : 'opacity-0 translate-y-8'
               }`}
               style={{ animationDelay: `${0.4 + index * 0.1}s` }}
@@ -235,149 +235,92 @@ const Portfolio: React.FC = () => {
               onMouseLeave={() => setHoveredId(null)}
               onClick={() => handleViewArtwork(artwork)}
             >
-              {/* Enhanced Image Container with premium frame */}
-              <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-slate-50 to-yellow-50 p-2">
-                <div className="relative w-full h-full overflow-hidden rounded-lg shadow-inner">
+              {/* Mobile-Optimized Image Container */}
+              <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-50 to-yellow-50 p-1">
+                <div className="relative w-full h-full overflow-hidden rounded-lg">
                   <ProtectedImage
                     src={artwork.image_url}
                     alt={artwork.title}
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
+                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
                   />
                   
-                  {/* Premium overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+                  {/* Simplified overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
                 </div>
                 
-                {/* Enhanced Color Palette Preview */}
-                <div className="absolute top-6 left-6 flex space-x-1.5">
-                  {artwork.colorPalette.slice(0, 4).map((color, idx) => (
+                {/* Simplified Color Palette - Mobile */}
+                <div className="absolute top-2 left-2 flex space-x-1">
+                  {artwork.colorPalette.slice(0, 3).map((color, idx) => (
                     <div
                       key={idx}
-                      className="w-5 h-5 rounded-full border-2 border-white shadow-lg hover:scale-110 transition-transform duration-300"
+                      className="w-3 h-3 rounded-full border border-white shadow-sm"
                       style={{ backgroundColor: color }}
-                      title={`Color ${idx + 1}`}
                     />
                   ))}
                 </div>
 
-                {/* Premium Availability Badge */}
-                <div className="absolute top-6 right-6">
-                  <span className="px-4 py-2 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm" style={{
-                    backgroundColor: 'rgba(34, 197, 94, 0.15)',
-                    borderColor: 'rgba(34, 197, 94, 0.4)',
-                    borderWidth: '1px',
-                    color: '#166534'
-                  }}>
-                    ✓ Disponible
+                {/* Simplified Availability Badge - Mobile */}
+                <div className="absolute top-2 right-2">
+                  <span className="px-2 py-1 rounded-full text-xs font-medium shadow-sm bg-green-100 text-green-800 border border-green-200">
+                    ✓
                   </span>
                 </div>
 
-                {/* Artist signature overlay */}
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-500">
-                    <p className="text-xs font-medium text-slate-700 text-center">
-                      {artwork.artist} @{artwork.year}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Enhanced Hover Overlay */}
+                {/* Mobile View Details Button */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-                  <div className="absolute bottom-6 left-6 right-6">
+                  <div className="absolute bottom-3 left-3 right-3">
                     <Button 
-                      className="w-full shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300" 
+                      size="sm"
+                      className="w-full shadow-lg" 
                       style={{
                         background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 50%) 100%)',
                         color: 'white',
                         border: 'none'
                       }}
                     >
-                      <Eye className="w-5 h-5 mr-2" />
+                      <Eye className="w-4 h-4 mr-1" />
                       Voir détails
                     </Button>
                   </div>
                 </div>
-
-                {/* Premium corner decorations */}
-                <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-yellow-500 rounded-tr-xl opacity-70" />
-                <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-yellow-500 rounded-bl-xl opacity-70" />
-                
-                {/* Floating premium sparkles */}
-                {hoveredId === artwork.id && (
-                  <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-1/4 left-1/4 animate-pulse">
-                      <Sparkles className="w-4 h-4 text-yellow-400 drop-shadow-lg" />
-                    </div>
-                    <div className="absolute top-3/4 right-1/4 animate-pulse" style={{ animationDelay: '0.5s' }}>
-                      <Sparkles className="w-3 h-3 text-pink-400 drop-shadow-lg" />
-                    </div>
-                    <div className="absolute top-1/2 right-1/3 animate-pulse" style={{ animationDelay: '1s' }}>
-                      <Sparkles className="w-3 h-3 text-purple-400 drop-shadow-lg" />
-                    </div>
-                  </div>
-                )}
               </div>
 
-              {/* Compact Product Info Section */}
-              <div className="p-4 space-y-3 bg-white">
-                {/* Title and Artist */}
+              {/* Mobile-Optimized Info Section */}
+              <div className="p-3 space-y-2 bg-white">
+                {/* Title and Artist - Compact */}
                 <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-slate-800">
+                  <h3 className="text-sm font-bold text-slate-800 line-clamp-1">
                     {artwork.title}
                   </h3>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                  <div className="flex items-center space-x-1">
+                    <div className="w-4 h-4 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                       <span className="text-white text-xs font-bold">
                         {artwork.artist.split(' ').map(n => n[0]).join('').substring(0, 2)}
                       </span>
                     </div>
-                    <p className="text-sm text-slate-600">
+                    <p className="text-xs text-slate-600 truncate">
                       {artwork.artist}
                     </p>
                   </div>
                 </div>
 
-                {/* Compact Details */}
-                <div className="grid grid-cols-3 gap-2 text-xs">
+                {/* Essential Details Only - Mobile */}
+                <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-3 h-3 text-yellow-600" />
-                    <span className="text-slate-600">Année:</span>
-                    <span className="font-medium text-slate-800">{artwork.year}</span>
+                    <span className="text-slate-600">{artwork.year}</span>
                   </div>
                   
-                  <div className="flex items-center space-x-1">
-                    <Palette className="w-3 h-3 text-blue-600" />
-                    <span className="text-slate-600">Médium:</span>
-                    <span className="font-medium text-slate-800">{artwork.technique || artwork.medium || 'N/A'}</span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-1">
-                    <Tag className="w-3 h-3 text-green-600" />
-                    <span className="text-slate-600">Taille:</span>
-                    <span className="font-medium text-slate-800">{artwork.dimensions || artwork.size || 'N/A'}</span>
-                  </div>
-                </div>
-
-                {/* Rating and Category */}
-                <div className="flex items-center justify-between">
-                  <RatingDisplay 
-                    rating={getArtworkRating(artwork.id).average}
-                    count={getArtworkRating(artwork.id).count}
-                    size="sm"
-                  />
-                  <span className="text-xs px-2 py-1 rounded-full font-medium" style={{ 
-                    color: 'hsl(38, 95%, 60%)',
-                    backgroundColor: 'rgba(251, 191, 36, 0.15)'
-                  }}>
+                  <span className="text-xs px-2 py-1 rounded-full font-medium bg-yellow-100 text-yellow-800">
                     {artwork.category}
                   </span>
                 </div>
 
-                {/* Compact Contact Buttons */}
-                <div className="grid grid-cols-3 gap-2">
+                {/* Mobile Contact Buttons - Horizontal */}
+                <div className="flex gap-1">
                   <Button 
                     size="sm" 
-                    className="text-xs"
+                    className="flex-1 text-xs h-8"
                     style={{
                       background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
                       color: 'white',
@@ -393,7 +336,7 @@ const Portfolio: React.FC = () => {
                   </Button>
                   <Button 
                     size="sm" 
-                    className="text-xs"
+                    className="flex-1 text-xs h-8"
                     style={{
                       background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
                       color: 'white',
@@ -410,7 +353,7 @@ const Portfolio: React.FC = () => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="text-xs"
+                    className="text-xs h-8 px-2"
                     style={{ 
                       borderColor: 'hsl(330, 20%, 88%)',
                       color: 'hsl(240, 10%, 15%)',
@@ -422,8 +365,7 @@ const Portfolio: React.FC = () => {
                     }}
                     data-share-button
                   >
-                    <Share2 className="w-3 h-3 mr-1" />
-                    Partager
+                    <Share2 className="w-3 h-3" />
                   </Button>
                 </div>
               </div>

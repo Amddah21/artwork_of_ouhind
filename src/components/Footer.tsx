@@ -14,8 +14,8 @@ const Footer = () => {
             <div className="flex items-center gap-4 mb-6">
               <Logo size="lg" className="text-primary-foreground" />
               <div>
-                <h3 className="font-serif text-2xl font-bold">Artiste Mamany-Art</h3>
-                <p className="text-primary-foreground/70 text-sm">Mamany-Art</p>
+                <h3 className="font-serif text-2xl font-bold">Artiste Omhind</h3>
+                <p className="text-primary-foreground/70 text-sm">Omhind</p>
               </div>
             </div>
             <p className="text-primary-foreground/80 leading-relaxed">
@@ -80,7 +80,7 @@ const Footer = () => {
 
         <div className="border-t border-primary-foreground/20 pt-8 text-center text-primary-foreground/60">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p>&copy; {new Date().getFullYear()} Artiste Mamany-Art. Tous droits réservés.</p>
+            <p>&copy; {new Date().getFullYear()} Artiste Omhind. Tous droits réservés.</p>
             <div className="flex items-center gap-2 text-sm">
               <span>from✨ par Digital Teams</span>
               <img 

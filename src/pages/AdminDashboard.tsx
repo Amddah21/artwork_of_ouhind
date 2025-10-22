@@ -112,7 +112,7 @@ const AdminDashboard: React.FC = () => {
     tags: '',
     materials: '',
     image_url: '',
-    artist_name: 'Mamany-Art' // Default artist name
+    artist_name: 'Omhind' // Default artist name
   });
 
   const categories = ['Abstrait', 'Portrait', 'Paysage', 'Photographie', 'Sculpture', 'Mixte'];
@@ -131,7 +131,7 @@ const AdminDashboard: React.FC = () => {
       tags: '',
       materials: '',
       image_url: '',
-      artist_name: 'Mamany-Art' // Default artist name
+      artist_name: 'Omhind' // Default artist name
     });
     setPreviewImages([]);
     setIsAdding(false);
@@ -345,7 +345,7 @@ const AdminDashboard: React.FC = () => {
       tags: artwork.tags?.join(', ') || '',
       materials: artwork.materials?.join(', ') || '',
       image_url: artwork.image_url,
-      artist_name: artwork.artist_name || 'Mamany-Art'
+      artist_name: artwork.artist_name || 'Omhind'
     });
     
     // Load existing images

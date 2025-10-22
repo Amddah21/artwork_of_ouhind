@@ -186,7 +186,7 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                 {artwork.title}
               </DialogTitle>
               <p className="text-sm text-gray-600 font-body mb-4">
-                Par Mamany-Art
+                Par Omhind
               </p>
               
               {/* Rating */}

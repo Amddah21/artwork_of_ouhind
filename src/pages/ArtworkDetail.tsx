@@ -116,7 +116,7 @@ const ArtworkDetail: React.FC = () => {
   const handleShare = async () => {
     const shareData = {
       title: artwork.title,
-      text: `Découvrez "${artwork.title}" par ${artwork.artist_name || 'Mamany-Art'}`,
+      text: `Découvrez "${artwork.title}" par ${artwork.artist_name || 'Omhind'}`,
       url: window.location.href
     };
 
@@ -158,14 +158,14 @@ const ArtworkDetail: React.FC = () => {
 
 
   const handleWhatsAppContact = () => {
-    const message = `Bonjour ! Je suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist_name || 'Mamany-Art'}. Pourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?`;
+    const message = `Bonjour ! Je suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist_name || 'Omhind'}. Pourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?`;
     const whatsappUrl = `https://wa.me/212666672756?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleEmailContact = () => {
     const subject = `Demande d'information - ${artwork.title}`;
-    const body = `Bonjour,\n\nJe suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist_name || 'Mamany-Art'}.\n\nDimensions: ${artwork.dimensions || artwork.size}\nAnnée: ${artwork.year}\nMédium: ${artwork.medium || artwork.technique}\n\nPourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique et des modalités d'acquisition ?\n\nCordialement,`;
+    const body = `Bonjour,\n\nJe suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist_name || 'Omhind'}.\n\nDimensions: ${artwork.dimensions || artwork.size}\nAnnée: ${artwork.year}\nMédium: ${artwork.medium || artwork.technique}\n\nPourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique et des modalités d'acquisition ?\n\nCordialement,`;
     const mailtoUrl = `mailto:omhind53@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(mailtoUrl);
   };
@@ -259,7 +259,7 @@ const ArtworkDetail: React.FC = () => {
                 {artwork.title}
               </h1>
               <p className="text-xl comfort-text-muted font-body">
-                par <span className="font-semibold" style={{color: '#7A6B5A'}}>{artwork.artist_name || 'Mamany-Art'}</span>
+                par <span className="font-semibold" style={{color: '#7A6B5A'}}>{artwork.artist_name || 'Omhind'}</span>
               </p>
             </div>
 

@@ -12,7 +12,7 @@ const Hero: React.FC = () => {
   // Get the artist name from the first artwork or use default
   const artistName = artworks.length > 0 && artworks[0].artist_name 
     ? artworks[0].artist_name 
-    : 'Mamany-Art';
+    : 'Omhind';
 
   useEffect(() => {
     setIsLoaded(true);
@@ -208,7 +208,7 @@ const Hero: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 via-pink-400/10 to-transparent rounded-3xl" />
                 <img
                   src="/sedibatr.JPG"
-                  alt="Artwork by Mamany-Art"
+                  alt="Artwork by Omhind"
                   className="w-full h-64 sm:h-96 object-cover transition-transform duration-700 hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />

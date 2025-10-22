@@ -13,7 +13,7 @@ interface CanvasWatermarkProps {
 
 const CanvasWatermark: React.FC<CanvasWatermarkProps> = ({
   imageSrc,
-  watermarkText = '© Mamany-Art',
+  watermarkText = '© Omhind',
   opacity = 0.3,
   fontSize = 24,
   rotation = -45,

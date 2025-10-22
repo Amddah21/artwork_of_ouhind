@@ -122,7 +122,7 @@ const GalleryDetail: React.FC = () => {
       rating: getArtworkRating(artwork.id).average || 0,
       ratingCount: getArtworkRating(artwork.id).count || 0,
       isAvailable: artwork.available,
-      artist: artwork.artist_name || 'Mamany-Art'
+      artist: artwork.artist_name || 'Omhind'
     }));
   };
 

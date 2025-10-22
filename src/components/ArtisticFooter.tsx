@@ -11,7 +11,7 @@ const ArtisticFooter: React.FC = () => {
   // Get the artist name from the first artwork or use default
   const artistName = artworks.length > 0 && artworks[0].artist_name 
     ? artworks[0].artist_name 
-    : 'Mamany-Art';
+    : 'Omhind';
 
   const footerLinks = {
     navigation: [

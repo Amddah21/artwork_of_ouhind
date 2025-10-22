@@ -8,6 +8,7 @@ import { ReviewProvider } from "@/contexts/ReviewContext";
 import { RatingProvider } from "@/contexts/RatingContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { GalleryProvider } from "@/contexts/GalleryContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useCopyrightProtection } from "@/hooks/useCopyrightProtection";
 import ArtisticNavbar from "@/components/ArtisticNavbar";
 import ArtisticFooter from "@/components/ArtisticFooter";
@@ -19,6 +20,7 @@ import Voting from "./pages/Voting";
 import Comments from "./pages/Comments";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import "@/styles/theme.css";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +34,7 @@ const AppContent = () => {
     enablePrintProtection: true,
     enableScreenshotProtection: true,
     showProtectionMessages: true,
-    protectionMessage: '🛡️ Image protégée par copyright - © Mamany-Art'
+    protectionMessage: '🛡️ Image protégée par copyright - © Omhind'
   });
 
   return (
@@ -63,19 +65,21 @@ const AppContent = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
-        <ArtworkProvider>
-          <GalleryProvider>
-            <ReviewProvider>
-              <RatingProvider>
-                <Toaster />
-                <Sonner />
-                <AppContent />
-              </RatingProvider>
-            </ReviewProvider>
-          </GalleryProvider>
-        </ArtworkProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <ArtworkProvider>
+            <GalleryProvider>
+              <ReviewProvider>
+                <RatingProvider>
+                  <Toaster />
+                  <Sonner />
+                  <AppContent />
+                </RatingProvider>
+              </ReviewProvider>
+            </GalleryProvider>
+          </ArtworkProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

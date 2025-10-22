@@ -138,7 +138,7 @@ const ProtectedImage = ({
       <div className="absolute inset-0 z-20 pointer-events-none">
         <div className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-black/70 text-white px-1 sm:px-2 py-0.5 sm:py-1 rounded text-xs font-medium">
           <Shield className="w-2 h-2 sm:w-3 sm:h-3 inline mr-0.5 sm:mr-1" />
-          <span className="hidden sm:inline">© Mamany-Art</span>
+          <span className="hidden sm:inline">© Omhind</span>
           <span className="sm:hidden">© M-A</span>
         </div>
         <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 bg-black/70 text-white px-1 sm:px-2 py-0.5 sm:py-1 rounded text-xs">
@@ -190,7 +190,7 @@ const ProtectedImage = ({
             </p>
             <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
               <Lock className="w-2 h-2 sm:w-3 sm:h-3" />
-              <span>Copyright © Mamany-Art</span>
+              <span>Copyright © Omhind</span>
             </div>
           </div>
         </div>
@@ -209,7 +209,7 @@ const ProtectedImage = ({
         className="absolute inset-0 pointer-events-none z-10"
         style={{
           background: 'transparent',
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ctext x='100' y='100' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='rgba(0,0,0,0.03)' text-anchor='middle' dominant-baseline='middle' transform='rotate(-45 100 100)'%3E© Mamany-Art 2025%3C/text%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Ctext x='100' y='100' font-family='Arial, sans-serif' font-size='16' font-weight='bold' fill='rgba(0,0,0,0.03)' text-anchor='middle' dominant-baseline='middle' transform='rotate(-45 100 100)'%3E© Omhind 2025%3C/text%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat',
           opacity: 0.15,
           mixBlendMode: 'multiply'
