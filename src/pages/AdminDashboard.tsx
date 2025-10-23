@@ -478,6 +478,7 @@ const AdminDashboard: React.FC = () => {
       const { data, error } = await supabase.from('artworks').select('count').limit(1);
       
       if (error) {
+        console.error('❌ Supabase Error:', error);
         toast({
           title: "❌ Connexion Supabase échouée",
           description: `Erreur: ${error.message}`,
@@ -486,13 +487,34 @@ const AdminDashboard: React.FC = () => {
         return;
       }
       
+      // Test successful
+      console.log('✅ Supabase connection successful!');
       toast({
         title: "✅ Supabase connecté !",
         description: "Vos œuvres seront visibles sur tous les appareils.",
         variant: "success",
       });
       
+      // Try to fetch artworks to verify data access
+      const { data: artworksData, error: artworksError } = await supabase
+        .from('artworks')
+        .select('*')
+        .limit(5);
+      
+      if (artworksError) {
+        console.error('❌ Error fetching artworks:', artworksError);
+        toast({
+          title: "⚠️ Erreur de lecture",
+          description: `Impossible de lire les œuvres: ${artworksError.message}`,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      console.log('✅ Artworks fetched successfully:', artworksData?.length || 0, 'artworks');
+      
     } catch (err) {
+      console.error('❌ Connection error:', err);
       toast({
         title: "❌ Erreur de connexion",
         description: `Erreur: ${err}`,
