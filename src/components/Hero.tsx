@@ -107,44 +107,44 @@ const Hero: React.FC = () => {
             isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
           }`}>
             <div className="mb-6">
-              <div className="inline-flex items-center justify-center mb-8">
-                <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+              <div className="inline-flex items-center justify-center mb-6 sm:mb-8">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--luxury-gold)' }}>
                   <Logo size="md" />
                 </div>
               </div>
-              <h1 className="luxury-text-responsive-xl font-luxury-display luxury-text-primary tracking-wide leading-tight mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-luxury-display luxury-text-primary tracking-wide leading-tight mb-4 sm:mb-6 px-4">
                 {artistName.toUpperCase()}
               </h1>
-              <div className="w-32 h-px mx-auto mb-6" style={{ background: 'linear-gradient(90deg, transparent 0%, var(--luxury-gold) 50%, transparent 100%)' }} />
-              <p className="text-xl sm:text-2xl font-luxury-accent luxury-text-secondary max-w-3xl mx-auto leading-relaxed">
+              <div className="w-24 sm:w-32 h-px mx-auto mb-4 sm:mb-6" style={{ background: 'linear-gradient(90deg, transparent 0%, var(--luxury-gold) 50%, transparent 100%)' }} />
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-luxury-accent luxury-text-secondary max-w-3xl mx-auto leading-relaxed px-4">
                 NEW SERIES OF ARTWORKS
               </p>
             </div>
           </div>
 
           {/* Main Buttons */}
-          <div className={`flex flex-col sm:flex-row gap-6 justify-center transition-all duration-1000 ${
+          <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center px-4 transition-all duration-1000 ${
             isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
           }`} style={{ animationDelay: '0.3s' }}>
             <button 
               onClick={handleExploreGallery}
-              className="luxury-btn-gradient px-16 py-5 text-lg font-semibold rounded-full shadow-2xl"
+              className="luxury-btn-gradient px-8 sm:px-16 py-3 sm:py-5 text-base sm:text-lg font-semibold rounded-full shadow-2xl w-full sm:w-auto"
             >
               ORIGINALS
             </button>
             <button 
               onClick={handleViewWorks}
-              className="luxury-btn-secondary px-16 py-5 text-lg font-semibold rounded-full"
+              className="luxury-btn-secondary px-8 sm:px-16 py-3 sm:py-5 text-base sm:text-lg font-semibold rounded-full w-full sm:w-auto"
             >
               PRINTS
             </button>
           </div>
 
           {/* Subtle Description */}
-          <div className={`max-w-4xl mx-auto transition-all duration-1000 ${
+          <div className={`max-w-4xl mx-auto px-4 transition-all duration-1000 ${
             isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
           }`} style={{ animationDelay: '0.6s' }}>
-            <p className="text-lg sm:text-xl font-luxury-body luxury-text-secondary leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl font-luxury-body luxury-text-secondary leading-relaxed text-center">
               Artiste peintre passionnée, je crée des œuvres qui capturent l'essence de la beauté naturelle à travers des techniques mixtes et une palette de couleurs inspirées de la nature.
             </p>
           </div>
@@ -156,13 +156,11 @@ const Hero: React.FC = () => {
             }`} style={{ animationDelay: '0.9s' }}>
               <div className="flex justify-center">
                 <div 
-                  className="luxury-card-premium overflow-hidden relative shadow-2xl"
+                  className="luxury-card-premium overflow-hidden relative shadow-2xl mx-4"
                   style={{
-                    width: '20cm',
-                    height: '20cm',
-                    aspectRatio: '1/1',
+                    width: '100%',
                     maxWidth: '800px',
-                    maxHeight: '800px'
+                    aspectRatio: '1/1'
                   }}
                 >
                   {/* Fade transition effect */}
@@ -223,7 +221,7 @@ const Hero: React.FC = () => {
           )}
 
           {/* Elegant Stats */}
-          <div className={`luxury-grid luxury-grid-3 gap-8 pt-12 transition-all duration-1000 ${
+          <div className={`luxury-grid luxury-grid-3 gap-4 sm:gap-6 lg:gap-8 pt-8 sm:pt-12 px-4 transition-all duration-1000 ${
             isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
           }`} style={{ animationDelay: '1.2s' }}>
             {[
@@ -233,12 +231,12 @@ const Hero: React.FC = () => {
             ].map((stat, index) => (
               <div 
                 key={index}
-                className="luxury-card-premium p-8 text-center hover:shadow-2xl transition-all duration-300"
+                className="luxury-card-premium p-4 sm:p-6 lg:p-8 text-center hover:shadow-2xl transition-all duration-300"
               >
-                <div className="text-5xl sm:text-6xl font-luxury-display luxury-text-gradient mb-4">
+                <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-luxury-display luxury-text-gradient mb-2 sm:mb-4">
                   {stat.number}
                 </div>
-                <div className="text-sm font-luxury-body luxury-text-secondary uppercase tracking-wider">
+                <div className="text-xs sm:text-sm font-luxury-body luxury-text-secondary uppercase tracking-wider">
                   {stat.label}
                 </div>
               </div>
