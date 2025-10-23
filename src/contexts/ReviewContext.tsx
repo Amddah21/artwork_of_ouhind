@@ -118,7 +118,7 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
 
       // Add timeout to prevent long loading
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Supabase connection timeout')), 3000)
+        setTimeout(() => reject(new Error('Supabase connection timeout')), 15000)
       );
       
       const supabasePromise = supabase
@@ -178,7 +178,7 @@ export const ReviewProvider = ({ children }: { children: ReactNode }) => {
 
       // Add timeout to prevent long loading
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Supabase connection timeout')), 3000)
+        setTimeout(() => reject(new Error('Supabase connection timeout')), 15000)
       );
       
       const supabasePromise = supabase
