@@ -44,68 +44,79 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-24 bg-background">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16 animate-fade-in">
+    <section id="contact" className="luxury-section luxury-bg-admin">
+      <div className="luxury-container">
+        <div className="text-center mb-16 luxury-animate-fade-in">
           <div className="flex justify-center mb-6">
-            <Logo size="lg" className="text-foreground/60" />
+            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+              <Logo size="lg" />
+            </div>
           </div>
-          <div className="inline-block mb-4">
-            <span className="text-sm font-semibold text-accent uppercase tracking-wider">Restons en Contact</span>
+          <div className="inline-block mb-4 px-6 py-3 rounded-full" style={{ 
+            backgroundColor: 'rgba(224, 168, 93, 0.1)', 
+            border: '1px solid rgba(224, 168, 93, 0.2)' 
+          }}>
+            <span className="text-sm font-luxury-body font-medium luxury-text-secondary uppercase tracking-wider">Restons en Contact</span>
           </div>
-          <h2 className="heading-lg mb-4">
+          <h2 className="text-4xl sm:text-5xl font-luxury-display luxury-text-primary mb-4">
             Contactez-Moi
           </h2>
-          <div className="section-divider"></div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <div className="w-24 h-px mx-auto mb-8" style={{ background: 'linear-gradient(90deg, transparent 0%, var(--luxury-gold) 50%, transparent 100%)' }} />
+          <p className="text-lg font-luxury-body luxury-text-secondary max-w-2xl mx-auto leading-relaxed">
             Intéressé par une commission ou souhaitez en savoir plus sur mon travail? Je serais ravie d'échanger avec vous.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
           <div className="space-y-6 animate-fade-in">
-            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-card/50 transition-all duration-300">
-              <div className="icon-badge">
-                <Mail className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Email</h3>
-                <a
-                  href="mailto:omhind53@gmail.com"
-                  className="text-muted-foreground hover:text-accent transition-colors"
-                >
-                  omhind53@gmail.com
-                </a>
-              </div>
-            </div>
-            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-card/50 transition-all duration-300">
-              <div className="icon-badge">
-                <Phone className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Téléphone</h3>
-                <a
-                  href="tel:+212666672756"
-                  className="text-muted-foreground hover:text-accent transition-colors"
-                >
-                  0666672756
-                </a>
+            <div className="luxury-card-premium p-6 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+                  <Mail className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-luxury-accent luxury-text-primary mb-1">Email</h3>
+                  <a
+                    href="mailto:omhind53@gmail.com"
+                    className="font-luxury-body luxury-text-secondary hover:luxury-text-gold transition-colors"
+                  >
+                    omhind53@gmail.com
+                  </a>
+                </div>
               </div>
             </div>
-            <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-card/50 transition-all duration-300">
-              <div className="icon-badge">
-                <MapPin className="w-6 h-6" />
+            <div className="luxury-card-premium p-6 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+                  <Phone className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-luxury-accent luxury-text-primary mb-1">Téléphone</h3>
+                  <a
+                    href="tel:+212666672756"
+                    className="font-luxury-body luxury-text-secondary hover:luxury-text-gold transition-colors"
+                  >
+                    0666672756
+                  </a>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Instagram</h3>
-                <a
-                  href="https://instagram.com/fatydouirani"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-accent transition-colors"
-                >
-                  @fatydouirani
-                </a>
+            </div>
+            <div className="luxury-card-premium p-6 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+                  <MapPin className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-luxury-accent luxury-text-primary mb-1">Instagram</h3>
+                  <a
+                    href="https://instagram.com/fatydouirani"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-luxury-body luxury-text-secondary hover:luxury-text-gold transition-colors"
+                  >
+                    @fatydouirani
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -120,26 +131,26 @@ const Contact = () => {
               />
             </div>
 
-            <div className="bg-gradient-subtle p-8 rounded-xl shadow-elegant border border-border/30">
-              <h3 className="font-serif text-2xl font-bold text-foreground mb-4">
+            <div className="luxury-card-premium p-8">
+              <h3 className="font-luxury-display text-2xl font-bold luxury-text-primary mb-6">
                 Processus de Commissions
               </h3>
-              <ol className="space-y-2 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="font-semibold text-accent">1.</span>
-                  Partagez votre vision et vos besoins
+              <ol className="space-y-3 font-luxury-body luxury-text-secondary">
+                <li className="flex items-start gap-3">
+                  <span className="font-luxury-accent luxury-text-gold text-xl">1.</span>
+                  <span>Partagez votre vision et vos besoins</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-semibold text-accent">2.</span>
-                  Recevez un devis personnalisé et un calendrier
+                <li className="flex items-start gap-3">
+                  <span className="font-luxury-accent luxury-text-gold text-xl">2.</span>
+                  <span>Recevez un devis personnalisé et un calendrier</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-semibold text-accent">3.</span>
-                  Examinez les esquisses et donnez votre avis
+                <li className="flex items-start gap-3">
+                  <span className="font-luxury-accent luxury-text-gold text-xl">3.</span>
+                  <span>Examinez les esquisses et donnez votre avis</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-semibold text-accent">4.</span>
-                  Recevez votre œuvre d'art complétée
+                <li className="flex items-start gap-3">
+                  <span className="font-luxury-accent luxury-text-gold text-xl">4.</span>
+                  <span>Recevez votre œuvre d'art complétée</span>
                 </li>
               </ol>
             </div>
@@ -191,7 +202,7 @@ const Contact = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="btn-primary w-full"
+              className="luxury-btn-gradient w-full"
             >
               {isSubmitting ? "Envoi en cours..." : "Envoyer le Message"}
             </Button>
@@ -199,13 +210,13 @@ const Contact = () => {
           
           {/* Social Media Contact Section */}
           <div className="mt-12 text-center">
-            <h3 className="text-xl font-semibold text-foreground mb-6">
+            <h3 className="text-xl font-luxury-accent luxury-text-primary mb-6">
               Ou contactez-moi directement sur les réseaux sociaux
             </h3>
             <div className="flex justify-center gap-4">
               <Button
                 onClick={handleFacebookContact}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                className="luxury-btn-gradient"
               >
                 <Facebook className="w-4 h-4 mr-2" />
                 Facebook

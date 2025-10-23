@@ -21,6 +21,8 @@ import Comments from "./pages/Comments";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import "@/styles/theme.css";
+import "@/styles/nature-gallery.css";
+import "@/styles/luxury-gallery.css";
 
 const queryClient = new QueryClient();
 

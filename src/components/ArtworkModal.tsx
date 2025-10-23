@@ -76,10 +76,10 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl w-full h-[90vh] p-0 overflow-hidden">
+      <DialogContent className="max-w-7xl w-full h-[90vh] p-0 overflow-hidden luxury-bg-secondary">
         <div className="flex h-full">
           {/* Left Side - Image Display (60%) */}
-          <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100">
+          <div className="flex-1 relative luxury-bg-secondary">
             {/* Header Controls */}
             <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center">
               <div className="flex items-center space-x-2">
@@ -88,7 +88,7 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={() => onNavigate?.('prev')}
-                    className="painterly-card"
+                    className="luxury-btn-secondary"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
@@ -98,7 +98,7 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={() => onNavigate?.('next')}
-                    className="painterly-card"
+                    className="luxury-btn-secondary"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Button>

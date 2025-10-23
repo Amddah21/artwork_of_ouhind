@@ -56,168 +56,138 @@ const ArtisticFooter: React.FC = () => {
   ];
 
   return (
-    <footer className="relative bg-gradient-to-br from-gray-50 via-white to-gray-100 watercolor-bg canvas-texture">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-yellow-400/10 to-pink-400/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-purple-400/10 to-blue-400/10 rounded-full blur-3xl" />
-        
-        {/* Floating artistic elements */}
-        <div className="absolute top-20 left-20 animate-floatingBrush">
-          <Palette className="w-8 h-8 text-yellow-400 opacity-20" />
-        </div>
-        <div className="absolute top-40 right-32 animate-floatingBrush" style={{ animationDelay: '3s' }}>
-          <Brush className="w-6 h-6 text-pink-400 opacity-25" />
-        </div>
-        <div className="absolute bottom-32 left-1/4 animate-floatingBrush" style={{ animationDelay: '1.5s' }}>
-          <Sparkles className="w-5 h-5 text-purple-400 opacity-20" />
-        </div>
-      </div>
-
-      <div className="relative z-10">
-        {/* Main Footer Content */}
-        <div className="container mx-auto px-6 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+    <footer className="luxury-footer py-20">
+      <div className="luxury-container">
+        <div className="luxury-grid luxury-grid-4 gap-12">
+          
+          {/* Artist Brand Section */}
+          <div className="lg:col-span-1 space-y-8">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+                <Logo size="sm" />
+              </div>
+              <div>
+                <h3 className="text-xl font-luxury-accent luxury-text-gold">
+                  {artistName}
+                </h3>
+                <p className="text-sm font-luxury-body luxury-text-light">
+                  Artiste Peintre
+                </p>
+              </div>
+            </div>
             
-            {/* Artist Brand Section */}
-            <div className="lg:col-span-1 space-y-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
-                  <Logo size="sm" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-display font-semibold text-gray-900">
-                    {artistName}
-                  </h3>
-                  <p className="text-sm text-gray-600 font-body">
-                    Artiste Peintre
-                  </p>
-                </div>
-              </div>
-              
-              <p className="text-gray-700 leading-relaxed font-body">
-                Artiste peintre passionnée, je crée des œuvres qui capturent l'essence de la beauté 
-                et de l'émotion à travers des techniques mixtes et une palette de couleurs vibrantes.
-              </p>
+            <p className="font-luxury-body luxury-text-light leading-relaxed">
+              Artiste peintre passionnée, je crée des œuvres qui capturent l'essence de la beauté 
+              et de l'émotion à travers des techniques mixtes et une palette de couleurs vibrantes.
+            </p>
 
-              {/* Social Links */}
-              <div className="flex space-x-3">
-                {footerLinks.social.map((social) => {
-                  const IconComponent = social.icon;
-                  return (
-                    <Button
-                      key={social.label}
-                      variant="outline"
-                      size="sm"
-                      className="hover-painterly-lift painterly-card"
-                      style={{ 
-                        borderColor: 'hsl(330, 20%, 88%)',
-                        color: 'hsl(240, 10%, 15%)'
-                      }}
-                      onClick={() => window.open(social.href, '_blank')}
-                    >
-                      <IconComponent className="w-4 h-4" />
-                    </Button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Navigation Links */}
-            <div className="space-y-6">
-              <h4 className="text-lg font-display font-semibold text-gray-900">
-                Navigation
-              </h4>
-              <nav className="space-y-3">
-                {footerLinks.navigation.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="block text-gray-700 hover:text-yellow-600 transition-colors duration-300 font-body hover-ink-flow"
+            {/* Social Links */}
+            <div className="flex space-x-4">
+              {footerLinks.social.map((social) => {
+                const IconComponent = social.icon;
+                return (
+                  <button
+                    key={social.label}
+                    className="luxury-btn-secondary p-3"
+                    onClick={() => window.open(social.href, '_blank')}
                   >
-                    {link.label}
-                  </a>
-                ))}
-              </nav>
+                    <IconComponent className="w-5 h-5" />
+                  </button>
+                );
+              })}
             </div>
+          </div>
 
-            {/* Contact Information */}
+          {/* Navigation Links */}
+          <div className="space-y-8">
+            <h4 className="text-xl font-luxury-accent luxury-text-gold">
+              Navigation
+            </h4>
+            <nav className="space-y-4">
+              {footerLinks.navigation.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="block font-luxury-body luxury-footer-link hover:luxury-text-gold transition-colors duration-300"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+          </div>
+
+          {/* Contact Information */}
+          <div className="space-y-8">
+            <h4 className="text-xl font-luxury-accent luxury-text-gold">
+              Contact
+            </h4>
             <div className="space-y-6">
-              <h4 className="text-lg font-display font-semibold text-gray-900">
-                Contact
-              </h4>
-              <div className="space-y-4">
-                {contactInfo.map((contact) => {
-                  const IconComponent = contact.icon;
-                  return (
-                    <div key={contact.label} className="flex items-start space-x-3">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400/20 to-pink-400/20 flex items-center justify-center flex-shrink-0 mt-1">
-                        <IconComponent className="w-4 h-4 text-yellow-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600 font-body">{contact.label}</p>
-                        <a
-                          href={contact.href}
-                          className="text-gray-900 hover:text-yellow-600 transition-colors duration-300 font-body"
-                        >
-                          {contact.value}
-                        </a>
-                      </div>
+              {contactInfo.map((contact) => {
+                const IconComponent = contact.icon;
+                return (
+                  <div key={contact.label} className="flex items-start space-x-4">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: 'rgba(224, 168, 93, 0.2)' }}>
+                      <IconComponent className="w-5 h-5 luxury-text-gold" />
                     </div>
-                  );
-                })}
-              </div>
-              
+                    <div>
+                      <p className="text-sm font-luxury-body luxury-text-light">{contact.label}</p>
+                      <a
+                        href={contact.href}
+                        className="font-luxury-body luxury-footer-link hover:luxury-text-gold transition-colors duration-300"
+                      >
+                        {contact.value}
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
+          </div>
 
-            {/* Legal Links */}
-            <div className="space-y-6">
-              <h4 className="text-lg font-display font-semibold text-gray-900">
-                Informations Légales
-              </h4>
-              <nav className="space-y-3">
-                {footerLinks.legal.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="block text-gray-700 hover:text-yellow-600 transition-colors duration-300 font-body text-sm hover-ink-flow"
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </nav>
+          {/* Legal Links */}
+          <div className="space-y-8">
+            <h4 className="text-xl font-luxury-accent luxury-text-gold">
+              Informations Légales
+            </h4>
+            <nav className="space-y-4">
+              {footerLinks.legal.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="block font-luxury-body luxury-footer-link hover:luxury-text-gold transition-colors duration-300 text-sm"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
 
-              {/* Awards/Recognition */}
-              <div className="pt-4 border-t border-gray-200">
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <Award className="w-4 h-4 text-yellow-500" />
-                  <span className="font-body">Artiste Reconnue</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-gray-600 mt-1">
-                  <Globe className="w-4 h-4 text-blue-500" />
-                  <span className="font-body">Expositions Internationales</span>
-                </div>
+            {/* Awards/Recognition */}
+            <div className="pt-6" style={{ borderTop: '1px solid rgba(224, 168, 93, 0.2)' }}>
+              <div className="flex items-center space-x-3 text-sm luxury-text-light">
+                <Award className="w-5 h-5 luxury-text-gold" />
+                <span className="font-luxury-body">Artiste Reconnue</span>
+              </div>
+              <div className="flex items-center space-x-3 text-sm luxury-text-light mt-2">
+                <Globe className="w-5 h-5 luxury-text-gold" />
+                <span className="font-luxury-body">Expositions Internationales</span>
               </div>
             </div>
           </div>
         </div>
 
-
         {/* Bottom Bar */}
-        <div className="border-t border-gray-200 bg-white/50 backdrop-blur-sm">
-          <div className="container mx-auto px-6 py-6">
-            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-              <div className="flex items-center space-x-2 text-gray-600">
-                <span className="font-body">© {currentYear} {artistName}. Tous droits réservés.</span>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-600 font-body">Fait avec</span>
-                <Sparkles className="w-4 h-4 text-yellow-500 animate-pulse" />
-                <span className="text-gray-600 font-body">par Digital Teams</span>
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">DT</span>
-                </div>
+        <div className="mt-16 pt-8" style={{ borderTop: '1px solid rgba(224, 168, 93, 0.2)' }}>
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="flex items-center space-x-2 luxury-text-light">
+              <span className="font-luxury-body">© {currentYear} {artistName}. Tous droits réservés.</span>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <span className="luxury-text-light font-luxury-body">Fait avec</span>
+              <Sparkles className="w-5 h-5 luxury-text-gold animate-pulse" />
+              <span className="luxury-text-light font-luxury-body">par Digital Teams</span>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+                <span className="text-white text-sm font-bold">DT</span>
               </div>
             </div>
           </div>

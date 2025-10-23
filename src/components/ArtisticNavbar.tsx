@@ -89,10 +89,10 @@ const ArtisticNavbar: React.FC = () => {
       {/* Main Navbar */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled 
-          ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200' 
+          ? 'luxury-nav backdrop-blur-md shadow-lg' 
           : 'bg-transparent'
       }`}>
-        <div className="container mx-auto px-4 sm:px-6">
+        <div className="luxury-container">
           <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo and Brand */}
             <div className="flex items-center space-x-3">
@@ -102,15 +102,15 @@ const ArtisticNavbar: React.FC = () => {
                 <Logo size="sm" />
               </div>
               <div className="hidden lg:block">
-                <h1 className={`text-lg font-display font-semibold transition-all duration-500 ${
+                <h1 className={`text-lg font-luxury-display font-semibold transition-all duration-500 ${
                   isScrolled 
-                    ? 'text-slate-800' 
-                    : 'bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent'
+                    ? 'luxury-text-primary' 
+                    : 'luxury-text-gradient'
                 }`}>
                   {artistName}
                 </h1>
-                <p className={`text-xs font-body transition-colors duration-500 ${
-                  isScrolled ? 'text-gray-600' : 'text-gray-500'
+                <p className={`text-xs font-luxury-body transition-colors duration-500 ${
+                  isScrolled ? 'luxury-text-secondary' : 'luxury-text-muted'
                 }`}>
                   Artiste Peintre
                 </p>

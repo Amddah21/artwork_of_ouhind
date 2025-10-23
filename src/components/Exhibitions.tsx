@@ -215,8 +215,12 @@ const Exhibitions = () => {
   const countries = [...new Set(exhibitions.flatMap(exhibition => exhibition.events.map(event => event.country || 'Maroc')))];
 
   return (
-    <section id="exhibitions" className="py-20 watercolor-bg canvas-texture">
-      <div className="container mx-auto px-6">
+    <section id="exhibitions" className="luxury-section luxury-bg-secondary relative overflow-hidden">
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-20 left-10 w-32 h-32 rounded-full blur-2xl" style={{ backgroundColor: 'var(--luxury-gold)' }}></div>
+        <div className="absolute bottom-20 right-10 w-40 h-40 rounded-full blur-3xl" style={{ backgroundColor: 'var(--luxury-orange)' }}></div>
+      </div>
+      <div className="luxury-container relative z-10">
         {/* Enhanced Header */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}

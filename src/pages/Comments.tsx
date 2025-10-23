@@ -263,15 +263,17 @@ const Comments = () => {
   }))));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-deep-cream via-cream-50 to-warm-white">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen luxury-bg-admin">
+      <div className="luxury-container py-8">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
-            <MessageCircle className="h-8 w-8 text-burnt-gold mr-3" />
-            <h1 className="text-4xl font-display text-deep-charcoal">Commentaires & Discussions</h1>
+            <div className="w-12 h-12 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+              <MessageCircle className="h-6 w-6 text-white" />
+            </div>
+            <h1 className="text-4xl font-luxury-display luxury-text-primary">Commentaires & Discussions</h1>
           </div>
-          <p className="text-lg text-charcoal-600 max-w-2xl mx-auto">
+          <p className="text-lg font-luxury-body luxury-text-secondary max-w-2xl mx-auto">
             Partagez vos impressions, posez vos questions et participez aux discussions autour des œuvres d'art.
           </p>
         </div>

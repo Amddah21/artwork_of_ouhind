@@ -171,15 +171,15 @@ const ArtworkDetail: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen watercolor-bg canvas-texture">
+    <div className="min-h-screen luxury-bg-admin">
       {/* Header */}
-      <div className="bg-white/95 backdrop-blur-md shadow-watercolor border-b border-gray-200 mt-16">
-        <div className="container mx-auto px-6 py-4">
+      <div className="luxury-nav backdrop-blur-md shadow-lg" style={{ borderBottom: '1px solid rgba(224, 168, 93, 0.2)' }}>
+        <div className="luxury-container py-4">
           <div className="flex items-center justify-between">
             <Button
               onClick={handleBack}
               variant="outline"
-              className="hover-painterly-lift painterly-card"
+              className="luxury-btn-secondary"
               style={{ 
                 borderColor: 'hsl(330, 20%, 88%)',
                 color: 'hsl(240, 10%, 15%)'

@@ -154,219 +154,86 @@ const Portfolio: React.FC = () => {
   };
 
   return (
-    <section id="portfolio" className="py-20 watercolor-bg canvas-texture" ref={portfolioRef}>
-      <div className="container mx-auto px-6">
-        {/* Mobile-Optimized Section Header */}
-        <div className={`text-center mb-8 sm:mb-12 transition-all duration-1000 ${
-          isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
+    <section id="portfolio" className="luxury-section luxury-bg-secondary" ref={portfolioRef}>
+      <div className="luxury-container">
+        {/* Featured Gallery Section */}
+        <div className={`text-center mb-20 transition-all duration-1000 ${
+          isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
         }`}>
-          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full painterly-card mb-4">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
-              <Palette className="w-3 h-3 text-white" />
+          <div className="inline-flex items-center space-x-3 mb-8 px-8 py-4 rounded-full" style={{ 
+            backgroundColor: 'rgba(224, 168, 93, 0.1)', 
+            border: '1px solid rgba(224, 168, 93, 0.2)' 
+          }}>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+              <Palette className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xs font-medium font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+            <span className="text-sm font-luxury-body font-medium luxury-text-secondary uppercase tracking-wider">
               Collection Exclusive
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-gradient">Galerie</h2>
-          <p className="text-sm sm:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed font-body px-4" style={{ color: 'hsl(240, 10%, 35%)' }}>
-            Découvrez des œuvres d'art originales. Chaque pièce est unique.
+          
+          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-luxury-display luxury-text-primary mb-8">
+            GALERIE D'ART
+          </h2>
+          
+          <p className="text-xl max-w-4xl mx-auto leading-relaxed font-luxury-body luxury-text-secondary">
+            Découvrez une sélection exclusive d'œuvres d'art originales, chacune racontant une histoire unique à travers la couleur et la forme.
           </p>
         </div>
 
-        {/* Mobile-Optimized Category Filter */}
-        <div className={`flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12 transition-all duration-1000 ${
-          isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
-        }`} style={{ animationDelay: '0.2s' }}>
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? "default" : "outline"}
-              onClick={() => {
-                if (category === 'Tous') {
-                  setSelectedCategory(category);
-                } else {
-                  handleViewGallery(category);
-                }
-              }}
-              className="hover-painterly-lift painterly-card text-xs sm:text-sm px-3 py-2"
-              style={{
-                ...(selectedCategory === category
-                  ? { // Style for selected button (any category)
-                      backgroundColor: 'hsl(38, 95%, 60%)',
-                      color: 'hsl(45, 100%, 97%)',
-                      borderColor: 'hsl(38, 95%, 60%)',
-                      borderWidth: '1px',
-                      fontWeight: 'normal'
-                    }
-                  : category === 'Tous'
-                    ? { // Style for unselected 'Tous' button
-                        backgroundColor: 'hsl(45, 100%, 97%)',
-                        color: 'hsl(240, 10%, 15%)',
-                        borderColor: 'hsl(240, 10%, 30%)',
-                        borderWidth: '2px',
-                        fontWeight: '600'
-                      }
-                    : { // Style for other unselected buttons
-                        backgroundColor: 'transparent',
-                        color: 'hsl(240, 10%, 15%)',
-                        borderColor: 'hsl(330, 20%, 88%)',
-                        borderWidth: '1px',
-                        fontWeight: 'normal'
-                      }
-                )
-              }}
-            >
-              {category === 'Tous' ? category : `Voir ${category}`}
-            </Button>
-          ))}
-        </div>
-
-        {/* Mobile-Optimized Artworks Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        {/* Elegant Artworks Grid */}
+        <div className="luxury-grid luxury-grid-4 gap-8">
           {displayedArtworks.map((artwork, index) => (
             <div
               key={artwork.id}
-              className={`group transition-all duration-1000 cursor-pointer bg-white shadow-lg hover:shadow-xl rounded-xl overflow-hidden border border-slate-200 hover:border-yellow-300 transform hover:scale-[1.02] ${
-                isLoaded ? 'animate-gallery-reveal' : 'opacity-0 translate-y-8'
+              className={`luxury-gallery-item transition-all duration-700 cursor-pointer ${
+                isLoaded ? 'luxury-animate-scale-in' : 'opacity-0 scale-95'
               }`}
               style={{ animationDelay: `${0.4 + index * 0.1}s` }}
-              onMouseEnter={() => setHoveredId(artwork.id)}
-              onMouseLeave={() => setHoveredId(null)}
               onClick={() => handleViewArtwork(artwork)}
             >
-              {/* Mobile-Optimized Image Container */}
-              <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-50 to-yellow-50 p-1">
-                <div className="relative w-full h-full overflow-hidden rounded-lg">
+              {/* Artwork Card */}
+              <div className="luxury-card-premium overflow-hidden">
+                
+                {/* Image Container */}
+                <div className="relative aspect-square overflow-hidden">
                   <ProtectedImage
                     src={artwork.image_url}
                     alt={artwork.title}
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                   />
                   
-                  {/* Simplified overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
-                </div>
-                
-                {/* Simplified Color Palette - Mobile */}
-                <div className="absolute top-2 left-2 flex space-x-1">
-                  {artwork.colorPalette.slice(0, 3).map((color, idx) => (
-                    <div
-                      key={idx}
-                      className="w-3 h-3 rounded-full border border-white shadow-sm"
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
-
-                {/* Simplified Availability Badge - Mobile */}
-                <div className="absolute top-2 right-2">
-                  <span className="px-2 py-1 rounded-full text-xs font-medium shadow-sm bg-green-100 text-green-800 border border-green-200">
-                    ✓
-                  </span>
-                </div>
-
-                {/* Mobile View Details Button */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
-                  <div className="absolute bottom-3 left-3 right-3">
-                    <Button 
-                      size="sm"
-                      className="w-full shadow-lg" 
-                      style={{
-                        background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 50%) 100%)',
-                        color: 'white',
-                        border: 'none'
-                      }}
-                    >
-                      <Eye className="w-4 h-4 mr-1" />
-                      Voir détails
-                    </Button>
+                  {/* Luxury Overlay */}
+                  <div className="luxury-gallery-overlay" />
+                  
+                  {/* Availability Badge */}
+                  <div className="absolute top-4 right-4">
+                    <span className="px-4 py-2 rounded-full text-xs font-luxury-body font-medium backdrop-blur-sm" style={{ 
+                      backgroundColor: 'rgba(250, 248, 245, 0.9)', 
+                      color: 'var(--luxury-gold)',
+                      border: '1px solid rgba(212, 175, 55, 0.2)'
+                    }}>
+                      Disponible
+                    </span>
                   </div>
                 </div>
-              </div>
 
-              {/* Mobile-Optimized Info Section */}
-              <div className="p-3 space-y-2 bg-white">
-                {/* Title and Artist - Compact */}
-                <div className="space-y-1">
-                  <h3 className="text-sm font-bold text-slate-800 line-clamp-1">
+                {/* Content */}
+                <div className="p-8 space-y-4">
+                  {/* Title */}
+                  <h3 className="text-xl font-luxury-accent luxury-text-primary group-hover:luxury-text-gold transition-colors duration-300">
                     {artwork.title}
                   </h3>
-                  <div className="flex items-center space-x-1">
-                    <div className="w-4 h-4 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">
-                        {artwork.artist.split(' ').map(n => n[0]).join('').substring(0, 2)}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-600 truncate">
-                      {artwork.artist}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Essential Details Only - Mobile */}
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center space-x-1">
-                    <Calendar className="w-3 h-3 text-yellow-600" />
-                    <span className="text-slate-600">{artwork.year}</span>
-                  </div>
                   
-                  <span className="text-xs px-2 py-1 rounded-full font-medium bg-yellow-100 text-yellow-800">
+                  {/* Category */}
+                  <p className="text-sm font-luxury-body luxury-text-secondary uppercase tracking-wider">
                     {artwork.category}
-                  </span>
-                </div>
-
-                {/* Mobile Contact Buttons - Horizontal */}
-                <div className="flex gap-1">
-                  <Button 
-                    size="sm" 
-                    className="flex-1 text-xs h-8"
-                    style={{
-                      background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
-                      color: 'white',
-                      border: 'none'
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleWhatsAppContact(artwork);
-                    }}
-                  >
-                    <Phone className="w-3 h-3 mr-1" />
-                    WhatsApp
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    className="flex-1 text-xs h-8"
-                    style={{
-                      background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
-                      color: 'white',
-                      border: 'none'
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEmailContact(artwork);
-                    }}
-                  >
-                    <Mail className="w-3 h-3 mr-1" />
-                    Email
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs h-8 px-2"
-                    style={{ 
-                      borderColor: 'hsl(330, 20%, 88%)',
-                      color: 'hsl(240, 10%, 15%)',
-                      backgroundColor: 'white'
-                    }}
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      await handleShareArtwork(artwork);
-                    }}
-                    data-share-button
-                  >
-                    <Share2 className="w-3 h-3" />
-                  </Button>
+                  </p>
+                  
+                  {/* Year */}
+                  <p className="text-sm font-luxury-body luxury-text-muted">
+                    {artwork.year}
+                  </p>
                 </div>
               </div>
             </div>

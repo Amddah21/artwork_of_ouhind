@@ -60,18 +60,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <Card className="w-full max-w-md mx-4">
-        <CardHeader className="relative">
+      <Card className="w-full max-w-md mx-4 luxury-card-premium">
+        <CardHeader className="relative" style={{ borderBottom: '1px solid rgba(224, 168, 93, 0.2)' }}>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="absolute right-2 top-2"
+            className="absolute right-2 top-2 luxury-btn-secondary"
           >
             <X className="h-4 w-4" />
           </Button>
-          <CardTitle>Connexion Administrateur</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl font-luxury-display luxury-text-primary">Connexion Administrateur</CardTitle>
+          <CardDescription className="font-luxury-body luxury-text-secondary">
             Connectez-vous avec vos identifiants. Les administrateurs seront redirigés vers le panneau d'administration.
           </CardDescription>
         </CardHeader>
