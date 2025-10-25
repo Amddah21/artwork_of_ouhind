@@ -84,18 +84,23 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       if (supabaseUrl && supabaseAnonKey && supabaseUrl !== 'https://your-project.supabase.co' && supabaseAnonKey !== 'your-anon-key') {
         console.log('🎨 [ArtworkContext] Loading artworks from Supabase...');
         
-        // Use optimized API service with joined images
-        const artworksData = await OptimizedApiService.getArtworks();
-        
-        // Process artworks to ensure proper image_url fallback
-        const processedArtworks = artworksData.map(artwork => ({
-          ...artwork,
-          images: artwork.artwork_images || [],
-          image_url: artwork.artwork_images?.[0]?.image_url || artwork.image_url
-        }));
-        
-        console.log('🎨 [ArtworkContext] Loaded', processedArtworks.length, 'artworks from Supabase');
-        return processedArtworks;
+        try {
+          // Use optimized API service with joined images
+          const artworksData = await OptimizedApiService.getArtworks();
+          
+          // Process artworks to ensure proper image_url fallback
+          const processedArtworks = (artworksData || []).map((artwork: any) => ({
+            ...artwork,
+            images: artwork.artwork_images || [],
+            image_url: artwork.artwork_images?.[0]?.image_url || artwork.image_url
+          }));
+          
+          console.log('🎨 [ArtworkContext] Loaded', processedArtworks.length, 'artworks from Supabase');
+          return processedArtworks;
+        } catch (error) {
+          console.error('Error loading artworks:', error);
+          return [];
+        }
       } else {
         // Fallback to localStorage for development
         console.log('🎨 [ArtworkContext] Supabase not configured, using localStorage fallback');

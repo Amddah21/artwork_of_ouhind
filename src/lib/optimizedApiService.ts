@@ -120,7 +120,7 @@ export class OptimizedApiService {
     const cached = this.getCachedData(cacheKey);
     if (cached) return cached;
 
-    const data = await withRetry(() => 
+    const { data, error } = await withRetry(() => 
       supabase
         .from('artworks')
         .select(`
@@ -134,8 +134,13 @@ export class OptimizedApiService {
         .order('created_at', { ascending: false })
     );
 
+    if (error) {
+      console.error('Error fetching artworks:', error);
+      throw error;
+    }
+
     this.setCachedData(cacheKey, data);
-    return data;
+    return data || [];
   }
 
   static async getArtworkById(id: string) {
@@ -163,13 +168,18 @@ export class OptimizedApiService {
   }
 
   static async createArtwork(artwork: Partial<Artwork>) {
-    const data = await withRetry(() => 
+    const { data, error } = await withRetry(() => 
       supabase
         .from('artworks')
         .insert([artwork])
         .select()
         .single()
     );
+
+    if (error) {
+      console.error('Error creating artwork:', error);
+      throw error;
+    }
 
     // Clear cache after creation
     this.clearCache('artworks');
