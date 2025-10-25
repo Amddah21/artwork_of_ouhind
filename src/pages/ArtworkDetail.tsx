@@ -56,19 +56,22 @@ const ArtworkDetail: React.FC = () => {
 
   // Find the artwork by ID from the context
   useEffect(() => {
-    if (id) {
-      // Wait for artworks to finish loading
-      if (!artworksLoading) {
-        const foundArtwork = artworks.find(art => art.id === id);
-        if (foundArtwork) {
-          setArtwork(foundArtwork);
-          // Increment views when viewing artwork
-          incrementViews(id);
-        }
+    if (id && !artworksLoading) {
+      const foundArtwork = artworks.find(art => art.id === id);
+      if (foundArtwork) {
+        setArtwork(foundArtwork);
         setIsLoading(false);
       }
     }
-  }, [id, artworks, artworksLoading, navigate, incrementViews]);
+  }, [id, artworks, artworksLoading]);
+
+  // Separate effect for incrementing views to prevent infinite loop
+  useEffect(() => {
+    if (artwork?.id) {
+      incrementViews(artwork.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [artwork?.id]);
 
   // Add keyboard shortcut for back button (Escape key) - MOVED UP TO FIX HOOKS ORDER
   useEffect(() => {
