@@ -1,0 +1,260 @@
+/* Luxury Theme Toggle Styles */
+.luxury-theme-toggle-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.luxury-theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  outline: none;
+  overflow: hidden;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* Base gradient background */
+.luxury-theme-toggle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    rgba(251, 191, 36, 0.1) 0%,
+    rgba(245, 158, 11, 0.15) 25%,
+    rgba(217, 119, 6, 0.1) 50%,
+    rgba(180, 83, 9, 0.15) 75%,
+    rgba(146, 64, 14, 0.1) 100%
+  );
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+/* Golden border effect */
+.luxury-theme-toggle::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, 
+    rgba(251, 191, 36, 0.3) 0%,
+    rgba(245, 158, 11, 0.4) 25%,
+    rgba(217, 119, 6, 0.3) 50%,
+    rgba(180, 83, 9, 0.4) 75%,
+    rgba(146, 64, 14, 0.3) 100%
+  );
+  border-radius: 9999px;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  z-index: 0;
+}
+
+/* Hover effects */
+.luxury-theme-toggle:hover::before {
+  background: linear-gradient(135deg, 
+    rgba(251, 191, 36, 0.2) 0%,
+    rgba(245, 158, 11, 0.25) 25%,
+    rgba(217, 119, 6, 0.2) 50%,
+    rgba(180, 83, 9, 0.25) 75%,
+    rgba(146, 64, 14, 0.2) 100%
+  );
+  transform: scale(1.02);
+}
+
+.luxury-theme-toggle:hover::after {
+  opacity: 1;
+  transform: scale(1.05);
+  box-shadow: 
+    0 0 20px rgba(251, 191, 36, 0.3),
+    0 0 40px rgba(245, 158, 11, 0.2),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Active state */
+.luxury-theme-toggle:active {
+  transform: scale(0.98);
+}
+
+.luxury-theme-toggle:active::before {
+  transform: scale(0.98);
+}
+
+.luxury-theme-toggle:active::after {
+  transform: scale(0.98);
+}
+
+/* Focus state for accessibility */
+.luxury-theme-toggle:focus-visible {
+  outline: 2px solid rgba(251, 191, 36, 0.6);
+  outline-offset: 2px;
+}
+
+/* Dark mode specific styles */
+@media (prefers-color-scheme: dark) {
+  .luxury-theme-toggle::before {
+    background: linear-gradient(135deg, 
+      rgba(71, 85, 105, 0.15) 0%,
+      rgba(100, 116, 139, 0.2) 25%,
+      rgba(71, 85, 105, 0.15) 50%,
+      rgba(100, 116, 139, 0.2) 75%,
+      rgba(71, 85, 105, 0.15) 100%
+    );
+  }
+  
+  .luxury-theme-toggle::after {
+    background: linear-gradient(135deg, 
+      rgba(71, 85, 105, 0.4) 0%,
+      rgba(100, 116, 139, 0.5) 25%,
+      rgba(71, 85, 105, 0.4) 50%,
+      rgba(100, 116, 139, 0.5) 75%,
+      rgba(71, 85, 105, 0.4) 100%
+    );
+  }
+}
+
+/* Luxury floating particles animation */
+@keyframes luxury-particle-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-5px) rotate(180deg);
+    opacity: 0.8;
+  }
+}
+
+/* Decorative floating elements */
+.luxury-theme-toggle .luxury-floating-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: linear-gradient(45deg, rgba(251, 191, 36, 0.8), rgba(245, 158, 11, 0.6));
+  border-radius: 50%;
+  animation: luxury-particle-float 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.luxury-theme-toggle .luxury-floating-particle:nth-child(1) {
+  top: 8%;
+  left: 12%;
+  animation-delay: 0s;
+}
+
+.luxury-theme-toggle .luxury-floating-particle:nth-child(2) {
+  top: 15%;
+  right: 15%;
+  animation-delay: 0.5s;
+}
+
+.luxury-theme-toggle .luxury-floating-particle:nth-child(3) {
+  bottom: 12%;
+  left: 20%;
+  animation-delay: 1s;
+}
+
+.luxury-theme-toggle .luxury-floating-particle:nth-child(4) {
+  bottom: 20%;
+  right: 12%;
+  animation-delay: 1.5s;
+}
+
+/* Luxury shimmer effect */
+@keyframes luxury-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.luxury-theme-toggle:hover .luxury-shimmer {
+  animation: luxury-shimmer 1.5s ease-in-out;
+}
+
+.luxury-shimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  z-index: 2;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .luxury-theme-toggle {
+    transform: scale(0.9);
+  }
+  
+  .luxury-theme-toggle:hover {
+    transform: scale(0.95);
+  }
+}
+
+@media (max-width: 480px) {
+  .luxury-theme-toggle {
+    transform: scale(0.8);
+  }
+  
+  .luxury-theme-toggle:hover {
+    transform: scale(0.85);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .luxury-theme-toggle::after {
+    border: 2px solid rgba(251, 191, 36, 0.8);
+  }
+  
+  .luxury-theme-toggle:hover::after {
+    border-color: rgba(251, 191, 36, 1);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .luxury-theme-toggle,
+  .luxury-theme-toggle::before,
+  .luxury-theme-toggle::after {
+    transition: none;
+  }
+  
+  .luxury-theme-toggle .luxury-floating-particle {
+    animation: none;
+  }
+  
+  .luxury-theme-toggle:hover .luxury-shimmer {
+    animation: none;
+  }
+}
+
+/* Icon animations */
+.luxury-theme-toggle svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.luxury-theme-toggle:hover svg {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* Smooth transitions for all interactive elements */
+.luxury-theme-toggle * {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

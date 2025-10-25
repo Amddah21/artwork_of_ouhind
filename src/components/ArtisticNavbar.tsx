@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Menu, X, Palette, Home, Grid3X3, User, Mail, Settings, Calendar, Brush, Sparkles, LogIn, LogOut } from 'lucide-react';
+import { Menu, X, Palette, Home, Grid3X3, User, Mail, Settings, Calendar, Brush, Sparkles, LogIn, LogOut, Sun, Moon } from 'lucide-react';
 import Logo from './Logo';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginForm from './LoginForm';
 import { useArtwork } from '@/contexts/ArtworkContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import LuxuryThemeToggle from './LuxuryThemeToggle';
+import '../styles/luxury-theme-toggle.css';
 
 const ArtisticNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,6 +18,7 @@ const ArtisticNavbar: React.FC = () => {
   const navigate = useNavigate();
   const { isAdmin, isAuthenticated, signOut } = useAuth();
   const { artworks } = useArtwork();
+  const { toggleTheme, isDark } = useTheme();
   
   // Get the artist name from the first artwork or use default
   const artistName = artworks.length > 0 && artworks[0].artist_name 
@@ -139,6 +143,8 @@ const ArtisticNavbar: React.FC = () => {
                 );
               })}
               
+              {/* Luxury Theme Toggle */}
+              <LuxuryThemeToggle size="sm" className="ml-3" />
               
               {/* Login/Logout Button */}
               {!isAuthenticated ? (
@@ -275,6 +281,10 @@ const ArtisticNavbar: React.FC = () => {
                   );
                 })}
                 
+                {/* Luxury Theme Toggle for Mobile */}
+                <div className="mt-4 mb-4 flex justify-center">
+                  <LuxuryThemeToggle size="md" />
+                </div>
                 
                 {/* Login/Logout Button for Mobile */}
                 {!isAuthenticated ? (
