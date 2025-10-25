@@ -123,24 +123,6 @@ const CopyrightProtection: React.FC<CopyrightProtectionProps> = ({
         KhtmlUserSelect: 'none'
       } as React.CSSProperties}
     >
-      {/* Dynamic Watermark Overlay */}
-      <div className="copyright-watermark-overlay">
-        <div className="watermark-text watermark-top-left">
-          © {artistName} {year}
-        </div>
-        <div className="watermark-text watermark-top-right">
-          Droits Réservés
-        </div>
-        <div className="watermark-text watermark-bottom-left">
-          {artworkTitle || 'Artwork'}
-        </div>
-        <div className="watermark-text watermark-bottom-right">
-          © {artistName}
-        </div>
-        <div className="watermark-text watermark-center">
-          © {artistName} {year} - Tous Droits Réservés
-        </div>
-      </div>
 
       {/* Invisible overlay to catch interactions */}
       <div 

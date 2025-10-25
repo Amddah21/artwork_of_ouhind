@@ -66,26 +66,6 @@ const ArtworkFrame: React.FC<ArtworkFrameProps> = ({
             {children}
           </div>
           
-          {/* Copyright Overlay */}
-          {showCopyright && (
-            <div className="luxury-frame-copyright">
-              <div className="luxury-copyright-badge">
-                <span className="luxury-copyright-text">© {artistName}</span>
-                {year && <span className="luxury-copyright-year">{year}</span>}
-              </div>
-            </div>
-          )}
-          
-          {/* Artwork Title Overlay */}
-          {artworkTitle && (
-            <div className="luxury-frame-title">
-              <div className="luxury-title-badge">
-                <span className="luxury-title-text">{artworkTitle}</span>
-                <span className="luxury-title-subtitle">Droits réservés</span>
-              </div>
-            </div>
-          )}
-          
           {/* Luxury Accents */}
           <div className="luxury-frame-accents">
             <div className="luxury-accent luxury-accent-1" />
