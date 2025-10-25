@@ -71,7 +71,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
   const [selectedRoom, setSelectedRoom] = useState<RoomOption>(roomOptions[0]);
   const [customRoomImage, setCustomRoomImage] = useState<string | null>(null);
   const [useCustomRoom, setUseCustomRoom] = useState(false);
-  const [frameSize, setFrameSize] = useState(100); // percentage
+  const [frameSize, setFrameSize] = useState(70); // Reduced for better mobile display
   const [framePosition, setFramePosition] = useState({ x: 50, y: 40 }); // percentage
   const [rotation, setRotation] = useState(0); // degrees
   const [wallColor, setWallColor] = useState(selectedRoom.wallColor);
@@ -159,7 +159,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
   };
 
   const resetView = () => {
-    setFrameSize(100);
+    setFrameSize(70);
     setFramePosition({ x: 50, y: 40 });
     setRotation(0);
     setWallColor(useCustomRoom && customRoomImage ? '#f5f5f5' : selectedRoom.wallColor);
@@ -234,16 +234,17 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 {/* Artwork Overlay */}
                 <div
                   ref={artworkRef}
-                  className="absolute"
+                  className="absolute pointer-events-auto"
                   style={{
                     left: `${framePosition.x}%`,
                     top: `${framePosition.y}%`,
                     transform: 'translate(-50%, -50%)',
-                    width: `${Math.min(frameSize, 90)}%`,
-                    maxWidth: '500px',
-                    minWidth: '80px',
+                    width: `min(${frameSize}%, ${window.innerWidth < 640 ? '90vw' : '500px'})`,
+                    maxWidth: window.innerWidth < 640 ? '350px' : '500px',
+                    minWidth: '120px',
                     aspectRatio: '4/5',
-                    zIndex: 10
+                    zIndex: 20,
+                    filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3))'
                   }}
                 >
                   <div className="relative w-full h-full shadow-2xl" style={{ transform: `rotate(${rotation}deg)` }}>
@@ -292,6 +293,21 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     </div>
                   </div>
                 </div>
+
+                {/* Visual Indicator for Artwork Position on Mobile */}
+                {!artworkRef.current && (
+                  <div 
+                    className="absolute left-1/2 top-1/3 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30"
+                  >
+                    <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-2 border-white rounded-xl p-4 shadow-2xl">
+                      <p className="text-sm sm:text-base font-bold text-center flex items-center gap-2">
+                        <Paintbrush className="w-5 h-5" />
+                        Your artwork appears here
+                      </p>
+                      <p className="text-xs mt-2 text-center opacity-90">Use sliders below to adjust size and position</p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Helpful Instructions */}
                 {useCustomRoom && (
