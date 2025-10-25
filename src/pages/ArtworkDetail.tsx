@@ -208,51 +208,6 @@ const ArtworkDetail: React.FC = () => {
       <div className="luxury-nav backdrop-blur-md shadow-lg" style={{ borderBottom: '1px solid rgba(224, 168, 93, 0.2)' }}>
         <div className="luxury-container py-4">
           <div className="flex items-center justify-between">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🎨 Retour button clicked - Navigating back...');
-                handleBack();
-              }}
-              className="luxury-retour-button group relative overflow-hidden"
-              type="button"
-              style={{ pointerEvents: 'auto', zIndex: 10 }}
-            >
-              {/* Luxury Background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 rounded-xl transition-all duration-300 group-hover:from-amber-100 group-hover:via-orange-100 group-hover:to-yellow-100" style={{ pointerEvents: 'none' }} />
-              
-              {/* Golden Border */}
-              <div className="absolute inset-0 rounded-xl border-2 border-gradient-to-r from-amber-300 via-orange-300 to-yellow-300 opacity-60 group-hover:opacity-100 transition-opacity duration-300" style={{ pointerEvents: 'none' }} />
-              
-              {/* Inner Glow */}
-              <div className="absolute inset-1 rounded-lg bg-gradient-to-r from-amber-200/20 via-orange-200/20 to-yellow-200/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ pointerEvents: 'none' }} />
-              
-              {/* Content */}
-              <div className="relative flex items-center justify-center px-6 py-3 space-x-3" style={{ pointerEvents: 'none' }}>
-                {/* Luxury Arrow Icon */}
-                <div className="relative">
-                  <ArrowLeft className="w-5 h-5 text-amber-700 transition-all duration-300 group-hover:text-amber-800 group-hover:scale-110" />
-                  {/* Icon Glow Effect */}
-                  <div className="absolute inset-0 rounded-full bg-amber-400/20 blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-                
-                {/* Text */}
-                <span className="font-luxury-display text-lg font-semibold text-amber-800 tracking-wide transition-all duration-300 group-hover:text-amber-900 group-hover:tracking-wider">
-                  RETOUR
-                </span>
-                
-                {/* Decorative Elements */}
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
-                <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-gradient-to-br from-yellow-400 to-amber-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:animate-pulse" style={{ animationDelay: '0.2s' }} />
-              </div>
-              
-              {/* Hover Effect Overlay */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ pointerEvents: 'none' }} />
-              
-              {/* Luxury Shadow */}
-              <div className="absolute inset-0 rounded-xl shadow-lg shadow-amber-200/50 opacity-0 group-hover:opacity-100 group-hover:shadow-xl group-hover:shadow-amber-300/60 transition-all duration-300" style={{ pointerEvents: 'none' }} />
-            </button>
             <div className="flex items-center gap-4">
               <Badge 
                 className="painterly-card" 
@@ -269,6 +224,21 @@ const ArtworkDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Floating Retour Button - Mobile Optimized */}
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('🎨 Retour button clicked - Navigating back...');
+          handleBack();
+        }}
+        className="fixed top-20 sm:top-24 left-4 sm:left-6 z-50 group flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-amber-100 via-orange-100 to-yellow-100 border-2 border-amber-300 shadow-lg hover:shadow-xl hover:shadow-amber-300/50 transition-all duration-300 hover:scale-110 active:scale-95"
+        type="button"
+        style={{ pointerEvents: 'auto' }}
+      >
+        <ArrowLeft className="w-7 h-7 sm:w-8 sm:h-8 text-amber-800" />
+      </button>
 
       <div className="container mx-auto px-6 py-12">
         <div className="grid lg:grid-cols-2 gap-12">
