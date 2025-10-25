@@ -86,11 +86,61 @@
   border-color: rgba(212, 175, 55, 0.2);
 }
 
-.luxury-card-premium {
-  background: linear-gradient(135deg, var(--luxury-warm-white) 0%, var(--luxury-cream) 100%);
+/* Elegant Multi-Layer Border System */
+.luxury-card-premium::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(135deg, 
+    var(--luxury-gold) 0%, 
+    var(--luxury-orange) 25%, 
+    var(--luxury-gold) 50%, 
+    var(--luxury-orange) 75%, 
+    var(--luxury-gold) 100%);
+  border-radius: 20px;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.luxury-card-premium::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.8) 0%, 
+    rgba(255, 255, 255, 0.4) 50%, 
+    rgba(255, 255, 255, 0.8) 100%);
   border-radius: 16px;
-  box-shadow: var(--luxury-shadow-medium);
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  pointer-events: none;
+}
+
+.luxury-card-premium:hover::before {
+  opacity: 1;
+  animation: luxury-border-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes luxury-border-glow {
+  0% {
+    background: linear-gradient(135deg, 
+      var(--luxury-gold) 0%, 
+      var(--luxury-orange) 25%, 
+      var(--luxury-gold) 50%, 
+      var(--luxury-orange) 75%, 
+      var(--luxury-gold) 100%);
+  }
+  100% {
+    background: linear-gradient(135deg, 
+      var(--luxury-orange) 0%, 
+      var(--luxury-gold) 25%, 
+      var(--luxury-orange) 50%, 
+      var(--luxury-gold) 75%, 
+      var(--luxury-orange) 100%);
+  }
 }
 
 /* Luxury Button Styles - AdminDashboard Inspired */
@@ -282,16 +332,51 @@
 /* Luxury Gallery Styles */
 .luxury-gallery-item {
   position: relative;
-  overflow: hidden;
-  border-radius: 12px;
-  background: var(--luxury-warm-white);
-  box-shadow: var(--luxury-shadow-light);
+  overflow: visible;
+  border-radius: 20px;
+  background: transparent;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .luxury-gallery-item:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--luxury-shadow-heavy);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(44, 44, 44, 0.15);
+}
+
+/* Elegant Corner Accents */
+.luxury-gallery-item::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    var(--luxury-gold) 25%, 
+    transparent 50%, 
+    var(--luxury-orange) 75%, 
+    transparent 100%);
+  border-radius: 22px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.luxury-gallery-item:hover::before {
+  opacity: 0.3;
+}
+
+/* Sophisticated Inner Shadow */
+.luxury-card-premium {
+  background: linear-gradient(135deg, var(--luxury-warm-white) 0%, var(--luxury-cream) 100%);
+  border-radius: 20px;
+  box-shadow: 
+    var(--luxury-shadow-medium),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
 }
 
 .luxury-gallery-overlay {
