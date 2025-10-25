@@ -184,7 +184,7 @@ const Portfolio: React.FC = () => {
         </div>
 
         {/* Elegant Artworks Grid */}
-        <div className="luxury-grid luxury-grid-4 gap-8">
+        <div className="luxury-grid luxury-grid-4 gap-4 sm:gap-6 lg:gap-8">
           {displayedArtworks.map((artwork, index) => (
             <div
               key={artwork.id}
@@ -211,14 +211,14 @@ const Portfolio: React.FC = () => {
               </ArtworkFrame>
 
               {/* Content Below Frame */}
-              <div className="mt-4 space-y-2 text-center">
+              <div className="mt-3 sm:mt-4 space-y-1 sm:space-y-2 text-center px-2">
                 {/* Title */}
-                <h3 className="luxury-text-primary text-lg font-semibold">
+                <h3 className="luxury-text-primary text-base sm:text-lg font-semibold leading-tight">
                   {artwork.title}
                 </h3>
                 
                 {/* Category */}
-                <p className="luxury-text-secondary text-sm uppercase tracking-wider">
+                <p className="luxury-text-secondary text-xs sm:text-sm uppercase tracking-wider">
                   {artwork.category}
                 </p>
                 
