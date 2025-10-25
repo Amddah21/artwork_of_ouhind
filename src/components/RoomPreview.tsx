@@ -22,27 +22,39 @@ interface RoomOption {
 const roomOptions: RoomOption[] = [
   {
     id: 'living-room',
-    name: 'Living Room',
-    image: '/gallery-interior-1.jpg', // Using existing gallery images
+    name: 'Salon Moderne',
+    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80',
     wallColor: '#f5f5f5'
   },
   {
     id: 'bedroom',
-    name: 'Bedroom',
-    image: '/gallery-interior-2.jpg',
+    name: 'Chambre',
+    image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&q=80',
     wallColor: '#f8f6f0'
   },
   {
     id: 'office',
-    name: 'Office',
-    image: '/gallery-interior-1.jpg',
+    name: 'Bureau',
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
     wallColor: '#f5f5f5'
   },
   {
+    id: 'dining',
+    name: 'Salle à Manger',
+    image: 'https://images.unsplash.com/photo-1556912173-0a0227f7982e?w=800&q=80',
+    wallColor: '#faf9f6'
+  },
+  {
     id: 'gallery',
-    name: 'Gallery Wall',
-    image: '/gallery-interior-2.jpg',
+    name: 'Galerie',
+    image: 'https://images.unsplash.com/photo-1594736797933-d0e2d728ce48?w=800&q=80',
     wallColor: '#ffffff'
+  },
+  {
+    id: 'entry',
+    name: 'Entrée',
+    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
+    wallColor: '#f8f8f8'
   }
 ];
 
@@ -311,7 +323,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     </div>
                     <h3 className="text-base font-bold text-gray-900">Room Type</h3>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 max-h-[300px] overflow-y-auto">
                     {roomOptions.map((room) => (
                       <button
                         key={room.id}
