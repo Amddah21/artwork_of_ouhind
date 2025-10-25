@@ -6,6 +6,7 @@ import { useArtwork } from '@/contexts/ArtworkContext';
 import ProtectedImage from './ProtectedImage';
 import ArtistPalette3D from './ArtistPalette3D';
 import ArtworkFrame from './ArtworkFrame';
+import ScreenshotDetection from './ScreenshotDetection';
 import '../styles/artist-palette-3d.css';
 import '../styles/artwork-frame.css';
 
@@ -78,12 +79,21 @@ const Hero: React.FC = () => {
     }, 100);
   };
 
+  const handleScreenshotAttempt = () => {
+    console.warn('🚫 Screenshot attempt detected - Copyright protection active');
+    // You can add additional actions here like:
+    // - Show a warning message
+    // - Log the attempt
+    // - Redirect or blur the content
+  };
+
   return (
-    <section 
-      id="hero"
-      ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden luxury-bg-admin"
-    >
+    <ScreenshotDetection onScreenshotAttempt={handleScreenshotAttempt}>
+      <section 
+        id="hero"
+        ref={heroRef}
+        className="relative min-h-screen flex items-center justify-center overflow-hidden luxury-bg-admin"
+      >
       {/* Luxury art gallery background */}
       <div className="absolute inset-0">
         {/* Sophisticated gradient overlay */}
@@ -313,7 +323,8 @@ const Hero: React.FC = () => {
           <div className="w-2 h-4 rounded-full mt-2 animate-pulse" style={{ backgroundColor: 'var(--luxury-gold)' }} />
         </div>
       </div>
-    </section>
+      </section>
+    </ScreenshotDetection>
   );
 };
 

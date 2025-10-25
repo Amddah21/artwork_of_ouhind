@@ -5,6 +5,7 @@ import { Share2, MessageCircle, Star, Tag, Eye, Palette, Calendar, Sparkles, Eur
 import RatingDisplay from './RatingDisplay';
 import ProtectedImage from './ProtectedImage';
 import ArtworkFrame from './ArtworkFrame';
+import ScreenshotDetection from './ScreenshotDetection';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import { useReview } from '@/contexts/ReviewContext';
 import { useGallery } from '@/contexts/GalleryContext';
@@ -142,6 +143,10 @@ const Portfolio: React.FC = () => {
     navigate(`/artwork/${artwork.id}`);
   };
 
+  const handleScreenshotAttempt = () => {
+    console.warn('🚫 Screenshot attempt detected in gallery - Copyright protection active');
+  };
+
   const handleWhatsAppContact = (artwork: any) => {
     const message = `Bonjour ! Je suis intéressé(e) par l'œuvre "${artwork.title}" de ${artwork.artist}. Pourriez-vous me donner plus d'informations sur cette pièce et discuter de sa valeur artistique ?`;
     const whatsappUrl = `https://wa.me/212666672756?text=${encodeURIComponent(message)}`;
@@ -156,7 +161,8 @@ const Portfolio: React.FC = () => {
   };
 
   return (
-    <section id="portfolio" className="luxury-section luxury-bg-secondary" ref={portfolioRef}>
+    <ScreenshotDetection onScreenshotAttempt={handleScreenshotAttempt}>
+      <section id="portfolio" className="luxury-section luxury-bg-secondary" ref={portfolioRef}>
       <div className="luxury-container">
         {/* Featured Gallery Section */}
         <div className={`text-center mb-20 transition-all duration-1000 ${
@@ -296,7 +302,8 @@ const Portfolio: React.FC = () => {
           </div>
         )}
       </div>
-    </section>
+      </section>
+    </ScreenshotDetection>
   );
 };
 

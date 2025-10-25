@@ -1,4 +1,6 @@
 import React from 'react';
+import CopyrightProtection from './CopyrightProtection';
+import '../styles/copyright-protection.css';
 
 interface ArtworkFrameProps {
   children: React.ReactNode;
@@ -36,9 +38,15 @@ const ArtworkFrame: React.FC<ArtworkFrameProps> = ({
   };
 
   return (
-    <div className={`luxury-artwork-frame ${frameClasses[variant]} ${sizeClasses[size]} ${className}`}>
-      {/* Outer Frame */}
-      <div className="luxury-frame-outer">
+    <CopyrightProtection
+      artistName={artistName}
+      artworkTitle={artworkTitle}
+      year={year}
+      className={`artwork-${variant}`}
+    >
+      <div className={`luxury-artwork-frame ${frameClasses[variant]} ${sizeClasses[size]} ${className}`}>
+        {/* Outer Frame */}
+        <div className="luxury-frame-outer">
         {/* Frame Corners */}
         <div className="luxury-frame-corner luxury-frame-corner-tl" />
         <div className="luxury-frame-corner luxury-frame-corner-tr" />
@@ -88,9 +96,10 @@ const ArtworkFrame: React.FC<ArtworkFrameProps> = ({
         </div>
       </div>
       
-      {/* Frame Shadow */}
-      <div className="luxury-frame-shadow" />
-    </div>
+        {/* Frame Shadow */}
+        <div className="luxury-frame-shadow" />
+      </div>
+    </CopyrightProtection>
   );
 };
 

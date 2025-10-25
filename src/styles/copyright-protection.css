@@ -1,372 +1,296 @@
-/* Comprehensive Copyright Protection Styles */
+/* Copyright Protection Styles */
 
-/* Disable text selection on all images */
-img, .artwork-image, .gallery-image {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-user-drag: none;
-  -khtml-user-drag: none;
-  -moz-user-drag: none;
-  -o-user-drag: none;
-  user-drag: none;
-  -webkit-touch-callout: none;
-  -webkit-user-modify: none;
-  -webkit-user-focus: none;
-  outline: none !important;
-  border: none !important;
-}
-
-/* Disable context menu globally */
-* {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* Re-enable text selection for input fields and content areas */
-input, textarea, [contenteditable], .allow-select {
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
-}
-
-/* Image protection overlay styles */
-.image-protection-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  pointer-events: none;
-  z-index: 1000;
-}
-
-/* Copyright watermark styles */
-.copyright-watermark {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-  pointer-events: none;
-  z-index: 1001;
-}
-
-.copyright-watermark.top-left {
-  top: 8px;
-  left: 8px;
-}
-
-.copyright-watermark.top-right {
-  top: 8px;
-  right: 8px;
-}
-
-.copyright-watermark.bottom-left {
-  bottom: 8px;
-  left: 8px;
-}
-
-.copyright-watermark.bottom-right {
-  bottom: 8px;
-  right: 8px;
-}
-
-.copyright-watermark.center {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 16px;
-  padding: 8px 16px;
-}
-
-/* Protection message overlay */
-.protection-message {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background: rgba(0, 0, 0, 0.9);
-  color: white;
-  padding: 8px;
-  border-radius: 6px;
-  text-align: center;
-  z-index: 10000;
-  font-family: Arial, sans-serif;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  animation: protectionPulse 0.5s ease-in-out;
-}
-
-@keyframes protectionPulse {
-  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
-/* Disable drag and drop globally */
-body {
-  -webkit-user-drag: none;
-  -khtml-user-drag: none;
-  -moz-user-drag: none;
-  -o-user-drag: none;
-  user-drag: none;
-}
-
-/* Hide images from print media */
-@media print {
-  img, .artwork-image, .gallery-image {
-    display: none !important;
-  }
-  
-  .copyright-watermark {
-    display: none !important;
-  }
-  
-  .protection-message {
-    display: none !important;
-  }
-}
-
-/* Disable image loading in some cases */
-.artwork-container {
+.copyright-protection-container {
   position: relative;
   overflow: hidden;
 }
 
-.artwork-container::before {
-  content: '';
+.copyright-protection-container * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-drag: none !important;
+  -khtml-user-select: none !important;
+}
+
+.copyright-protection-container img {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  -khtml-user-select: none;
+}
+
+/* Watermark Overlay System */
+.copyright-watermark-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, transparent 49%, rgba(255,255,255,0.1) 50%, transparent 51%);
-  background-size: 20px 20px;
+  right: 0;
+  bottom: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 5;
+  overflow: hidden;
 }
 
-/* Blur effect for protection */
-.protection-blur {
-  filter: blur(3px);
-  transition: filter 0.3s ease-in-out;
+.watermark-text {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.15);
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  transform: rotate(-45deg);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  animation: watermark-drift 20s linear infinite;
 }
 
-/* Disable right-click context menu */
-.no-context-menu {
-  -webkit-context-menu: none;
-  -moz-context-menu: none;
-  -ms-context-menu: none;
-  context-menu: none;
+.watermark-top-left {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
 }
 
-/* Protection shield icon */
-.protection-shield {
+.watermark-top-right {
+  top: 15%;
+  right: 5%;
+  animation-delay: -5s;
+}
+
+.watermark-bottom-left {
+  bottom: 25%;
+  left: 5%;
+  animation-delay: -10s;
+}
+
+.watermark-bottom-right {
+  bottom: 20%;
+  right: 10%;
+  animation-delay: -15s;
+}
+
+.watermark-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 18px;
+  animation-delay: -7s;
+}
+
+@keyframes watermark-drift {
+  0% {
+    transform: rotate(-45deg) translateX(-100px);
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: rotate(-45deg) translateX(100px);
+    opacity: 0.1;
+  }
+}
+
+/* Protection Overlay */
+.copyright-protection-overlay {
+  background: transparent;
+  cursor: default;
+}
+
+.copyright-protection-overlay:hover {
+  background: rgba(0, 0, 0, 0.01);
+}
+
+/* Protection Status Indicator */
+.copyright-protection-indicator {
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 24px;
-  height: 24px;
-  background: rgba(255, 0, 0, 0.8);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 15;
+}
+
+.protection-badge {
+  background: rgba(0, 0, 0, 0.8);
   color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  animation: protection-pulse 3s ease-in-out infinite;
+}
+
+@keyframes protection-pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* Enhanced Watermark for Different Artwork Types */
+.copyright-protection-container.artwork-hero .watermark-text {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.copyright-protection-container.artwork-gallery .watermark-text {
   font-size: 12px;
-  z-index: 1002;
-  pointer-events: none;
+  color: rgba(255, 255, 255, 0.12);
 }
 
-/* Invisible watermark pattern */
-.invisible-watermark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='50' y='50' font-family='Arial' font-size='10' fill='rgba(0,0,0,0.02)' text-anchor='middle' dominant-baseline='middle'%3E© Omhind%3C/text%3E%3C/svg%3E");
-  background-repeat: repeat;
-  opacity: 0.1;
-  pointer-events: none;
-  z-index: 1;
+.copyright-protection-container.artwork-detail .watermark-text {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.25);
 }
 
-/* Disable image saving through CSS */
-.artwork-image {
-  background-image: none !important;
-  content: none !important;
-}
-
-/* Protection for mobile devices */
-@media (max-width: 768px) {
-  .copyright-watermark {
-    font-size: 10px;
-    padding: 2px 6px;
-  }
-  
-  .copyright-watermark.center {
-    font-size: 12px;
-    padding: 6px 12px;
-  }
-  
-  .protection-message {
-    padding: 15px;
-    font-size: 14px;
-    margin: 0 20px;
-    max-width: 90vw;
-  }
-  
-  .protection-shield {
-    width: 18px;
-    height: 18px;
-    font-size: 10px;
-    top: 8px;
-    right: 8px;
-  }
-  
-  /* Mobile-specific image protection */
-  img, .artwork-image, .gallery-image {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-user-drag: none;
-    -khtml-user-drag: none;
-    -moz-user-drag: none;
-    -o-user-drag: none;
-    user-drag: none;
-    pointer-events: none;
-  }
-  
-  /* Mobile text sizing */
-  .protection-message div {
-    font-size: 12px;
-  }
-  
-  .protection-message h3 {
-    font-size: 16px;
-    margin-bottom: 8px;
-  }
-}
-
-/* Extra small mobile devices */
-@media (max-width: 480px) {
-  .copyright-watermark {
-    font-size: 9px;
-    padding: 1px 4px;
-  }
-  
-  .protection-message {
-    padding: 12px;
-    font-size: 13px;
-    margin: 0 15px;
-  }
-  
-  .protection-shield {
-    width: 16px;
-    height: 16px;
-    font-size: 9px;
-  }
-  
-  .copyright-watermark.center {
-    font-size: 11px;
-    padding: 4px 8px;
-  }
-}
-
-/* High contrast mode protection */
-@media (prefers-contrast: high) {
-  .copyright-watermark {
-    background: rgba(0, 0, 0, 0.9);
-    border: 2px solid white;
-  }
-  
-  .protection-message {
-    background: rgba(0, 0, 0, 0.95);
-    border: 2px solid white;
-  }
-}
-
-/* Reduced motion protection */
-@media (prefers-reduced-motion: reduce) {
-  .protection-message {
-    animation: none;
-  }
-  
-  .protection-blur {
-    transition: none;
-  }
-}
-
-/* Enhanced Screenshot Protection */
-.protected-image {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-drag: none;
-  -khtml-user-drag: none;
-  -moz-user-drag: none;
-  -o-user-drag: none;
-  user-drag: none;
-  position: relative;
-}
-
-/* Prevent screenshot tools from capturing */
-.protected-image::before {
+/* Dynamic Watermark Patterns */
+.copyright-protection-container::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: transparent;
-  z-index: 9999;
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 50px,
+      rgba(255, 255, 255, 0.02) 50px,
+      rgba(255, 255, 255, 0.02) 100px
+    );
   pointer-events: none;
+  z-index: 1;
 }
 
-/* Hide from print media */
+/* Disable Print Styles */
 @media print {
-  .protected-image,
-  .artwork-image,
-  .gallery-image,
-  img[alt*="artwork"],
-  img[alt*="gallery"] {
+  .copyright-protection-container {
+    display: none !important;
+  }
+  
+  .copyright-watermark-overlay {
+    display: none !important;
+  }
+  
+  .copyright-protection-overlay {
     display: none !important;
   }
 }
 
-/* Additional screenshot protection */
-.screenshot-protection {
+/* Disable Screenshot Attempts */
+.copyright-protection-container {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
+  -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  -webkit-user-drag: none;
-  user-drag: none;
-  pointer-events: none;
 }
 
-/* Disable right-click context menu globally for images */
-img {
-  pointer-events: none;
+/* Additional Protection Measures */
+.copyright-protection-container img {
+  image-rendering: optimizeQuality;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Responsive Watermark Sizing */
+@media (max-width: 768px) {
+  .watermark-text {
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  
+  .watermark-center {
+    font-size: 14px;
+  }
+  
+  .protection-badge {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .watermark-text {
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+  
+  .watermark-center {
+    font-size: 12px;
+  }
+  
+  .protection-badge {
+    font-size: 8px;
+    padding: 2px 4px;
+  }
+}
+
+/* High DPI Display Optimization */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .watermark-text {
+    text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Dark Mode Watermark Adjustment */
+@media (prefers-color-scheme: dark) {
+  .watermark-text {
+    color: rgba(255, 255, 255, 0.2);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Accessibility - Ensure watermarks don't interfere with screen readers */
+.watermark-text {
+  aria-hidden: true;
+}
+
+/* Additional Security Measures */
+.copyright-protection-container {
+  /* Disable text selection highlighting */
+  -webkit-tap-highlight-color: transparent;
+  
+  /* Disable image saving */
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* Prevent image extraction */
+.copyright-protection-container img {
+  /* Disable image context menu */
+  -webkit-touch-callout: none;
+  
+  /* Disable image dragging */
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  
+  /* Disable image selection */
   -webkit-user-select: none;
+  -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
