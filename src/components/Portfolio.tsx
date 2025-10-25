@@ -10,6 +10,7 @@ import { useArtwork } from '@/contexts/ArtworkContext';
 import { useReview } from '@/contexts/ReviewContext';
 import { useGallery } from '@/contexts/GalleryContext';
 import '../styles/artwork-frame.css';
+import '../styles/luxury-gallery-cards.css';
 
 interface Artwork {
   id: string;
@@ -189,7 +190,7 @@ const Portfolio: React.FC = () => {
           </p>
         </div>
 
-        {/* Elegant Artworks Grid */}
+        {/* Elegant Artworks Grid with Luxury Styling */}
         <div className="luxury-grid luxury-grid-4 gap-4 sm:gap-6 lg:gap-8">
           {displayedArtworks.map((artwork, index) => (
             <div
@@ -200,38 +201,49 @@ const Portfolio: React.FC = () => {
               style={{ transitionDelay: `${index * 0.1}s` }}
               onClick={() => handleViewArtwork(artwork)}
             >
-              {/* Luxury Artwork Frame */}
-              <ArtworkFrame
-                variant="gallery"
-                size="medium"
-                artistName="Omhind"
-                artworkTitle={artwork.title}
-                year={artwork.year?.toString()}
-                className="w-full"
-              >
-                <ProtectedImage
-                  src={artwork.image_url}
-                  alt={artwork.title}
-                  className="w-full h-full object-cover"
-                />
-              </ArtworkFrame>
+              {/* Luxury Card Container */}
+              <div className="luxury-gallery-card">
+                {/* Decorative Elements */}
+                <div className="luxury-gallery-decoration luxury-gallery-decoration-1" />
+                <div className="luxury-gallery-decoration luxury-gallery-decoration-2" />
+                
+                {/* Premium Image Container with Frame */}
+                <div className="luxury-gallery-image-container">
+                  <ArtworkFrame
+                    variant="gallery"
+                    size="medium"
+                    artistName="Omhind"
+                    artworkTitle={artwork.title}
+                    year={artwork.year?.toString()}
+                    className="w-full"
+                  >
+                    <ProtectedImage
+                      src={artwork.image_url}
+                      alt={artwork.title}
+                      className="luxury-gallery-image"
+                    />
+                  </ArtworkFrame>
+                </div>
 
-              {/* Content Below Frame */}
-              <div className="mt-3 sm:mt-4 space-y-1 sm:space-y-2 text-center px-2">
-                {/* Title */}
-                <h3 className="luxury-text-primary text-base sm:text-lg font-semibold leading-tight">
-                  {artwork.title}
-                </h3>
-                
-                {/* Category */}
-                <p className="luxury-text-secondary text-xs sm:text-sm uppercase tracking-wider">
-                  {artwork.category}
-                </p>
-                
-                {/* Year */}
-                <p className="luxury-text-muted text-xs">
-                  {artwork.year}
-                </p>
+                {/* Luxury Content Section */}
+                <div className="luxury-gallery-content">
+                  <div className="luxury-gallery-content-wrapper">
+                    {/* Title */}
+                    <h3 className="luxury-gallery-title">
+                      {artwork.title}
+                    </h3>
+                    
+                    {/* Category Badge */}
+                    <span className="luxury-gallery-category">
+                      {artwork.category}
+                    </span>
+                    
+                    {/* Year */}
+                    <p className="luxury-gallery-year">
+                      {artwork.year}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
