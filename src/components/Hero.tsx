@@ -5,10 +5,11 @@ import Logo from './Logo';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import ProtectedImage from './ProtectedImage';
 import ArtistPalette3D from './ArtistPalette3D';
-import ArtworkFrame from './ArtworkFrame';
+import Artwork3D from './Artwork3D';
 import ScreenshotDetection from './ScreenshotDetection';
 import '../styles/artist-palette-3d.css';
 import '../styles/artwork-frame.css';
+import '../styles/artwork-3d.css';
 import '../styles/mobile-content-fix.css';
 
 const Hero: React.FC = () => {
@@ -247,37 +248,28 @@ const Hero: React.FC = () => {
               </div>
             </div>
 
-            {/* Featured Artwork Showcase with Luxury Frame */}
+            {/* Featured Artwork Showcase with 3D Effect */}
             {featuredArtworks.length > 0 && (
               <div className={`transition-all duration-1000 ${
                 isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
               }`} style={{ animationDelay: '1.2s' }}>
                 <div className="flex justify-center lg:justify-end px-2 sm:px-4 lg:px-0">
-                  <ArtworkFrame
-                    variant="luxury"
-                    size="hero"
-                    artistName={artistName}
-                    artworkTitle={featuredArtworks[currentArtworkIndex]?.title}
-                    year={featuredArtworks[currentArtworkIndex]?.year?.toString()}
-                    className="max-w-[280px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] w-full"
-                  >
-                    {/* Fade transition effect */}
-                    <div className="relative w-full h-full">
-                      {featuredArtworks.map((artwork, index) => (
-                        <div
-                          key={artwork.id}
-                          className={`absolute inset-0 transition-opacity duration-1000 ${
-                            index === currentArtworkIndex ? 'opacity-100' : 'opacity-0'
-                          }`}
-                        >
-                          <ProtectedImage
-                            src={artwork.image_url}
-                            alt={artwork.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ))}
-                    </div>
+                  <div className="relative max-w-[280px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] w-full h-[350px] sm:h-[420px] md:h-[480px] lg:h-[540px] xl:h-[600px]">
+                    {/* 3D Artwork with fade transition */}
+                    {featuredArtworks.map((artwork, index) => (
+                      <div
+                        key={artwork.id}
+                        className={`absolute inset-0 transition-opacity duration-1000 ${
+                          index === currentArtworkIndex ? 'opacity-100' : 'opacity-0'
+                        }`}
+                      >
+                        <Artwork3D
+                          artwork={artwork}
+                          artistName={artistName}
+                          className="w-full h-full"
+                        />
+                      </div>
+                    ))}
                     
                     {/* Enhanced indicator dots */}
                     <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
@@ -293,7 +285,7 @@ const Hero: React.FC = () => {
                         />
                       ))}
                     </div>
-                  </ArtworkFrame>
+                  </div>
                 </div>
               </div>
             )}
