@@ -119,16 +119,28 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Check file size
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        alert('File too large. Please upload an image smaller than 10MB.');
+        return;
+      }
+
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setCustomRoomImage(reader.result as string);
-        setUseCustomRoom(true);
-        setSelectedRoom({
-          id: 'custom',
-          name: 'Custom Room',
-          image: reader.result as string,
-          wallColor: '#f5f5f5'
-        });
+      reader.onloadend = (e) => {
+        const result = e.target?.result as string;
+        if (result) {
+          setCustomRoomImage(result);
+          setUseCustomRoom(true);
+          setSelectedRoom({
+            id: 'custom',
+            name: 'Custom Room',
+            image: result,
+            wallColor: '#f5f5f5'
+          });
+          // Reset wall color for custom room
+          setWallColor('#f5f5f5');
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -197,9 +209,11 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                   backgroundImage: `url(${useCustomRoom && customRoomImage ? customRoomImage : selectedRoom.image})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  filter: `brightness(0.85) contrast(1.05) saturate(0.9)`,
+                  filter: useCustomRoom && customRoomImage 
+                    ? `brightness(0.95) contrast(1.05) saturate(0.95)` 
+                    : `brightness(0.85) contrast(1.05) saturate(0.9)`,
                   backgroundColor: wallColor,
-                  backgroundBlendMode: 'overlay'
+                  backgroundBlendMode: useCustomRoom && customRoomImage ? 'normal' : 'overlay'
                 }}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
@@ -266,6 +280,14 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 </div>
 
                 {/* Helpful Instructions */}
+                {useCustomRoom && (
+                  <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-2 rounded-lg shadow-lg">
+                    <p className="text-xs sm:text-sm font-bold flex items-center gap-1">
+                      <Image className="w-4 h-4" />
+                      Custom Room Active
+                    </p>
+                  </div>
+                )}
                 <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 sm:p-3 shadow-lg max-w-[90%] sm:max-w-none">
                   <p className="text-xs sm:text-sm text-gray-600">
                     <span className="hidden sm:inline"><Move className="w-4 h-4 inline mr-1" />Drag to move • </span>
