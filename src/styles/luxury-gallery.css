@@ -1,27 +1,27 @@
 /* Luxury Art Gallery Design System - AdminDashboard Inspired */
 
-/* Premium Color Palette - Warm Gold & Orange Theme */
+/* Clean Professional Gallery Color Palette */
 :root {
-  /* Primary Luxury Colors - Warm Gold & Orange */
-  --luxury-gold: #E0A85D;
-  --luxury-dark-gold: #D4AF37;
-  --luxury-light-gold: #F4E4BC;
-  --luxury-orange: #E76F51;
-  --luxury-light-orange: #FDF0D5;
+  /* Primary Professional Colors - Clean & Modern */
+  --luxury-gold: #D97706;
+  --luxury-dark-gold: #B45309;
+  --luxury-light-gold: #FEF3C7;
+  --luxury-orange: #EA580C;
+  --luxury-light-orange: #FED7AA;
   
-  /* Sophisticated Neutrals */
-  --luxury-charcoal: #2C2C2C;
-  --luxury-dark-gray: #4A4A4A;
-  --luxury-medium-gray: #6B6B6B;
-  --luxury-light-gray: #9B9B9B;
+  /* Clean Neutrals */
+  --luxury-charcoal: #1F2937;
+  --luxury-dark-gray: #374151;
+  --luxury-medium-gray: #6B7280;
+  --luxury-light-gray: #9CA3AF;
   
-  /* Elegant Backgrounds - Warm Tones */
-  --luxury-cream: #FDFBF5;
-  --luxury-beige: #F5F2ED;
-  --luxury-warm-white: #FEFCF9;
-  --luxury-off-white: #F8F6F3;
+  /* Clean Backgrounds */
+  --luxury-cream: #FFFFFF;
+  --luxury-beige: #F9FAFB;
+  --luxury-warm-white: #FFFFFF;
+  --luxury-off-white: #F3F4F6;
   --luxury-slate-50: #F8FAFC;
-  --luxury-yellow-50: #FEFCE8;
+  --luxury-yellow-50: #FFFBEB;
   --luxury-orange-50: #FFF7ED;
   
   /* Accent Colors */
@@ -86,61 +86,26 @@
   border-color: rgba(212, 175, 55, 0.2);
 }
 
-/* Elegant Multi-Layer Border System */
-.luxury-card-premium::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 2px;
-  background: linear-gradient(135deg, 
-    var(--luxury-gold) 0%, 
-    var(--luxury-orange) 25%, 
-    var(--luxury-gold) 50%, 
-    var(--luxury-orange) 75%, 
-    var(--luxury-gold) 100%);
-  border-radius: 20px;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: xor;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  opacity: 0.6;
-  transition: opacity 0.3s ease;
+/* Clean Professional Typography */
+.luxury-text-primary {
+  color: var(--luxury-charcoal);
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1.4;
 }
 
-.luxury-card-premium::after {
-  content: '';
-  position: absolute;
-  inset: 4px;
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.8) 0%, 
-    rgba(255, 255, 255, 0.4) 50%, 
-    rgba(255, 255, 255, 0.8) 100%);
-  border-radius: 16px;
-  pointer-events: none;
+.luxury-text-secondary {
+  color: var(--luxury-medium-gray);
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.luxury-card-premium:hover::before {
-  opacity: 1;
-  animation: luxury-border-glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes luxury-border-glow {
-  0% {
-    background: linear-gradient(135deg, 
-      var(--luxury-gold) 0%, 
-      var(--luxury-orange) 25%, 
-      var(--luxury-gold) 50%, 
-      var(--luxury-orange) 75%, 
-      var(--luxury-gold) 100%);
-  }
-  100% {
-    background: linear-gradient(135deg, 
-      var(--luxury-orange) 0%, 
-      var(--luxury-gold) 25%, 
-      var(--luxury-orange) 50%, 
-      var(--luxury-gold) 75%, 
-      var(--luxury-orange) 100%);
-  }
+.luxury-text-muted {
+  color: var(--luxury-light-gray);
+  font-weight: 400;
+  font-size: 0.875rem;
 }
 
 /* Luxury Button Styles - AdminDashboard Inspired */
@@ -329,54 +294,34 @@
   }
 }
 
-/* Luxury Gallery Styles */
+/* Clean Professional Gallery Styles */
 .luxury-gallery-item {
   position: relative;
-  overflow: visible;
-  border-radius: 20px;
+  overflow: hidden;
+  border-radius: 12px;
   background: transparent;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
 }
 
 .luxury-gallery-item:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 60px rgba(44, 44, 44, 0.15);
+  transform: translateY(-4px);
 }
 
-/* Elegant Corner Accents */
-.luxury-gallery-item::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, 
-    transparent 0%, 
-    var(--luxury-gold) 25%, 
-    transparent 50%, 
-    var(--luxury-orange) 75%, 
-    transparent 100%);
-  border-radius: 22px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
-}
-
-.luxury-gallery-item:hover::before {
-  opacity: 0.3;
-}
-
-/* Sophisticated Inner Shadow */
+/* Clean Minimalist Card Design */
 .luxury-card-premium {
-  background: linear-gradient(135deg, var(--luxury-warm-white) 0%, var(--luxury-cream) 100%);
-  border-radius: 20px;
-  box-shadow: 
-    var(--luxury-shadow-medium),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  background: var(--luxury-cream);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--luxury-orange);
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.luxury-card-premium:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  border-color: var(--luxury-gold);
 }
 
 .luxury-gallery-overlay {

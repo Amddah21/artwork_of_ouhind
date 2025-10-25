@@ -186,10 +186,10 @@ const Portfolio: React.FC = () => {
           {displayedArtworks.map((artwork, index) => (
             <div
               key={artwork.id}
-              className={`luxury-gallery-item luxury-artwork-hover luxury-golden-glow luxury-sparkle-effect cursor-pointer ${
-                isLoaded ? 'luxury-artwork-entrance' : 'opacity-0 scale-95'
+              className={`luxury-gallery-item cursor-pointer ${
+                isLoaded ? 'opacity-100' : 'opacity-0'
               }`}
-              style={{ animationDelay: `${0.4 + index * 0.15}s` }}
+              style={{ transitionDelay: `${index * 0.1}s` }}
               onClick={() => handleViewArtwork(artwork)}
             >
               {/* Artwork Card */}
@@ -203,43 +203,24 @@ const Portfolio: React.FC = () => {
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                   />
                   
-                  {/* Luxury Overlay */}
-                  <div className="luxury-gallery-overlay" />
-                  
-                  {/* Luxury Floating Elements */}
-                  <div className="absolute top-4 left-4 w-8 h-8 luxury-floating-elements" style={{ animationDelay: `${index * 0.2}s` }}>
-                    <div className="w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 opacity-20 animate-pulse"></div>
-                  </div>
-                  <div className="absolute bottom-4 right-4 w-6 h-6 luxury-floating-elements" style={{ animationDelay: `${index * 0.3}s` }}>
-                    <div className="w-full h-full rounded-full bg-gradient-to-br from-orange-400 to-pink-400 opacity-20 animate-pulse"></div>
-                  </div>
-                  
-                  {/* Availability Badge */}
-                  <div className="absolute top-4 right-4">
-                    <span className="px-4 py-2 rounded-full text-xs font-luxury-body font-medium backdrop-blur-sm" style={{ 
-                      backgroundColor: 'rgba(250, 248, 245, 0.9)', 
-                      color: 'var(--luxury-gold)',
-                      border: '1px solid rgba(212, 175, 55, 0.2)'
-                    }}>
-                      Disponible
-                    </span>
-                  </div>
+                  {/* Clean overlay for hover effect */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-all duration-300" />
                 </div>
 
                 {/* Content */}
-                <div className="p-8 space-y-4">
+                <div className="p-6 space-y-3">
                   {/* Title */}
-                  <h3 className="text-xl font-luxury-accent luxury-text-primary group-hover:luxury-text-gold transition-colors duration-300">
+                  <h3 className="luxury-text-primary">
                     {artwork.title}
                   </h3>
                   
                   {/* Category */}
-                  <p className="text-sm font-luxury-body luxury-text-secondary uppercase tracking-wider">
+                  <p className="luxury-text-secondary">
                     {artwork.category}
                   </p>
                   
                   {/* Year */}
-                  <p className="text-sm font-luxury-body luxury-text-muted">
+                  <p className="luxury-text-muted">
                     {artwork.year}
                   </p>
                 </div>
