@@ -42,7 +42,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!supabaseUrl || !supabaseAnonKey) {
       // Fallback to localStorage for development
       console.log('Supabase not configured, using localStorage fallback');
-      // Don't auto-load user from localStorage - start fresh each time
+      
+      // Try to restore user from localStorage for persistent sessions
+      try {
+        const storedAuth = localStorage.getItem('artspark-auth');
+        if (storedAuth) {
+          const parsedAuth = JSON.parse(storedAuth);
+          console.log('Restoring user from localStorage:', parsedAuth);
+          setUser(parsedAuth);
+        }
+      } catch (error) {
+        console.error('Error parsing stored auth:', error);
+        localStorage.removeItem('artspark-auth');
+      }
+      
       setIsLoading(false);
       return;
     }

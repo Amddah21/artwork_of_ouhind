@@ -127,10 +127,10 @@ const ArtisticNavbar: React.FC = () => {
                     key={item.id}
                     variant="ghost"
                     onClick={() => handleNavClick(item.href)}
-                    className={`group relative transition-all duration-300 px-3 py-2 rounded-lg ${
+                    className={`group relative transition-all duration-300 px-3 py-2 rounded-lg luxury-magnetic-hover luxury-sparkle-effect ${
                       isActiveItem
-                        ? 'text-gray-800 bg-gradient-to-r from-gray-200 to-gray-300 shadow-lg hover:from-gray-300 hover:to-gray-400'
-                        : 'text-gray-700 hover:text-gray-800 hover:bg-gray-100 hover:shadow-md'
+                        ? 'luxury-btn-primary text-white shadow-xl'
+                        : 'luxury-btn-secondary hover:luxury-btn-primary hover:text-white'
                     }`}
                   >
                     <IconComponent className={`w-4 h-4 mr-2 transition-transform group-hover:scale-110 ${
@@ -298,10 +298,10 @@ const ArtisticNavbar: React.FC = () => {
                         e.stopPropagation();
                         handleNavClick(item.href);
                       }}
-                      className={`w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 touch-manipulation ${
+                      className={`w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 touch-manipulation luxury-magnetic-hover ${
                         isActiveItem
-                          ? 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 shadow-lg'
-                          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-800'
+                          ? 'luxury-btn-primary text-white shadow-xl'
+                          : 'luxury-btn-secondary hover:luxury-btn-primary hover:text-white'
                       }`}
                       style={{ touchAction: 'manipulation' }}
                     >

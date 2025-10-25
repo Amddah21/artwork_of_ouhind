@@ -186,17 +186,17 @@ const Portfolio: React.FC = () => {
           {displayedArtworks.map((artwork, index) => (
             <div
               key={artwork.id}
-              className={`luxury-gallery-item transition-all duration-700 cursor-pointer ${
-                isLoaded ? 'luxury-animate-scale-in' : 'opacity-0 scale-95'
+              className={`luxury-gallery-item luxury-artwork-hover luxury-golden-glow luxury-sparkle-effect cursor-pointer ${
+                isLoaded ? 'luxury-artwork-entrance' : 'opacity-0 scale-95'
               }`}
-              style={{ animationDelay: `${0.4 + index * 0.1}s` }}
+              style={{ animationDelay: `${0.4 + index * 0.15}s` }}
               onClick={() => handleViewArtwork(artwork)}
             >
               {/* Artwork Card */}
               <div className="luxury-card-premium overflow-hidden">
                 
                 {/* Image Container */}
-                <div className="relative aspect-square overflow-hidden">
+                <div className="relative aspect-square overflow-hidden luxury-image-reveal">
                   <ProtectedImage
                     src={artwork.image_url}
                     alt={artwork.title}
@@ -205,6 +205,14 @@ const Portfolio: React.FC = () => {
                   
                   {/* Luxury Overlay */}
                   <div className="luxury-gallery-overlay" />
+                  
+                  {/* Luxury Floating Elements */}
+                  <div className="absolute top-4 left-4 w-8 h-8 luxury-floating-elements" style={{ animationDelay: `${index * 0.2}s` }}>
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 opacity-20 animate-pulse"></div>
+                  </div>
+                  <div className="absolute bottom-4 right-4 w-6 h-6 luxury-floating-elements" style={{ animationDelay: `${index * 0.3}s` }}>
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-orange-400 to-pink-400 opacity-20 animate-pulse"></div>
+                  </div>
                   
                   {/* Availability Badge */}
                   <div className="absolute top-4 right-4">
@@ -244,15 +252,19 @@ const Portfolio: React.FC = () => {
         {isLoading && (
           <div className="text-center py-20">
             <div className="max-w-md mx-auto">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center luxury-floating-elements">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+                <div className="absolute inset-0 rounded-full border-2 border-yellow-300 opacity-30 animate-pulse"></div>
               </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ color: 'hsl(240, 10%, 15%)' }}>
+              <h3 className="text-2xl font-bold mb-4 luxury-text-primary">
                 Chargement des œuvres...
               </h3>
-              <p className="text-lg" style={{ color: 'hsl(240, 10%, 35%)' }}>
+              <p className="text-lg luxury-text-secondary">
                 Veuillez patienter pendant que nous chargeons votre galerie.
               </p>
+              <div className="mt-8 w-full max-w-xs mx-auto h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-full luxury-artwork-loading rounded-full"></div>
+              </div>
             </div>
           </div>
         )}

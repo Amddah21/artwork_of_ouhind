@@ -88,7 +88,7 @@ const ArtisticFooter: React.FC = () => {
                 return (
                   <button
                     key={social.label}
-                    className="luxury-btn-secondary p-3"
+                    className="luxury-btn-secondary p-3 luxury-magnetic-hover luxury-sparkle-effect"
                     onClick={() => window.open(social.href, '_blank')}
                   >
                     <IconComponent className="w-5 h-5" />

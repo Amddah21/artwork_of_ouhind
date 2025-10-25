@@ -226,7 +226,7 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
       const categories = await ApiService.getCategories();
       dispatch({ type: 'SET_CATEGORIES', payload: categories });
       
-      // Load gallery data for each category
+      // Load gallery data for each category with better error handling
       const galleries: Gallery[] = [];
       for (const { category } of categories) {
         try {
@@ -237,10 +237,35 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
               ...galleryData,
               artworks: artworks || []
             });
+          } else {
+            // Create a fallback gallery entry even if data loading fails
+            console.warn(`Creating fallback gallery for category: ${category}`);
+            galleries.push({
+              id: category.toLowerCase().replace(/\s+/g, '-'),
+              name: category,
+              slug: category.toLowerCase().replace(/\s+/g, '-'),
+              description: `Collection d'œuvres ${category.toLowerCase()}`,
+              featuredImage: '/placeholder.jpg',
+              artworkCount: 0,
+              year: new Date().getFullYear(),
+              category: category,
+              artworks: []
+            });
           }
         } catch (error) {
           console.error(`Error loading gallery for category ${category}:`, error);
-          // Continue with other galleries
+          // Create a fallback gallery entry to prevent complete failure
+          galleries.push({
+            id: category.toLowerCase().replace(/\s+/g, '-'),
+            name: category,
+            slug: category.toLowerCase().replace(/\s+/g, '-'),
+            description: `Collection d'œuvres ${category.toLowerCase()}`,
+            featuredImage: '/placeholder.jpg',
+            artworkCount: 0,
+            year: new Date().getFullYear(),
+            category: category,
+            artworks: []
+          });
         }
       }
       

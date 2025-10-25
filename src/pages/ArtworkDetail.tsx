@@ -110,8 +110,34 @@ const ArtworkDetail: React.FC = () => {
   const multipleViews = getMultipleViews();
 
   const handleBack = () => {
-    navigate(-1);
+    try {
+      // Try to go back in history first
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        // Fallback to home page if no history
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // Fallback to home page
+      navigate('/');
+    }
   };
+
+  // Add keyboard shortcut for back button (Escape key)
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleBack();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, []);
 
   const handleShare = async () => {
     const shareData = {
@@ -177,13 +203,19 @@ const ArtworkDetail: React.FC = () => {
         <div className="luxury-container py-4">
           <div className="flex items-center justify-between">
             <Button
-              onClick={handleBack}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Retour button clicked');
+                handleBack();
+              }}
               variant="outline"
-              className="luxury-btn-secondary"
+              className="luxury-btn-secondary luxury-magnetic-hover luxury-sparkle-effect"
               style={{ 
                 borderColor: 'hsl(330, 20%, 88%)',
                 color: 'hsl(240, 10%, 15%)'
               }}
+              type="button"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Retour

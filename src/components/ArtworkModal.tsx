@@ -76,7 +76,7 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl w-full h-[90vh] p-0 overflow-hidden luxury-bg-secondary">
+      <DialogContent className="max-w-7xl w-full h-[90vh] p-0 overflow-hidden luxury-bg-secondary luxury-modal-entrance">
         <div className="flex h-full">
           {/* Left Side - Image Display (60%) */}
           <div className="flex-1 relative luxury-bg-secondary">
@@ -88,7 +88,7 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={() => onNavigate?.('prev')}
-                    className="luxury-btn-secondary"
+                    className="luxury-btn-secondary luxury-magnetic-hover luxury-sparkle-effect"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
@@ -98,7 +98,7 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={() => onNavigate?.('next')}
-                    className="luxury-btn-secondary"
+                    className="luxury-btn-secondary luxury-magnetic-hover luxury-sparkle-effect"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Button>
@@ -110,7 +110,7 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={handleShare}
-                  className="painterly-card"
+                  className="painterly-card luxury-magnetic-hover luxury-sparkle-effect"
                 >
                   <Share2 className="w-4 h-4" />
                 </Button>
@@ -118,7 +118,7 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={onClose}
-                  className="painterly-card"
+                  className="painterly-card luxury-magnetic-hover luxury-sparkle-effect"
                 >
                   <X className="w-4 h-4" />
                 </Button>
@@ -127,16 +127,23 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
 
             {/* Main Image Display */}
             <div className="flex items-center justify-center h-full p-8">
-              <div className="relative max-w-full max-h-full">
+              <div className="relative max-w-full max-h-full luxury-image-reveal luxury-golden-glow">
                 <img
                   ref={imageRef}
                   src={allImages[currentImageIndex]}
                   alt={`${artwork.title} - Vue ${currentImageIndex + 1}`}
-                  className="max-w-full max-h-full object-contain transition-all duration-300"
+                  className="max-w-full max-h-full object-contain transition-all duration-500 luxury-magnetic-hover"
                   style={{
                     filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.1))'
                   }}
                 />
+                {/* Luxury floating elements around the image */}
+                <div className="absolute -top-4 -left-4 w-8 h-8 luxury-floating-elements">
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 opacity-30"></div>
+                </div>
+                <div className="absolute -bottom-4 -right-4 w-6 h-6 luxury-floating-elements" style={{ animationDelay: '1s' }}>
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-orange-400 to-pink-400 opacity-30"></div>
+                </div>
               </div>
             </div>
 
@@ -281,7 +288,7 @@ const ArtworkModal: React.FC<ArtworkModalProps> = ({
             <div className="p-6 border-t border-gray-200 space-y-3">
               {artwork.isAvailable ? (
                 <Button 
-                  className="w-full hover-painterly-lift"
+                  className="w-full hover-painterly-lift luxury-magnetic-hover luxury-sparkle-effect"
                   style={{
                     background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
                     color: 'hsl(45, 100%, 97%)'

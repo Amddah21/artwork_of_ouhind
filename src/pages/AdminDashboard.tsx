@@ -14,6 +14,7 @@ import { useGallery } from '@/contexts/GalleryContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import AdminReviewsSection from '@/components/AdminReviewsSection';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 interface ArtworkImage {
   id: number;
@@ -100,6 +101,7 @@ const AdminDashboard: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -117,6 +119,35 @@ const AdminDashboard: React.FC = () => {
 
   const categories = ['Abstrait', 'Portrait', 'Paysage', 'Photographie', 'Sculpture', 'Mixte'];
   const techniques = ['Peinture acrylique', 'Peinture à l\'huile', 'Peinture mixte', 'Photographie artistique', 'Sculpture', 'Dessin', 'Aquarelle'];
+
+  // Image compression function for better performance
+  const compressImage = (file: File, maxWidth: number = 1920, quality: number = 0.8): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Calculate new dimensions
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx?.drawImage(img, 0, 0, width, height);
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = URL.createObjectURL(file);
+    });
+  };
 
   const resetForm = () => {
     setFormData({
@@ -138,73 +169,116 @@ const AdminDashboard: React.FC = () => {
     setEditingId(null);
   };
 
-  // Multiple image upload handler
+  // Multiple image upload handler with improved error handling
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    // Validate all files
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (!file.type.startsWith('image/')) {
-        toast({
-          title: "Erreur",
-          description: `Le fichier ${file.name} n'est pas une image valide (PNG, JPG, JPEG)`,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Validate file size (max 50MB)
-      if (file.size > 50 * 1024 * 1024) {
-        toast({
-          title: "Fichier trop volumineux",
-          description: `L'image ${file.name} fait ${(file.size / (1024 * 1024)).toFixed(1)}MB. Veuillez choisir une image de moins de 50MB.`,
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-
-    setIsUploading(true);
-    
     try {
-      const newImages: string[] = [];
+      // Check total image count limit (max 20 images per artwork)
+      const MAX_IMAGES = 20;
+      const currentCount = previewImages.length;
+      const newCount = files.length;
       
-      // Process each file
+      if (currentCount + newCount > MAX_IMAGES) {
+        toast({
+          title: "Limite atteinte",
+          description: `Vous pouvez ajouter un maximum de ${MAX_IMAGES} images par œuvre. Vous avez actuellement ${currentCount} image(s).`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate all files first
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const reader = new FileReader();
-        
-        reader.onload = (e) => {
-          const base64 = e.target?.result as string;
-          newImages.push(base64);
-          
-          // If this is the last file, update state
-          if (newImages.length === files.length) {
-            setPreviewImages(prev => [...prev, ...newImages]);
-            setIsUploading(false);
-            
-            toast({
-              title: "Succès",
-              description: `${files.length} image(s) téléchargée(s) avec succès`,
-              variant: "success",
-            });
-          }
-        };
-        
-        reader.onerror = () => {
-          setIsUploading(false);
+        if (!file.type.startsWith('image/')) {
           toast({
             title: "Erreur",
-            description: `Erreur lors du téléchargement de ${file.name}`,
+            description: `Le fichier ${file.name} n'est pas une image valide (PNG, JPG, JPEG)`,
             variant: "destructive",
           });
-        };
+          return;
+        }
+
+        // Reduce file size limit to prevent crashes (max 10MB per image)
+        if (file.size > 10 * 1024 * 1024) {
+          toast({
+            title: "Fichier trop volumineux",
+            description: `L'image ${file.name} fait ${(file.size / (1024 * 1024)).toFixed(1)}MB. Veuillez choisir une image de moins de 10MB.`,
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
+      setIsUploading(true);
+      setUploadProgress(0);
+      
+      try {
+        // Process all images in parallel with compression for much faster upload
+        const fileArray = Array.from(files);
+        let completedCount = 0;
         
-        reader.readAsDataURL(file);
+        const processingPromises = fileArray.map(async (file, index) => {
+          try {
+            // Try compression first for better performance
+            if (file.size > 2 * 1024 * 1024) { // Compress if larger than 2MB
+              const result = await compressImage(file, 1920, 0.8);
+              completedCount++;
+              setUploadProgress((completedCount / fileArray.length) * 100);
+              return result;
+            } else {
+              // For smaller files, use direct conversion
+              const result = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target?.result as string);
+                reader.onerror = () => reject(new Error(`Failed to read file: ${file.name}`));
+                reader.readAsDataURL(file);
+              });
+              completedCount++;
+              setUploadProgress((completedCount / fileArray.length) * 100);
+              return result;
+            }
+          } catch (error) {
+            // Fallback to direct conversion if compression fails
+            const result = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = (e) => resolve(e.target?.result as string);
+              reader.onerror = () => reject(new Error(`Failed to read file: ${file.name}`));
+              reader.readAsDataURL(file);
+            });
+            completedCount++;
+            setUploadProgress((completedCount / fileArray.length) * 100);
+            return result;
+          }
+        });
+        
+        // Wait for all images to be processed in parallel
+        const processedImages = await Promise.all(processingPromises);
+        
+        // Update state with all processed images at once
+        setPreviewImages(prev => [...prev, ...processedImages]);
+        setIsUploading(false);
+        setUploadProgress(0);
+        
+        toast({
+          title: "Succès",
+          description: `${processedImages.length} image(s) téléchargée(s) avec succès`,
+          variant: "success",
+        });
+        
+      } catch (error) {
+        console.error('Error processing images:', error);
+        setIsUploading(false);
+        toast({
+          title: "Erreur",
+          description: "Erreur lors du traitement des images",
+          variant: "destructive",
+        });
       }
     } catch (error) {
+      console.error('Error in handleImageUpload:', error);
       setIsUploading(false);
       toast({
         title: "Erreur",
@@ -524,8 +598,9 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-50 to-orange-50 p-2 sm:p-4 lg:p-6">
-      <div className="max-w-7xl mx-auto">
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-50 to-orange-50 p-2 sm:p-4 lg:p-6">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-white/20">
@@ -732,7 +807,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <Label className="text-base font-semibold text-slate-700">📸 Images de l'œuvre</Label>
                     <div className="text-xs text-slate-500 bg-blue-50 px-2 py-1 rounded">
-                      💡 Astuce: Vous pouvez uploader plusieurs images (jusqu'à 50MB chacune)
+                      💡 Astuce: Vous pouvez uploader jusqu'à 20 images (jusqu'à 50MB chacune)
                     </div>
                   </div>
                   
@@ -767,25 +842,37 @@ const AdminDashboard: React.FC = () => {
                           </div>
                           
                           {/* Add More Images Button */}
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => fileInputRef.current?.click()}
-                            disabled={isUploading}
-                            className="mx-auto"
-                          >
-                            {isUploading ? (
-                              <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600 mr-2"></div>
-                                Téléchargement...
-                              </>
-                            ) : (
-                              <>
-                                <Plus className="h-4 w-4 mr-2" />
-                                Ajouter plus d'images
-                              </>
+                          <div className="w-full space-y-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => fileInputRef.current?.click()}
+                              disabled={isUploading}
+                              className="mx-auto"
+                            >
+                              {isUploading ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600 mr-2"></div>
+                                  Téléchargement...
+                                </>
+                              ) : (
+                                <>
+                                  <Plus className="h-4 w-4 mr-2" />
+                                  Ajouter plus d'images
+                                </>
+                              )}
+                            </Button>
+                            
+                            {/* Progress Bar */}
+                            {isUploading && uploadProgress > 0 && (
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
+                                  style={{ width: `${uploadProgress}%` }}
+                                ></div>
+                              </div>
                             )}
-                          </Button>
+                          </div>
                         </div>
                       ) : (
                         <div className="space-y-4">
@@ -797,28 +884,40 @@ const AdminDashboard: React.FC = () => {
                               Glissez-déposez des images ou cliquez pour sélectionner plusieurs fichiers
                             </p>
                             <p className="text-xs text-slate-500">
-                              PNG, JPG, JPEG jusqu'à 50MB chacun
+                              PNG, JPG, JPEG jusqu'à 50MB chacun. Maximum 20 images par œuvre.
                             </p>
                           </div>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => fileInputRef.current?.click()}
-                            disabled={isUploading}
-                            className="mx-auto"
-                          >
-                            {isUploading ? (
-                              <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600 mr-2"></div>
-                                Téléchargement...
-                              </>
-                            ) : (
-                              <>
-                                <Upload className="h-4 w-4 mr-2" />
-                                Choisir des images
-                              </>
+                          <div className="w-full space-y-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => fileInputRef.current?.click()}
+                              disabled={isUploading}
+                              className="mx-auto"
+                            >
+                              {isUploading ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600 mr-2"></div>
+                                  Téléchargement...
+                                </>
+                              ) : (
+                                <>
+                                  <Upload className="h-4 w-4 mr-2" />
+                                  Choisir des images
+                                </>
+                              )}
+                            </Button>
+                            
+                            {/* Progress Bar */}
+                            {isUploading && uploadProgress > 0 && (
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
+                                  style={{ width: `${uploadProgress}%` }}
+                                ></div>
+                              </div>
                             )}
-                          </Button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -1058,8 +1157,9 @@ const AdminDashboard: React.FC = () => {
         <div className="mt-8">
           <AdminReviewsSection />
         </div>
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 };
 

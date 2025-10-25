@@ -12,7 +12,7 @@ const About = () => {
         <div className="luxury-grid luxury-grid-2 gap-16 items-center">
           <div className="space-y-8">
             <div>
-              <div className="inline-flex items-center gap-3 mb-8 px-6 py-3 rounded-full" style={{ 
+              <div className="inline-flex items-center gap-3 mb-8 px-6 py-3 rounded-full luxury-floating-elements" style={{ 
                 backgroundColor: 'rgba(224, 168, 93, 0.1)', 
                 border: '1px solid rgba(224, 168, 93, 0.2)' 
               }}>
@@ -29,14 +29,14 @@ const About = () => {
               </div>
             </div>
             
-            <div className="space-y-6">
-              <p className="text-lg text-gray-600 leading-relaxed font-serif">
-                <strong className="text-gray-800">Omhind</strong> est une artiste plasticienne au tempérament de femme battante, elle se caractérise par de fortes valeurs 
+            <div className="space-y-8">
+              <p className="luxury-artist-description">
+                <span className="luxury-name-highlight">Omhind</span> est une artiste plasticienne au tempérament de femme battante, elle se caractérise par de fortes valeurs 
                 et des objectifs clairs. Son travail constitue un processus édificateur de projets riches en 
                 expériences et recherches en Arts Plastiques.
               </p>
-              <p className="text-lg text-gray-600 leading-relaxed font-serif">
-                Sa signature artistique est <strong className="text-gray-800">impressionniste et expressionniste contemporaine</strong>. 
+              <p className="luxury-artist-description">
+                Sa signature artistique est <span className="luxury-name-highlight">impressionniste et expressionniste contemporaine</span>. 
                 Elle se manifeste par un modelage de matieres et de pigments mesuré en couches, des éclaboussures de couleurs et des traits 
                 pleins de nuances, avec des compositions exécutées avec une grande précision.
               </p>

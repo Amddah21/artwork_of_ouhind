@@ -11,13 +11,22 @@ const Hero: React.FC = () => {
   const heroRef = useRef<HTMLElement>(null);
   const { artworks } = useArtwork();
   
-  // Get featured artworks for the carousel
-  const featuredArtworks = artworks.slice(0, 6); // Get first 6 artworks
-  
   // Get the artist name from the first artwork or use default
   const artistName = artworks.length > 0 && artworks[0].artist_name 
     ? artworks[0].artist_name 
     : 'Omhind';
+  
+  // Get featured artworks for the carousel - include a default artwork if none exist
+  const defaultArtwork = {
+    id: 'default-artwork',
+    title: 'Œuvre Contemporaine',
+    image_url: '/sedibatr.JPG',
+    year: '2024',
+    category: 'Peinture',
+    artist_name: artistName
+  };
+  
+  const featuredArtworks = artworks.length > 0 ? artworks.slice(0, 6) : [defaultArtwork];
 
   useEffect(() => {
     setIsLoaded(true);
@@ -98,152 +107,198 @@ const Hero: React.FC = () => {
         />
       </div>
 
-      {/* Main Content */}
-      <div className="luxury-container relative z-10">
-        <div className="text-center space-y-12">
+      {/* Main Content Container */}
+      <div className="luxury-container relative z-10 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center min-h-screen py-12">
           
-          {/* Elegant Title */}
-          <div className={`transition-all duration-1000 ${
-            isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-          }`}>
-            <div className="mb-6">
-              <div className="inline-flex items-center justify-center mb-6 sm:mb-8">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--luxury-gold)' }}>
-                  <Logo size="md" />
-                </div>
-              </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-luxury-display luxury-text-primary tracking-wide leading-tight mb-4 sm:mb-6 px-4">
-                {artistName.toUpperCase()}
-              </h1>
-              <div className="w-24 sm:w-32 h-px mx-auto mb-4 sm:mb-6" style={{ background: 'linear-gradient(90deg, transparent 0%, var(--luxury-gold) 50%, transparent 100%)' }} />
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-luxury-accent luxury-text-secondary max-w-3xl mx-auto leading-relaxed px-4">
-                NEW SERIES OF ARTWORKS
-              </p>
-            </div>
-          </div>
-
-          {/* Main Buttons */}
-          <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center px-4 transition-all duration-1000 ${
-            isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-          }`} style={{ animationDelay: '0.3s' }}>
-            <button 
-              onClick={handleExploreGallery}
-              className="luxury-btn-gradient px-8 sm:px-16 py-3 sm:py-5 text-base sm:text-lg font-semibold rounded-full shadow-2xl w-full sm:w-auto"
-            >
-              ORIGINALS
-            </button>
-            <button 
-              onClick={handleViewWorks}
-              className="luxury-btn-secondary px-8 sm:px-16 py-3 sm:py-5 text-base sm:text-lg font-semibold rounded-full w-full sm:w-auto"
-            >
-              PRINTS
-            </button>
-          </div>
-
-          {/* Subtle Description */}
-          <div className={`max-w-4xl mx-auto px-4 transition-all duration-1000 ${
-            isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-          }`} style={{ animationDelay: '0.6s' }}>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl font-luxury-body luxury-text-secondary leading-relaxed text-center">
-              Artiste peintre passionnée, je crée des œuvres qui capturent l'essence de la beauté naturelle à travers des techniques mixtes et une palette de couleurs inspirées de la nature.
-            </p>
-          </div>
-
-          {/* Luxury Artwork Carousel - 20cm x 20cm frame */}
-          {featuredArtworks.length > 0 && (
+          {/* Left Column - Brand & Text */}
+          <div className="lg:col-span-5 text-center lg:text-left space-y-8">
+          
+            {/* Brand Identity */}
             <div className={`transition-all duration-1000 ${
               isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-            }`} style={{ animationDelay: '0.9s' }}>
-              <div className="flex justify-center">
-                <div 
-                  className="luxury-card-premium overflow-hidden relative shadow-2xl mx-4"
-                  style={{
-                    width: '100%',
-                    maxWidth: '800px',
-                    aspectRatio: '1/1'
-                  }}
-                >
-                  {/* Fade transition effect */}
-                  <div className="relative w-full h-full">
-                    {featuredArtworks.map((artwork, index) => (
-                      <div
-                        key={artwork.id}
-                        className={`absolute inset-0 transition-opacity duration-1000 ${
-                          index === currentArtworkIndex ? 'opacity-100' : 'opacity-0'
-                        }`}
-                      >
-                        <ProtectedImage
-                          src={artwork.image_url}
-                          alt={artwork.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
-                    
-                    {/* Gold decorative frame overlay */}
-                    <div className="absolute inset-0 border-4 opacity-40" style={{ borderColor: 'var(--luxury-gold)' }} />
-                    
-                    {/* Artwork title overlay */}
-                    {featuredArtworks[currentArtworkIndex] && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-8">
-                        <h3 className="text-white font-luxury-accent text-xl font-bold text-center mb-2">
-                          {featuredArtworks[currentArtworkIndex].title}
-                        </h3>
-                        <p className="text-white/80 text-sm font-luxury-body text-center">
-                          {featuredArtworks[currentArtworkIndex].year} • {featuredArtworks[currentArtworkIndex].category}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Enhanced indicator dots */}
-                  <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
-                    {featuredArtworks.map((_, index) => (
-                      <div
-                        key={index}
-                        className={`transition-all duration-300 ${
-                          index === currentArtworkIndex 
-                            ? 'w-3 h-3 bg-white shadow-lg' 
-                            : 'w-2 h-2 bg-white/40'
-                        } rounded-full`}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Gold corner accents */}
-                  <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2" style={{ borderColor: 'var(--luxury-gold)' }} />
-                  <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2" style={{ borderColor: 'var(--luxury-gold)' }} />
-                  <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2" style={{ borderColor: 'var(--luxury-gold)' }} />
-                  <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2" style={{ borderColor: 'var(--luxury-gold)' }} />
+            }`}>
+              <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 mb-8">
+                <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full flex items-center justify-center shadow-xl" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+                  <Logo size="lg" />
+                </div>
+                <div className="text-center lg:text-left">
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-luxury-display luxury-text-primary tracking-wide leading-tight mb-4">
+                    {artistName.toUpperCase()}
+                  </h1>
+                  <div className="w-32 h-px mx-auto lg:mx-0 mb-4" style={{ background: 'linear-gradient(90deg, transparent 0%, var(--luxury-gold) 50%, transparent 100%)' }} />
+                  <p className="text-lg md:text-xl lg:text-2xl font-luxury-accent luxury-text-secondary leading-relaxed tracking-wider">
+                    COLLECTION EXCLUSIVE • ART CONTEMPORAIN
+                  </p>
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Elegant Stats */}
-          <div className={`luxury-grid luxury-grid-3 gap-4 sm:gap-6 lg:gap-8 pt-8 sm:pt-12 px-4 transition-all duration-1000 ${
-            isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-          }`} style={{ animationDelay: '1.2s' }}>
-            {[
-              { number: "40+", label: "Années d'Expérience" },
-              { number: "200+", label: "Œuvres Créées" },
-              { number: "50+", label: "Expositions" }
-            ].map((stat, index) => (
-              <div 
-                key={index}
-                className="luxury-card-premium p-4 sm:p-6 lg:p-8 text-center hover:shadow-2xl transition-all duration-300"
+            {/* Action Buttons */}
+            <div className={`flex flex-col sm:flex-row gap-4 justify-center lg:justify-start transition-all duration-1000 ${
+              isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
+            }`} style={{ animationDelay: '0.3s' }}>
+              <button 
+                onClick={handleExploreGallery}
+                className="luxury-btn-primary px-8 sm:px-12 py-4 text-lg font-semibold rounded-full luxury-magnetic-hover luxury-sparkle-effect min-w-[200px]"
               >
-                <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-luxury-display luxury-text-gradient mb-2 sm:mb-4">
-                  {stat.number}
+                COLLECTION
+              </button>
+              <button 
+                onClick={handleViewWorks}
+                className="luxury-btn-secondary px-8 sm:px-12 py-4 text-lg font-semibold rounded-full luxury-magnetic-hover luxury-sparkle-effect min-w-[200px]"
+              >
+                DÉCOUVERTE
+              </button>
+            </div>
+
+            {/* Artist Statement */}
+            <div className={`transition-all duration-1000 ${
+              isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
+            }`} style={{ animationDelay: '0.6s' }}>
+              <div className="relative max-w-lg mx-auto">
+                <p className="luxury-artist-statement-premium text-center">
+                  Artiste plasticienne renommée, je façonne des œuvres singulières qui transcendent l'ordinaire, 
+                  mêlant matériaux précieux et couleurs sublimes pour créer des compositions d'une élégance rare.
+                </p>
+                
+                {/* Luxury decorative elements */}
+                <div className="absolute -top-6 -left-6 w-10 h-10 luxury-floating-elements opacity-40">
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-400 to-indigo-400"></div>
                 </div>
-                <div className="text-xs sm:text-sm font-luxury-body luxury-text-secondary uppercase tracking-wider">
-                  {stat.label}
+                <div className="absolute -bottom-6 -right-6 w-8 h-8 luxury-floating-elements opacity-40" style={{ animationDelay: '1s' }}>
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-rose-400 to-pink-400"></div>
+                </div>
+                <div className="absolute top-1/2 -right-8 w-6 h-6 luxury-floating-elements opacity-30" style={{ animationDelay: '2s' }}>
+                  <div className="w-full h-full rounded-full bg-gradient-to-br from-emerald-400 to-teal-400"></div>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Statistics */}
+            <div className={`grid grid-cols-3 gap-4 transition-all duration-1000 ${
+              isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
+            }`} style={{ animationDelay: '1.2s' }}>
+              {[
+                { number: "40+", label: "Années d'Excellence" },
+                { number: "200+", label: "Pièces Uniques" },
+                { number: "50+", label: "Expositions Internationales" }
+              ].map((stat, index) => (
+                <div 
+                  key={index}
+                  className="luxury-card-premium p-4 text-center hover:shadow-2xl transition-all duration-300 cursor-default group"
+                  style={{ cursor: 'default' }}
+                >
+                  <div className="text-2xl md:text-3xl lg:text-4xl font-luxury-display luxury-text-gradient mb-2 group-hover:scale-110 transition-transform duration-300">
+                    {stat.number}
+                  </div>
+                  <div className="text-xs font-luxury-body luxury-text-secondary uppercase tracking-wider">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column - Featured Artwork */}
+          <div className="lg:col-span-7 flex justify-center lg:justify-end">
+
+            {/* Featured Artwork Showcase */}
+            {featuredArtworks.length > 0 && (
+              <div className={`transition-all duration-1000 ${
+                isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
+              }`} style={{ animationDelay: '0.9s' }}>
+                <div className="relative">
+                  <div 
+                    className="luxury-card-premium overflow-hidden relative shadow-2xl"
+                    style={{
+                      width: '100%',
+                      maxWidth: '600px',
+                      aspectRatio: '4/5'
+                    }}
+                  >
+                    {/* Fade transition effect */}
+                    <div className="relative w-full h-full">
+                      {featuredArtworks.map((artwork, index) => (
+                        <div
+                          key={artwork.id}
+                          className={`absolute inset-0 transition-opacity duration-1000 ${
+                            index === currentArtworkIndex ? 'opacity-100' : 'opacity-0'
+                          }`}
+                        >
+                          <ProtectedImage
+                            src={artwork.image_url}
+                            alt={artwork.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                      
+                      {/* Luxury decorative frame overlay */}
+                      <div className="absolute inset-0 border-8 opacity-60 shadow-2xl" style={{ 
+                        borderColor: 'var(--luxury-gold)',
+                        borderRadius: '12px',
+                        boxShadow: 'inset 0 0 0 4px rgba(224, 168, 93, 0.3), 0 0 30px rgba(224, 168, 93, 0.4)'
+                      }} />
+                      
+                      {/* Inner frame detail */}
+                      <div className="absolute inset-2 border-2 opacity-80" style={{ 
+                        borderColor: 'rgba(255, 255, 255, 0.8)',
+                        borderRadius: '8px'
+                      }} />
+                      
+                      {/* Corner decorative elements */}
+                      <div className="absolute top-4 left-4 w-6 h-6 border-l-4 border-t-4 opacity-60" style={{ borderColor: 'var(--luxury-gold)' }} />
+                      <div className="absolute top-4 right-4 w-6 h-6 border-r-4 border-t-4 opacity-60" style={{ borderColor: 'var(--luxury-gold)' }} />
+                      <div className="absolute bottom-4 left-4 w-6 h-6 border-l-4 border-b-4 opacity-60" style={{ borderColor: 'var(--luxury-gold)' }} />
+                      <div className="absolute bottom-4 right-4 w-6 h-6 border-r-4 border-b-4 opacity-60" style={{ borderColor: 'var(--luxury-gold)' }} />
+                      
+                      {/* Copyright watermark */}
+                      <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
+                        <span className="text-white text-xs font-medium tracking-wide">© {artistName}</span>
+                      </div>
+                      
+                      {/* Artwork title overlay */}
+                      {featuredArtworks[currentArtworkIndex] && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-6 backdrop-blur-sm">
+                          <h3 className="text-white font-luxury-accent text-lg font-bold text-center mb-1 tracking-wide">
+                            {featuredArtworks[currentArtworkIndex].title}
+                          </h3>
+                          <p className="text-white/90 text-sm font-luxury-body text-center tracking-wider">
+                            {featuredArtworks[currentArtworkIndex].year} • {featuredArtworks[currentArtworkIndex].category}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Enhanced indicator dots */}
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+                      {featuredArtworks.map((_, index) => (
+                        <div
+                          key={index}
+                          className={`transition-all duration-300 cursor-pointer ${
+                            index === currentArtworkIndex 
+                              ? 'w-3 h-3 bg-white shadow-lg' 
+                              : 'w-2 h-2 bg-white/40'
+                          } rounded-full`}
+                          onClick={() => setCurrentArtworkIndex(index)}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Gold corner accents */}
+                    <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2" style={{ borderColor: 'var(--luxury-gold)' }} />
+                    <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2" style={{ borderColor: 'var(--luxury-gold)' }} />
+                    <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2" style={{ borderColor: 'var(--luxury-gold)' }} />
+                    <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2" style={{ borderColor: 'var(--luxury-gold)' }} />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
 
       {/* Elegant Scroll Indicator */}
       <div 
