@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '@/lib/api';
+import { supabase } from '@/lib/optimizedSupabase';
 import { useAuth } from './AuthContext';
 
 interface Rating {

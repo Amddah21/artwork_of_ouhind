@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
-import { supabase } from '@/lib/api';
+import { supabase } from '@/lib/optimizedSupabase';
 
 export interface Review {
   id: string;

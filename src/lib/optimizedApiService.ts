@@ -311,12 +311,13 @@ export class OptimizedApiService {
     const cached = this.getCachedData(cacheKey);
     if (cached) return cached;
 
-    const data = await withRetry(() => 
-      supabase
+    const data = await withRetry(async () => {
+      const result = await supabase
         .from('artworks')
         .select('category')
-        .order('category')
-    );
+        .order('category');
+      return result;
+    });
 
     if (!data || data.length === 0) {
       return [];
@@ -338,6 +339,71 @@ export class OptimizedApiService {
 
     this.setCachedData(cacheKey, categories);
     return categories;
+  }
+
+  static async getGalleryData(category: string) {
+    const requestKey = `getGalleryData_${category}`;
+    
+    return this.throttledRequest(requestKey, async () => {
+      console.log(`🌐 [OptimizedApiService] Fetching gallery data for: ${category}`);
+      
+      if (!category) {
+        console.warn('No category provided to getGalleryData');
+        return null;
+      }
+
+      // Get the first artwork as featured image
+      const { data: featuredData, error: featuredError } = await withRetry(async () => {
+        const result = await supabase
+          .from('artworks')
+          .select('*')
+          .eq('category', category)
+          .order('created_at', { ascending: false })
+          .limit(1);
+        return result;
+      });
+      
+      if (featuredError) {
+        console.error('Error fetching featured artwork:', featuredError);
+        return null;
+      }
+      
+      if (!featuredData || featuredData.length === 0) {
+        console.log(`No artworks found for category: ${category}`);
+        return null;
+      }
+      
+      const featuredArtwork = featuredData[0];
+      
+      // Get total count for this category
+      const { count, error: countError } = await withRetry(async () => {
+        const result = await supabase
+          .from('artworks')
+          .select('*', { count: 'exact', head: true })
+          .eq('category', category);
+        return result;
+      });
+      
+      let artworkCount: number;
+      if (countError) {
+        console.error('Error fetching artwork count:', countError);
+        artworkCount = 1;
+      } else {
+        artworkCount = count || 0;
+      }
+      
+      return {
+        id: category.toLowerCase().replace(/\s+/g, '-'),
+        name: category,
+        slug: category.toLowerCase().replace(/\s+/g, '-'),
+        featuredImage: featuredArtwork.image_url || '/placeholder.svg',
+        description: `Collection d'œuvres ${category.toLowerCase()}`,
+        artworkCount,
+        year: new Date().getFullYear(),
+        category,
+        artworks: []
+      };
+    });
   }
 
   // Image management

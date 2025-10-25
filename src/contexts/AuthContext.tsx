@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/lib/api';
+import { supabase } from '@/lib/optimizedSupabase';
 import type { User } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://spionvuemjgnvjlesapp.supabase.co';

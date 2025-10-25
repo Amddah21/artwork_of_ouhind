@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { ApiService } from '@/lib/api';
+import { OptimizedApiService } from '@/lib/optimizedApiService';
 
 interface Gallery {
   id: string;
@@ -223,16 +223,16 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
   const loadFromSupabase = async () => {
     try {
       // Load categories first
-      const categories = await ApiService.getCategories();
+      const categories = await OptimizedApiService.getCategories();
       dispatch({ type: 'SET_CATEGORIES', payload: categories });
       
       // Load gallery data for each category with better error handling
       const galleries: Gallery[] = [];
       for (const { category } of categories) {
         try {
-          const galleryData = await ApiService.getGalleryData(category);
+          const galleryData = await OptimizedApiService.getGalleryData(category);
           if (galleryData) {
-            const artworks = await ApiService.getArtworksByCategory(category);
+            const artworks = await OptimizedApiService.getArtworksByCategory(category);
             galleries.push({
               ...galleryData,
               artworks: artworks || []
@@ -303,7 +303,7 @@ export const GalleryProvider: React.FC<GalleryProviderProps> = ({ children }) =>
         return;
       }
 
-      const categories = await ApiService.getCategories();
+      const categories = await OptimizedApiService.getCategories();
       dispatch({ type: 'SET_CATEGORIES', payload: categories });
     } catch (error) {
       console.error('Error loading categories:', error);
