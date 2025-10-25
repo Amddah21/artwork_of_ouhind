@@ -15,6 +15,7 @@ import ArtisticFooter from "@/components/ArtisticFooter";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Suspense, lazy } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import AdminMiddleware from "@/components/AdminMiddleware";
 import "@/styles/theme.css";
 import "@/styles/nature-gallery.css";
 import "@/styles/luxury-gallery.css";
@@ -85,9 +86,9 @@ const AppContent = () => {
               <Route path="/voting" element={<Voting />} />
               <Route path="/comments" element={<Comments />} />
               <Route path="/admin" element={
-                <ProtectedRoute requireAdmin={true}>
+                <AdminMiddleware>
                   <AdminDashboard />
-                </ProtectedRoute>
+                </AdminMiddleware>
               } />
               <Route path="*" element={<NotFound />} />
             </Routes>

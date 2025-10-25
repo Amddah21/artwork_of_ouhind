@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/optimizedSupabase';
+import { AdminAuthService, AdminCheckResult } from '@/lib/adminAuthService';
 import type { User } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://spionvuemjgnvjlesapp.supabase.co';
@@ -129,7 +130,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Check if Supabase is properly configured
       if (!supabaseUrl || !supabaseAnonKey) {
-        // Fallback to localStorage for development - accept any credentials
+        // Fallback to localStorage for development - but still check admin status
         console.log('Supabase not configured, using localStorage fallback');
         
         // Check for admin credentials (support multiple admin emails)
@@ -144,7 +145,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           setUser(adminUser);
           localStorage.setItem('artspark-auth', JSON.stringify(adminUser));
-          console.log('Admin login successful:', adminUser);
+          console.log('Admin login successful (fallback):', adminUser);
         } else if (email && password) {
           // Accept any other valid email/password as regular user
           const regularUser: Profile = {
@@ -154,7 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           setUser(regularUser);
           localStorage.setItem('artspark-auth', JSON.stringify(regularUser));
-          console.log('Regular user login successful:', regularUser);
+          console.log('Regular user login successful (fallback):', regularUser);
         } else {
           throw new Error('Invalid credentials provided');
         }
@@ -194,8 +195,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
-      console.log('✅ Supabase login successful, fetching profile...');
-      // Fetch profile after successful sign-in
+      console.log('✅ Supabase login successful, checking admin status...');
+      
+      // CRITICAL: Check admin status in database before proceeding
+      const adminCheck: AdminCheckResult = await AdminAuthService.checkAdminStatus(email);
+      
+      if (!adminCheck.isAdmin) {
+        // User authenticated but not admin - deny access
+        console.log('🚫 Access denied - user is not admin:', email);
+        
+        // Sign out the user since they're not authorized
+        await supabase.auth.signOut();
+        
+        // Throw specific error based on admin check result
+        if (adminCheck.error === 'Database unavailable') {
+          throw new Error('Database unavailable');
+        } else {
+          throw new Error('Access denied: not authorized');
+        }
+      }
+
+      console.log('✅ Admin access confirmed, fetching profile...');
+      
+      // Fetch profile after successful admin verification
       const { data: { user: supabaseUser } } = await supabase.auth.getUser();
       if (supabaseUser) {
         await fetchUserProfile(supabaseUser.id);
@@ -203,6 +225,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     } catch (error) {
       console.error('💥 Sign in error, falling back to localStorage:', error);
+      
+      // Only fallback to localStorage if it's not an admin authorization error
+      if (error.message?.includes('Access denied') || error.message?.includes('Database unavailable')) {
+        throw error; // Don't fallback for admin authorization errors
+      }
       
       // Fallback to localStorage if Supabase fails
       const adminEmails = ['omhind53@gmail.com', 'ahmed1965amddah@gmail.com'];

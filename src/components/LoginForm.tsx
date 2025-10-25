@@ -33,7 +33,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
       const adminEmails = ['omhind53@gmail.com', 'ahmed1965amddah@gmail.com'];
       const isUserAdmin = adminEmails.includes(email.toLowerCase()) && password === 'admin123';
       
-      // Show success message
+      // Only show success message if login was successful (admin check passed)
       toast({
         title: "Connexion réussie",
         description: isUserAdmin ? "Bienvenue dans l'interface admin!" : "Connexion réussie!",
@@ -67,6 +67,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
         errorMessage = "Ressources insuffisantes. Veuillez réessayer dans quelques instants.";
       } else if (error?.message?.includes('Google')) {
         errorMessage = "Problème avec la vérification Google. Essayez de vous déconnecter de votre compte Google et reconnectez-vous.";
+      } else if (error?.message?.includes('Access denied: not authorized')) {
+        errorMessage = "Accès refusé: vous n'êtes pas autorisé à accéder à cette interface.";
+      } else if (error?.message?.includes('Database unavailable')) {
+        errorMessage = "Base de données indisponible. Veuillez réessayer plus tard.";
       }
       
       toast({
