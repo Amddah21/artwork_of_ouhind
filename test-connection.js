@@ -1,7 +1,7 @@
 // Quick Supabase connection test
 const testConnection = async () => {
-  const supabaseUrl = 'https://aogxcbkfggfnvofavohp.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvZ3hjYmtmZ2dmbnZvZmF2b2hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3MTMxNDUsImV4cCI6MjA3NjI4OTE0NX0.nDKVGgjXIYJfAAkniUPkx4ckdDJJz21ogiC4A2IYVEc';
+  const supabaseUrl = 'https://spionvuemjgnvjlesapp.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwaW9udnVlbWpnbnZqbGVzYXBwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEzNDE1NTEsImV4cCI6MjA3NjkxNzU1MX0.qdgPAXb3fQPGd9xj_pKJhMtyq1ulDa01wdXFnXtliW4';
   
   console.log('Testing Supabase connection...');
   

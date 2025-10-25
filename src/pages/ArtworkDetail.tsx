@@ -51,23 +51,53 @@ const ArtworkDetail: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   
   const { addRating, getAverageRating, getRatingCount, getUserRating } = useRating();
-  const { artworks, incrementViews } = useArtwork();
+  const { artworks, incrementViews, isLoading: artworksLoading } = useArtwork();
 
   // Find the artwork by ID from the context
   useEffect(() => {
-    if (id && artworks.length > 0) {
-      const foundArtwork = artworks.find(art => art.id === id);
-      if (foundArtwork) {
-        setArtwork(foundArtwork);
-        // Increment views when viewing artwork
-        incrementViews(id);
+    if (id) {
+      // Wait for artworks to finish loading
+      if (!artworksLoading) {
+        const foundArtwork = artworks.find(art => art.id === id);
+        if (foundArtwork) {
+          setArtwork(foundArtwork);
+          // Increment views when viewing artwork
+          incrementViews(id);
+        }
+        setIsLoading(false);
+      }
+    }
+  }, [id, artworks, artworksLoading, navigate, incrementViews]);
+
+  // Add keyboard shortcut for back button (Escape key) - MOVED UP TO FIX HOOKS ORDER
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleBack();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, []);
+
+  const handleBack = () => {
+    try {
+      // Try to go back in history first
+      if (window.history.length > 1) {
+        navigate(-1);
       } else {
-        // Artwork not found, redirect to gallery
+        // Fallback to home page if no history
         navigate('/');
       }
-      setIsLoading(false);
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // Fallback to home page
+      navigate('/');
     }
-  }, [id, artworks, navigate, incrementViews]);
+  };
 
   // Show loading state
   if (isLoading) {
@@ -108,36 +138,6 @@ const ArtworkDetail: React.FC = () => {
   };
 
   const multipleViews = getMultipleViews();
-
-  const handleBack = () => {
-    try {
-      // Try to go back in history first
-      if (window.history.length > 1) {
-        navigate(-1);
-      } else {
-        // Fallback to home page if no history
-        navigate('/');
-      }
-    } catch (error) {
-      console.error('Navigation error:', error);
-      // Fallback to home page
-      navigate('/');
-    }
-  };
-
-  // Add keyboard shortcut for back button (Escape key)
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        handleBack();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyPress);
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-    };
-  }, []);
 
   const handleShare = async () => {
     const shareData = {
