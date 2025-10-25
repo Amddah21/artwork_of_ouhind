@@ -151,31 +151,38 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
       <div className="absolute inset-0 flex items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
         <div className="relative w-full max-w-7xl max-h-[90vh] bg-white rounded-lg shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
-          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 border-b">
-            <div className="flex items-center gap-3">
-              <Paintbrush className="w-6 h-6 text-amber-600" />
+          <div className="flex items-center justify-between p-6 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200/30">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-amber-400 rounded-full blur-xl opacity-40"></div>
+                <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500 flex items-center justify-center shadow-lg">
+                  <Paintbrush className="w-6 h-6 text-white" />
+                </div>
+              </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Room Preview</h2>
-                <p className="text-sm text-gray-600">{artwork.title}</p>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-700 via-orange-600 to-amber-700 bg-clip-text text-transparent">
+                  Room Preview
+                </h2>
+                <p className="text-sm text-gray-600 font-medium">{artwork.title}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={resetView}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-700 hover:text-amber-700 hover:bg-amber-50 transition-all duration-200 rounded-lg"
               >
                 <RotateCw className="w-4 h-4 mr-2" />
-                Reset
+                Reset View
               </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onClose}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-200 rounded-lg"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </Button>
             </div>
           </div>
@@ -271,36 +278,41 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
             </div>
 
             {/* Controls Panel */}
-            <div className="w-full lg:w-80 bg-white border-t lg:border-t-0 lg:border-l overflow-y-auto">
-              <div className="p-4 space-y-6">
+            <div className="w-full lg:w-80 bg-gradient-to-b from-amber-50/30 to-white border-t lg:border-t-0 lg:border-l border-amber-200/30 overflow-y-auto">
+              <div className="p-6 space-y-6">
                 {/* Room Selection */}
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">Room Type</h3>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+                      <Image className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    <h3 className="text-base font-bold text-gray-900">Room Type</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
                     {roomOptions.map((room) => (
                       <button
                         key={room.id}
                         onClick={() => handleRoomSelect(room)}
-                        className={`p-3 rounded-lg border-2 transition-all ${
+                        className={`p-3 rounded-xl border-2 transition-all duration-200 ${
                           selectedRoom.id === room.id && !useCustomRoom
-                            ? 'border-amber-600 bg-amber-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-amber-500 bg-gradient-to-br from-amber-50 to-orange-50 shadow-md shadow-amber-200/50'
+                            : 'border-gray-200 hover:border-amber-300 hover:shadow-sm'
                         }`}
                       >
-                        <div className="aspect-video rounded mb-2 overflow-hidden">
+                        <div className="aspect-video rounded-lg mb-2 overflow-hidden border border-gray-100">
                           <OptimizedImage
                             src={room.image}
                             alt={room.name}
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <p className="text-sm font-medium text-gray-900">{room.name}</p>
+                        <p className="text-sm font-semibold text-gray-900">{room.name}</p>
                       </button>
                     ))}
                   </div>
                   
                   {/* Upload Custom Room */}
-                  <div className="mt-2">
+                  <div className="mt-4">
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -311,16 +323,16 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     />
                     <Button
                       variant="outline"
-                      className="w-full"
+                      className="w-full border-2 border-amber-300 hover:border-amber-500 bg-white hover:bg-amber-50 text-amber-700 hover:text-amber-800 font-medium transition-all duration-200 rounded-xl"
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       Upload Your Room
                     </Button>
                     {useCustomRoom && (
-                      <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg">
-                        <p className="text-xs text-amber-800">
-                          ✓ Custom room uploaded
+                      <div className="mt-3 p-3 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 rounded-xl shadow-sm">
+                        <p className="text-xs font-semibold text-amber-800 flex items-center gap-1">
+                          <span className="text-green-600">✓</span> Custom room uploaded
                         </p>
                       </div>
                     )}
@@ -328,10 +340,10 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 </div>
 
                 {/* Frame Size Slider */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-semibold text-gray-900">Frame Size</h3>
-                    <span className="text-sm text-gray-600">{Math.round(frameSize)}%</span>
+                <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-bold text-gray-900">Frame Size</h3>
+                    <span className="text-sm font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">{Math.round(frameSize)}%</span>
                   </div>
                   <input
                     type="range"
@@ -339,12 +351,12 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     max="150"
                     value={frameSize}
                     onChange={(e) => setFrameSize(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    className="w-full h-3 bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 rounded-lg appearance-none cursor-pointer"
                     style={{
-                      background: `linear-gradient(to right, var(--luxury-gold) 0%, var(--luxury-gold) ${frameSize}%, #e5e7eb ${frameSize}%, #e5e7eb 100%)`
+                      background: `linear-gradient(to right, #f59e0b 0%, #f59e0b ${frameSize}%, #e5e7eb ${frameSize}%, #e5e7eb 100%)`
                     }}
                   />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <div className="flex justify-between text-xs font-semibold text-gray-500 mt-2">
                     <span>Small</span>
                     <span>Medium</span>
                     <span>Large</span>
@@ -352,10 +364,10 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 </div>
 
                 {/* Rotation Slider */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-semibold text-gray-900">Rotation</h3>
-                    <span className="text-sm text-gray-600">{rotation}°</span>
+                <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-bold text-gray-900">Rotation</h3>
+                    <span className="text-sm font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">{rotation}°</span>
                   </div>
                   <input
                     type="range"
@@ -363,9 +375,12 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     max="45"
                     value={rotation}
                     onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    className="w-full h-3 bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #f59e0b 0%, #f59e0b ${((rotation + 45) / 90) * 100}%, #e5e7eb ${((rotation + 45) / 90) * 100}%, #e5e7eb 100%)`
+                    }}
                   />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <div className="flex justify-between text-xs font-semibold text-gray-500 mt-2">
                     <span>-45°</span>
                     <span>0°</span>
                     <span>45°</span>
@@ -373,33 +388,33 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 </div>
 
                 {/* Wall Color Selection */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">Wall Color</h3>
-                  <div className="grid grid-cols-3 gap-2">
+                <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">Wall Color</h3>
+                  <div className="grid grid-cols-3 gap-3">
                     {wallColors.map((color) => (
                       <button
                         key={color.value}
                         onClick={() => setWallColor(color.value)}
-                        className={`p-3 rounded-lg border-2 transition-all ${
+                        className={`p-3 rounded-xl border-2 transition-all duration-200 ${
                           wallColor === color.value
-                            ? 'border-amber-600 ring-2 ring-amber-600 ring-offset-2'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-amber-500 ring-2 ring-amber-500 ring-offset-2 shadow-lg'
+                            : 'border-gray-200 hover:border-amber-300 hover:shadow-md'
                         }`}
                         style={{ backgroundColor: color.value }}
                       >
-                        <div className="text-xs mt-1 text-gray-600">{color.name}</div>
+                        <div className="text-xs mt-1 font-semibold text-gray-700">{color.name}</div>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 {/* Quick Presets */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Settings</h3>
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">Quick Settings</h3>
                   <div className="space-y-2">
                     <Button
                       variant="outline"
-                      className="w-full justify-start"
+                      className="w-full justify-start border-2 border-gray-200 hover:border-amber-300 bg-white hover:bg-amber-50 transition-all duration-200 rounded-xl"
                       onClick={() => {
                         setFramePosition({ x: 50, y: 35 });
                         setFrameSize(120);
@@ -409,7 +424,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     </Button>
                     <Button
                       variant="outline"
-                      className="w-full justify-start"
+                      className="w-full justify-start border-2 border-gray-200 hover:border-amber-300 bg-white hover:bg-amber-50 transition-all duration-200 rounded-xl"
                       onClick={() => {
                         setFramePosition({ x: 35, y: 40 });
                         setFrameSize(90);
@@ -419,7 +434,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     </Button>
                     <Button
                       variant="outline"
-                      className="w-full justify-start"
+                      className="w-full justify-start border-2 border-gray-200 hover:border-amber-300 bg-white hover:bg-amber-50 transition-all duration-200 rounded-xl"
                       onClick={() => {
                         setFramePosition({ x: 65, y: 40 });
                         setFrameSize(90);
