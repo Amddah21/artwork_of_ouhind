@@ -4,9 +4,11 @@ import { Button } from './ui/button';
 import { Share2, MessageCircle, Star, Tag, Eye, Palette, Calendar, Sparkles, Euro, Phone, Mail, ShoppingCart } from 'lucide-react';
 import RatingDisplay from './RatingDisplay';
 import ProtectedImage from './ProtectedImage';
+import ArtworkFrame from './ArtworkFrame';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import { useReview } from '@/contexts/ReviewContext';
 import { useGallery } from '@/contexts/GalleryContext';
+import '../styles/artwork-frame.css';
 
 interface Artwork {
   id: string;
@@ -192,38 +194,38 @@ const Portfolio: React.FC = () => {
               style={{ transitionDelay: `${index * 0.1}s` }}
               onClick={() => handleViewArtwork(artwork)}
             >
-              {/* Artwork Card */}
-              <div className="luxury-card-premium overflow-hidden">
-                
-                {/* Image Container */}
-                <div className="relative aspect-square overflow-hidden luxury-image-reveal">
-                  <ProtectedImage
-                    src={artwork.image_url}
-                    alt={artwork.title}
-                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                  />
-                  
-                  {/* Clean overlay for hover effect */}
-                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-all duration-300" />
-                </div>
+              {/* Luxury Artwork Frame */}
+              <ArtworkFrame
+                variant="gallery"
+                size="medium"
+                artistName="Omhind"
+                artworkTitle={artwork.title}
+                year={artwork.year?.toString()}
+                className="w-full"
+              >
+                <ProtectedImage
+                  src={artwork.image_url}
+                  alt={artwork.title}
+                  className="w-full h-full object-cover"
+                />
+              </ArtworkFrame>
 
-                {/* Content */}
-                <div className="p-6 space-y-3">
-                  {/* Title */}
-                  <h3 className="luxury-text-primary">
-                    {artwork.title}
-                  </h3>
-                  
-                  {/* Category */}
-                  <p className="luxury-text-secondary">
-                    {artwork.category}
-                  </p>
-                  
-                  {/* Year */}
-                  <p className="luxury-text-muted">
-                    {artwork.year}
-                  </p>
-                </div>
+              {/* Content Below Frame */}
+              <div className="mt-4 space-y-2 text-center">
+                {/* Title */}
+                <h3 className="luxury-text-primary text-lg font-semibold">
+                  {artwork.title}
+                </h3>
+                
+                {/* Category */}
+                <p className="luxury-text-secondary text-sm uppercase tracking-wider">
+                  {artwork.category}
+                </p>
+                
+                {/* Year */}
+                <p className="luxury-text-muted text-xs">
+                  {artwork.year}
+                </p>
               </div>
             </div>
           ))}

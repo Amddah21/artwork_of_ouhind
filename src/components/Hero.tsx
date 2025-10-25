@@ -5,7 +5,9 @@ import Logo from './Logo';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import ProtectedImage from './ProtectedImage';
 import ArtistPalette3D from './ArtistPalette3D';
+import ArtworkFrame from './ArtworkFrame';
 import '../styles/artist-palette-3d.css';
+import '../styles/artwork-frame.css';
 
 const Hero: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -232,19 +234,19 @@ const Hero: React.FC = () => {
               </div>
             </div>
 
-            {/* Featured Artwork Showcase */}
+            {/* Featured Artwork Showcase with Luxury Frame */}
             {featuredArtworks.length > 0 && (
               <div className={`transition-all duration-1000 ${
                 isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
               }`} style={{ animationDelay: '1.2s' }}>
-                <div className="relative">
-                  <div 
-                    className="luxury-card-premium overflow-hidden relative shadow-2xl"
-                    style={{
-                      width: '100%',
-                      maxWidth: '500px',
-                      aspectRatio: '4/5'
-                    }}
+                <div className="flex justify-center lg:justify-end">
+                  <ArtworkFrame
+                    variant="luxury"
+                    size="hero"
+                    artistName={artistName}
+                    artworkTitle={featuredArtworks[currentArtworkIndex]?.title}
+                    year={featuredArtworks[currentArtworkIndex]?.year?.toString()}
+                    className="max-w-[500px] w-full"
                   >
                     {/* Fade transition effect */}
                     <div className="relative w-full h-full">
@@ -262,48 +264,23 @@ const Hero: React.FC = () => {
                           />
                         </div>
                       ))}
-                      
-                      {/* Luxury decorative frame overlay */}
-                      <div className="absolute inset-0 border-4 opacity-60 shadow-2xl" style={{ 
-                        borderColor: 'var(--luxury-gold)',
-                        borderRadius: '12px',
-                        boxShadow: 'inset 0 0 0 2px rgba(224, 168, 93, 0.3), 0 0 20px rgba(224, 168, 93, 0.4)'
-                      }} />
-                      
-                      {/* Inner frame detail */}
-                      <div className="absolute inset-2 border-2 opacity-80" style={{ 
-                        borderColor: 'rgba(255, 255, 255, 0.8)',
-                        borderRadius: '8px'
-                      }} />
-                      
-                      {/* Artwork title overlay */}
-                      {featuredArtworks[currentArtworkIndex] && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-4 backdrop-blur-sm">
-                          <h3 className="text-white font-luxury-accent text-base font-bold text-center mb-1 tracking-wide">
-                            {featuredArtworks[currentArtworkIndex].title}
-                          </h3>
-                          <p className="text-white/90 text-xs font-luxury-body text-center tracking-wider">
-                            {featuredArtworks[currentArtworkIndex].year} • {featuredArtworks[currentArtworkIndex].category}
-                          </p>
-                        </div>
-                      )}
                     </div>
                     
                     {/* Enhanced indicator dots */}
-                    <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+                    <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
                       {featuredArtworks.map((_, index) => (
                         <div
                           key={index}
                           className={`transition-all duration-300 cursor-pointer ${
                             index === currentArtworkIndex 
-                              ? 'w-2 h-2 bg-white shadow-lg' 
-                              : 'w-1.5 h-1.5 bg-white/40'
-                          } rounded-full`}
+                              ? 'w-3 h-3 bg-white shadow-lg' 
+                              : 'w-2 h-2 bg-white/40'
+                          } rounded-full hover:bg-white/80`}
                           onClick={() => setCurrentArtworkIndex(index)}
                         />
                       ))}
                     </div>
-                  </div>
+                  </ArtworkFrame>
                 </div>
               </div>
             )}
