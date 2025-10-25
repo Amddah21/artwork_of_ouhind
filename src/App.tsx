@@ -15,8 +15,6 @@ import ArtisticFooter from "@/components/ArtisticFooter";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Suspense, lazy } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import ConnectionStatus from "@/components/ConnectionStatus";
-import PerformanceMonitor from "@/components/PerformanceMonitor";
 import "@/styles/theme.css";
 import "@/styles/nature-gallery.css";
 import "@/styles/luxury-gallery.css";
@@ -96,8 +94,6 @@ const AppContent = () => {
           </Suspense>
         </main>
         <ArtisticFooter />
-        <ConnectionStatus />
-        <PerformanceMonitor />
       </div>
     </BrowserRouter>
   );
