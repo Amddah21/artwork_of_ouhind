@@ -222,14 +222,16 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 {/* Artwork Overlay */}
                 <div
                   ref={artworkRef}
-                  className="absolute cursor-move"
+                  className="absolute"
                   style={{
                     left: `${framePosition.x}%`,
                     top: `${framePosition.y}%`,
                     transform: 'translate(-50%, -50%)',
-                    width: `${frameSize}%`,
+                    width: `${Math.min(frameSize, 90)}%`,
                     maxWidth: '500px',
-                    aspectRatio: '4/5'
+                    minWidth: '80px',
+                    aspectRatio: '4/5',
+                    zIndex: 10
                   }}
                 >
                   <div className="relative w-full h-full shadow-2xl" style={{ transform: `rotate(${rotation}deg)` }}>
