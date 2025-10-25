@@ -93,17 +93,9 @@ const ArtworkDetail: React.FC = () => {
       console.log('📊 [Navigation] History length:', window.history.length);
       console.log('📍 [Navigation] Current path:', window.location.pathname);
       
-      // Check if we have a referrer or can go back
-      if (document.referrer && document.referrer !== window.location.href) {
-        console.log('🔙 [Navigation] Using browser back navigation');
-        navigate(-1);
-      } else if (window.history.length > 1) {
-        console.log('🔙 [Navigation] Using history back navigation');
-        navigate(-1);
-      } else {
-        console.log('🏠 [Navigation] No history available, navigating to home');
-        navigate('/');
-      }
+      // Simple navigation - always go to home for now
+      console.log('🏠 [Navigation] Navigating to home');
+      navigate('/');
     } catch (error) {
       console.error('❌ [Navigation] Error occurred:', error);
       console.log('🏠 [Navigation] Fallback: Navigating to home');
@@ -223,18 +215,19 @@ const ArtworkDetail: React.FC = () => {
               }}
               className="luxury-retour-button group relative overflow-hidden"
               type="button"
+              style={{ pointerEvents: 'auto', zIndex: 10 }}
             >
               {/* Luxury Background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 rounded-xl transition-all duration-300 group-hover:from-amber-100 group-hover:via-orange-100 group-hover:to-yellow-100" />
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 rounded-xl transition-all duration-300 group-hover:from-amber-100 group-hover:via-orange-100 group-hover:to-yellow-100" style={{ pointerEvents: 'none' }} />
               
               {/* Golden Border */}
-              <div className="absolute inset-0 rounded-xl border-2 border-gradient-to-r from-amber-300 via-orange-300 to-yellow-300 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 rounded-xl border-2 border-gradient-to-r from-amber-300 via-orange-300 to-yellow-300 opacity-60 group-hover:opacity-100 transition-opacity duration-300" style={{ pointerEvents: 'none' }} />
               
               {/* Inner Glow */}
-              <div className="absolute inset-1 rounded-lg bg-gradient-to-r from-amber-200/20 via-orange-200/20 to-yellow-200/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-1 rounded-lg bg-gradient-to-r from-amber-200/20 via-orange-200/20 to-yellow-200/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ pointerEvents: 'none' }} />
               
               {/* Content */}
-              <div className="relative flex items-center justify-center px-6 py-3 space-x-3">
+              <div className="relative flex items-center justify-center px-6 py-3 space-x-3" style={{ pointerEvents: 'none' }}>
                 {/* Luxury Arrow Icon */}
                 <div className="relative">
                   <ArrowLeft className="w-5 h-5 text-amber-700 transition-all duration-300 group-hover:text-amber-800 group-hover:scale-110" />
@@ -253,10 +246,10 @@ const ArtworkDetail: React.FC = () => {
               </div>
               
               {/* Hover Effect Overlay */}
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ pointerEvents: 'none' }} />
               
               {/* Luxury Shadow */}
-              <div className="absolute inset-0 rounded-xl shadow-lg shadow-amber-200/50 opacity-0 group-hover:opacity-100 group-hover:shadow-xl group-hover:shadow-amber-300/60 transition-all duration-300" />
+              <div className="absolute inset-0 rounded-xl shadow-lg shadow-amber-200/50 opacity-0 group-hover:opacity-100 group-hover:shadow-xl group-hover:shadow-amber-300/60 transition-all duration-300" style={{ pointerEvents: 'none' }} />
             </button>
             <div className="flex items-center gap-4">
               <Badge 
