@@ -8,6 +8,7 @@ import StarRating from '@/components/StarRating';
 import ReviewSection from '@/components/ReviewSection';
 import { useRating } from '@/contexts/RatingContext';
 import { useArtwork } from '@/contexts/ArtworkContext';
+import '../styles/luxury-retour-button.css';
 
 interface Artwork {
   id: string;
@@ -85,16 +86,24 @@ const ArtworkDetail: React.FC = () => {
 
   const handleBack = () => {
     try {
-      // Try to go back in history first
-      if (window.history.length > 1) {
+      console.log('🔄 [Navigation] Starting back navigation...');
+      console.log('📊 [Navigation] History length:', window.history.length);
+      console.log('📍 [Navigation] Current path:', window.location.pathname);
+      
+      // Check if we have a referrer or can go back
+      if (document.referrer && document.referrer !== window.location.href) {
+        console.log('🔙 [Navigation] Using browser back navigation');
+        navigate(-1);
+      } else if (window.history.length > 1) {
+        console.log('🔙 [Navigation] Using history back navigation');
         navigate(-1);
       } else {
-        // Fallback to home page if no history
+        console.log('🏠 [Navigation] No history available, navigating to home');
         navigate('/');
       }
     } catch (error) {
-      console.error('Navigation error:', error);
-      // Fallback to home page
+      console.error('❌ [Navigation] Error occurred:', error);
+      console.log('🏠 [Navigation] Fallback: Navigating to home');
       navigate('/');
     }
   };
@@ -202,24 +211,50 @@ const ArtworkDetail: React.FC = () => {
       <div className="luxury-nav backdrop-blur-md shadow-lg" style={{ borderBottom: '1px solid rgba(224, 168, 93, 0.2)' }}>
         <div className="luxury-container py-4">
           <div className="flex items-center justify-between">
-            <Button
+            <button
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Retour button clicked');
+                console.log('🎨 Retour button clicked - Navigating back...');
                 handleBack();
               }}
-              variant="outline"
-              className="luxury-btn-secondary luxury-magnetic-hover luxury-sparkle-effect"
-              style={{ 
-                borderColor: 'hsl(330, 20%, 88%)',
-                color: 'hsl(240, 10%, 15%)'
-              }}
+              className="luxury-retour-button group relative overflow-hidden"
               type="button"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Retour
-            </Button>
+              {/* Luxury Background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 rounded-xl transition-all duration-300 group-hover:from-amber-100 group-hover:via-orange-100 group-hover:to-yellow-100" />
+              
+              {/* Golden Border */}
+              <div className="absolute inset-0 rounded-xl border-2 border-gradient-to-r from-amber-300 via-orange-300 to-yellow-300 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              {/* Inner Glow */}
+              <div className="absolute inset-1 rounded-lg bg-gradient-to-r from-amber-200/20 via-orange-200/20 to-yellow-200/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              {/* Content */}
+              <div className="relative flex items-center justify-center px-6 py-3 space-x-3">
+                {/* Luxury Arrow Icon */}
+                <div className="relative">
+                  <ArrowLeft className="w-5 h-5 text-amber-700 transition-all duration-300 group-hover:text-amber-800 group-hover:scale-110" />
+                  {/* Icon Glow Effect */}
+                  <div className="absolute inset-0 rounded-full bg-amber-400/20 blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+                
+                {/* Text */}
+                <span className="font-luxury-display text-lg font-semibold text-amber-800 tracking-wide transition-all duration-300 group-hover:text-amber-900 group-hover:tracking-wider">
+                  RETOUR
+                </span>
+                
+                {/* Decorative Elements */}
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:animate-pulse" />
+                <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-gradient-to-br from-yellow-400 to-amber-400 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:animate-pulse" style={{ animationDelay: '0.2s' }} />
+              </div>
+              
+              {/* Hover Effect Overlay */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              {/* Luxury Shadow */}
+              <div className="absolute inset-0 rounded-xl shadow-lg shadow-amber-200/50 opacity-0 group-hover:opacity-100 group-hover:shadow-xl group-hover:shadow-amber-300/60 transition-all duration-300" />
+            </button>
             <div className="flex items-center gap-4">
               <Badge 
                 className="painterly-card" 
