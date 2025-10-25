@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, RotateCw, Maximize2, Minimize2, Move, Paintbrush, Upload, Image } from 'lucide-react';
+import { X, RotateCw, Maximize2, Minimize2, Move, Paintbrush, Upload, Image, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from './ui/button';
 import OptimizedImage from './OptimizedImage';
 
@@ -213,19 +213,16 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
 
           <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
             {/* Main Preview Area */}
-            <div className="flex-1 relative overflow-hidden bg-gray-100 min-h-[200px] sm:min-h-[300px]">
+            <div className="flex-1 relative overflow-hidden min-h-[200px] sm:min-h-[300px]" style={{ backgroundColor: wallColor }}>
+              {/* Clean background with subtle pattern */}
               <div 
                 ref={containerRef}
-                className="w-full h-full relative cursor-move"
+                className="w-full h-full relative"
                 style={{
-                  backgroundImage: `url(${useCustomRoom && customRoomImage ? customRoomImage : selectedRoom.image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  filter: useCustomRoom && customRoomImage 
-                    ? `brightness(0.95) contrast(1.05) saturate(0.95)` 
-                    : `brightness(0.85) contrast(1.05) saturate(0.9)`,
-                  backgroundColor: wallColor,
-                  backgroundBlendMode: useCustomRoom && customRoomImage ? 'normal' : 'overlay'
+                  background: useCustomRoom && customRoomImage 
+                    ? `url(${customRoomImage}) center/cover no-repeat, linear-gradient(${wallColor}, ${wallColor})`
+                    : `url(${selectedRoom.image}) center/cover no-repeat, linear-gradient(${wallColor}dd, ${wallColor}dd)`,
+                  backgroundBlendMode: 'overlay'
                 }}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
@@ -411,6 +408,91 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     <span>Small</span>
                     <span>Medium</span>
                     <span>Large</span>
+                  </div>
+                </div>
+
+                {/* Precise Position Controls */}
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">Position</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs text-gray-600 mb-2 block">Horizontal: {framePosition.x}%</label>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setFramePosition(prev => ({ ...prev, x: Math.max(10, prev.x - 5) }))}
+                          className="p-2 rounded-lg bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50 transition-all"
+                        >
+                          <ArrowLeft className="w-4 h-4 text-amber-700" />
+                        </button>
+                        <input
+                          type="range"
+                          min="10"
+                          max="90"
+                          value={framePosition.x}
+                          onChange={(e) => setFramePosition(prev => ({ ...prev, x: Number(e.target.value) }))}
+                          className="flex-1 h-2 bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 rounded-lg appearance-none cursor-pointer"
+                        />
+                        <button
+                          onClick={() => setFramePosition(prev => ({ ...prev, x: Math.min(90, prev.x + 5) }))}
+                          className="p-2 rounded-lg bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50 transition-all"
+                        >
+                          <ArrowRight className="w-4 h-4 text-amber-700" />
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-600 mb-2 block">Vertical: {framePosition.y}%</label>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setFramePosition(prev => ({ ...prev, y: Math.max(10, prev.y - 5) }))}
+                          className="p-2 rounded-lg bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50 transition-all"
+                        >
+                          <ArrowUp className="w-4 h-4 text-amber-700" />
+                        </button>
+                        <input
+                          type="range"
+                          min="10"
+                          max="90"
+                          value={framePosition.y}
+                          onChange={(e) => setFramePosition(prev => ({ ...prev, y: Number(e.target.value) }))}
+                          className="flex-1 h-2 bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 rounded-lg appearance-none cursor-pointer"
+                        />
+                        <button
+                          onClick={() => setFramePosition(prev => ({ ...prev, y: Math.min(90, prev.y + 5) }))}
+                          className="p-2 rounded-lg bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50 transition-all"
+                        >
+                          <ArrowDown className="w-4 h-4 text-amber-700" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Size Controls */}
+                <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">Quick Size</h3>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      onClick={() => setFrameSize(60)}
+                      className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-300 hover:bg-amber-50 transition-all text-sm font-semibold"
+                    >
+                      <ZoomOut className="w-4 h-4 mx-auto mb-1 text-amber-600" />
+                      Small
+                    </button>
+                    <button
+                      onClick={() => setFrameSize(80)}
+                      className="p-3 rounded-lg border-2 border-amber-500 bg-gradient-to-br from-amber-50 to-orange-50 text-sm font-semibold shadow-md"
+                    >
+                      <ZoomIn className="w-4 h-4 mx-auto mb-1 text-amber-600" />
+                      Medium
+                    </button>
+                    <button
+                      onClick={() => setFrameSize(100)}
+                      className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-300 hover:bg-amber-50 transition-all text-sm font-semibold"
+                    >
+                      <ZoomIn className="w-5 h-5 mx-auto mb-1 text-amber-600" />
+                      Large
+                    </button>
                   </div>
                 </div>
 
