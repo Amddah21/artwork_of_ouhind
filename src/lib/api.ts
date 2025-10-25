@@ -135,11 +135,18 @@ export class ApiService {
     return user
   }
 
-  // Œuvres d'art
+  // Œuvres d'art - Optimized with images join
   static async getArtworks() {
     const { data, error } = await supabase
       .from('artworks')
-      .select('*')
+      .select(`
+        *,
+        artwork_images (
+          id,
+          image_url,
+          display_order
+        )
+      `)
       .order('created_at', { ascending: false })
     if (error) throw error
     return data
@@ -148,7 +155,14 @@ export class ApiService {
   static async getArtworkById(id: string) {
     const { data, error } = await supabase
       .from('artworks')
-      .select('*')
+      .select(`
+        *,
+        artwork_images (
+          id,
+          image_url,
+          display_order
+        )
+      `)
       .eq('id', id)
       .single()
     if (error) throw error
@@ -347,14 +361,22 @@ export class ApiService {
         return [];
       }
 
-      // Add timeout wrapper to prevent long-running queries
+      // Reduced timeout for better performance
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Query timeout after 8 seconds')), 8000)
+        setTimeout(() => reject(new Error('Query timeout after 5 seconds')), 5000)
       );
 
+      // Optimized query with images join
       const query = supabase
         .from('artworks')
-        .select('*')
+        .select(`
+          *,
+          artwork_images (
+            id,
+            image_url,
+            display_order
+          )
+        `)
         .eq('category', category)
         .order('created_at', { ascending: false });
       
@@ -367,9 +389,9 @@ export class ApiService {
         console.error('Error fetching artworks by category:', error);
         
         // Retry logic for timeout errors
-        if (error.code === '57014' && retryCount < 2) {
+        if (error.code === '57014' && retryCount < 1) {
           console.log(`Retrying getArtworksByCategory for ${category} (attempt ${retryCount + 1})`);
-          await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1))); // Exponential backoff
+          await new Promise(resolve => setTimeout(resolve, 500 * (retryCount + 1))); // Faster retry
           return this.getArtworksByCategory(category, retryCount + 1);
         }
         
@@ -384,7 +406,7 @@ export class ApiService {
       console.error('Error in getArtworksByCategory:', error);
       
       // Return empty array instead of throwing to prevent app crashes
-      if (retryCount >= 2) {
+      if (retryCount >= 1) {
         console.warn(`Failed to load artworks for ${category} after ${retryCount + 1} attempts`);
         return [];
       }
@@ -451,12 +473,13 @@ export class ApiService {
         timeoutPromise
       ]) as any;
       
+      let artworkCount: number;
       if (countError) {
         console.error('Error fetching artwork count:', countError);
         // Use a simple fallback count
-        var artworkCount = 1; // At least we have the featured artwork
+        artworkCount = 1; // At least we have the featured artwork
       } else {
-        var artworkCount = count || 0;
+        artworkCount = count || 0;
       }
       
       const galleryData = {

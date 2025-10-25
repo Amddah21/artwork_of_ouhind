@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Share2, MessageCircle, Star, Tag, Eye, Palette, Calendar, Sparkles, Euro, Phone, Mail, ShoppingCart } from 'lucide-react';
 import RatingDisplay from './RatingDisplay';
-import ProtectedImage from './ProtectedImage';
+import OptimizedImage from './OptimizedImage';
 import ArtworkFrame from './ArtworkFrame';
 import ScreenshotDetection from './ScreenshotDetection';
+import LoadingSpinner from './LoadingSpinner';
+import ArtworkSkeleton from './ArtworkSkeleton';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import { useReview } from '@/contexts/ReviewContext';
 import { useGallery } from '@/contexts/GalleryContext';
@@ -217,10 +219,11 @@ const Portfolio: React.FC = () => {
                     year={artwork.year?.toString()}
                     className="w-full"
                   >
-                    <ProtectedImage
+                    <OptimizedImage
                       src={artwork.image_url}
                       alt={artwork.title}
                       className="luxury-gallery-image"
+                      priority={index < 3} // Prioritize first 3 images
                     />
                   </ArtworkFrame>
                 </div>
@@ -252,21 +255,7 @@ const Portfolio: React.FC = () => {
         {/* Loading State */}
         {isLoading && (
           <div className="text-center py-20">
-            <div className="max-w-md mx-auto">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center luxury-floating-elements">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-                <div className="absolute inset-0 rounded-full border-2 border-yellow-300 opacity-30 animate-pulse"></div>
-              </div>
-              <h3 className="text-2xl font-bold mb-4 luxury-text-primary">
-                Chargement des œuvres...
-              </h3>
-              <p className="text-lg luxury-text-secondary">
-                Veuillez patienter pendant que nous chargeons votre galerie.
-              </p>
-              <div className="mt-8 w-full max-w-xs mx-auto h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full luxury-artwork-loading rounded-full"></div>
-              </div>
-            </div>
+            <LoadingSpinner size="lg" text="Chargement de la collection..." />
           </div>
         )}
 

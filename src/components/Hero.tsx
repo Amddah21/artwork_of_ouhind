@@ -1,16 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, Suspense, lazy } from 'react';
 import { Button } from './ui/button';
 import { ArrowRight, Palette, Award, Users, Globe, Brush, Sparkles } from 'lucide-react';
 import Logo from './Logo';
 import { useArtwork } from '@/contexts/ArtworkContext';
-import ProtectedImage from './ProtectedImage';
-import ArtistPalette3D from './ArtistPalette3D';
-import Artwork3D from './Artwork3D';
+import OptimizedImage from './OptimizedImage';
+import LoadingSpinner from './LoadingSpinner';
 import ScreenshotDetection from './ScreenshotDetection';
 import '../styles/artist-palette-3d.css';
 import '../styles/artwork-frame.css';
 import '../styles/artwork-3d.css';
 import '../styles/mobile-content-fix.css';
+
+// Lazy load heavy 3D components
+const ArtistPalette3D = lazy(() => import('./ArtistPalette3D'));
+const Artwork3D = lazy(() => import('./Artwork3D'));
 
 const Hero: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -217,9 +220,15 @@ const Hero: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-br from-yellow-100/20 to-orange-100/20 rounded-full blur-3xl scale-150" />
                   <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/10 to-purple-100/10 rounded-full blur-2xl scale-125" />
                   
-                  {/* 3D Artist Palette - Responsive sizing */}
+                  {/* 3D Artist Palette - Responsive sizing with lazy loading */}
                   <div className="w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80">
-                    <ArtistPalette3D className="relative z-10 w-full h-full" />
+                    <Suspense fallback={
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-100/20 to-orange-100/20 rounded-full">
+                        <LoadingSpinner size="md" text="" />
+                      </div>
+                    }>
+                      <ArtistPalette3D className="relative z-10 w-full h-full" />
+                    </Suspense>
                   </div>
                   
                   {/* Floating luxury elements around palette - Hidden on mobile */}
@@ -243,12 +252,18 @@ const Hero: React.FC = () => {
               }`} style={{ animationDelay: '1.2s' }}>
                 <div className="flex justify-center lg:justify-end px-2 sm:px-4 lg:px-0">
                   <div className="relative max-w-[280px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] w-full h-[350px] sm:h-[420px] md:h-[480px] lg:h-[540px] xl:h-[600px]">
-                    {/* 3D Artwork */}
-                    <Artwork3D
-                      artwork={featuredArtwork}
-                      artistName={artistName}
-                      className="w-full h-full"
-                    />
+                    {/* 3D Artwork with lazy loading */}
+                    <Suspense fallback={
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+                        <LoadingSpinner size="md" text="Chargement de l'œuvre..." />
+                      </div>
+                    }>
+                      <Artwork3D
+                        artwork={featuredArtwork}
+                        artistName={artistName}
+                        className="w-full h-full"
+                      />
+                    </Suspense>
                   </div>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Lock, Shield, Eye, EyeOff } from 'lucide-react';
 import WatermarkOverlay from './WatermarkOverlay';
 
@@ -27,18 +27,24 @@ const ProtectedImage = ({
   const imgRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const showProtectionMessage = (message: string) => {
-      setProtectionMessage(message);
-      setShowProtection(true);
-      setIsBlurred(true);
-      setTimeout(() => {
-        setShowProtection(false);
-        setIsBlurred(false);
-        setProtectionMessage('');
-      }, 3000);
-    };
+  // Optimized protection message handler with debouncing
+  const showProtectionMessage = useCallback((message: string) => {
+    if (showProtection) return; // Prevent multiple messages
+    
+    setProtectionMessage(message);
+    setShowProtection(true);
+    setIsBlurred(true);
+    
+    const timer = setTimeout(() => {
+      setShowProtection(false);
+      setIsBlurred(false);
+      setProtectionMessage('');
+    }, 2000); // Reduced from 3000ms
+    
+    return () => clearTimeout(timer);
+  }, [showProtection]);
 
+  useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
       showProtectionMessage('❌ Vous ne pouvez pas télécharger l\'image, elle est protégée');
@@ -53,23 +59,15 @@ const ProtectedImage = ({
       e.preventDefault();
     };
 
+    // Optimized keyboard handler - only listen for critical shortcuts
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Disable common screenshot and save shortcuts
       if (
         (e.ctrlKey && e.shiftKey && e.key === 'S') || // Ctrl+Shift+S
         (e.metaKey && e.shiftKey && e.key === '4') || // Cmd+Shift+4 (Mac)
-        (e.metaKey && e.shiftKey && e.key === '3') || // Cmd+Shift+3 (Mac)
-        (e.key === 'F12') || // F12 (DevTools)
-        (e.ctrlKey && e.key === 'u') || // Ctrl+U (View Source)
         (e.ctrlKey && e.key === 's') || // Ctrl+S (Save)
         (e.ctrlKey && e.key === 'c') || // Ctrl+C (Copy)
-        (e.ctrlKey && e.key === 'v') || // Ctrl+V (Paste)
-        (e.ctrlKey && e.key === 'a') || // Ctrl+A (Select All)
-        (e.ctrlKey && e.key === 'p') || // Ctrl+P (Print)
         (e.metaKey && e.key === 's') || // Cmd+S (Mac Save)
-        (e.metaKey && e.key === 'c') || // Cmd+C (Mac Copy)
-        (e.metaKey && e.key === 'a') || // Cmd+A (Mac Select All)
-        (e.altKey && e.key === 'PrintScreen') // Alt+PrintScreen
+        (e.metaKey && e.key === 'c') // Cmd+C (Mac Copy)
       ) {
         e.preventDefault();
         showProtectionMessage('❌ Capture d\'écran et outils bloqués - Image protégée');
@@ -77,26 +75,14 @@ const ProtectedImage = ({
     };
 
     const handleMouseLeave = () => {
-      // Blur image when mouse leaves to prevent screenshots
+      // Reduced blur duration for better UX
       setIsBlurred(true);
-      setTimeout(() => setIsBlurred(false), 1000);
+      setTimeout(() => setIsBlurred(false), 500); // Reduced from 1000ms
     };
 
     const handleTouchStart = (e: TouchEvent) => {
       // Prevent long press on mobile
       e.preventDefault();
-    };
-
-    // Screenshot detection and prevention
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        showProtectionMessage('❌ Capture d\'écran détectée - Image protégée');
-      }
-    };
-
-    // Detect if user tries to take screenshot or use dev tools
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      showProtectionMessage('❌ Tentative de capture détectée - Image protégée');
     };
 
     const img = imgRef.current;
@@ -109,8 +95,6 @@ const ProtectedImage = ({
       img.addEventListener('touchstart', handleTouchStart, { passive: false });
       container.addEventListener('mouseleave', handleMouseLeave);
       document.addEventListener('keydown', handleKeyDown);
-      document.addEventListener('visibilitychange', handleVisibilityChange);
-      window.addEventListener('beforeunload', handleBeforeUnload);
 
       return () => {
         img.removeEventListener('contextmenu', handleContextMenu);
@@ -119,11 +103,9 @@ const ProtectedImage = ({
         img.removeEventListener('touchstart', handleTouchStart);
         container.removeEventListener('mouseleave', handleMouseLeave);
         document.removeEventListener('keydown', handleKeyDown);
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
-        window.removeEventListener('beforeunload', handleBeforeUnload);
       };
     }
-  }, []);
+  }, [showProtectionMessage]);
 
   return (
     <div 
@@ -167,6 +149,8 @@ const ProtectedImage = ({
         } as React.CSSProperties}
         onClick={onClick}
         draggable={false}
+        loading="lazy"
+        decoding="async"
         onLoad={() => {
           // Additional protection when image loads
           if (imgRef.current) {

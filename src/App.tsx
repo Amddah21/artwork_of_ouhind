@@ -13,18 +13,38 @@ import { useCopyrightProtection } from "@/hooks/useCopyrightProtection";
 import ArtisticNavbar from "@/components/ArtisticNavbar";
 import ArtisticFooter from "@/components/ArtisticFooter";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Index from "./pages/Index";
-import ArtworkDetail from "./pages/ArtworkDetail";
-import GalleryDetail from "./pages/GalleryDetail";
-import Voting from "./pages/Voting";
-import Comments from "./pages/Comments";
-import AdminDashboard from "./pages/AdminDashboard";
-import NotFound from "./pages/NotFound";
+import { Suspense, lazy } from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import ConnectionStatus from "@/components/ConnectionStatus";
+import PerformanceMonitor from "@/components/PerformanceMonitor";
 import "@/styles/theme.css";
 import "@/styles/nature-gallery.css";
 import "@/styles/luxury-gallery.css";
 
-const queryClient = new QueryClient();
+// Lazy load pages for better performance
+const Index = lazy(() => import("./pages/Index"));
+const ArtworkDetail = lazy(() => import("./pages/ArtworkDetail"));
+const GalleryDetail = lazy(() => import("./pages/GalleryDetail"));
+const Voting = lazy(() => import("./pages/Voting"));
+const Comments = lazy(() => import("./pages/Comments"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
+// Optimized QueryClient configuration
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
+      retry: 2,
+      retryDelay: 1000,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 // Inner component that uses the copyright protection hook
 const AppContent = () => {
@@ -44,21 +64,25 @@ const AppContent = () => {
       <div className="min-h-screen flex flex-col">
         <ArtisticNavbar />
         <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/artwork/:id" element={<ArtworkDetail />} />
-            <Route path="/gallery/:galleryId" element={<GalleryDetail />} />
-            <Route path="/voting" element={<Voting />} />
-            <Route path="/comments" element={<Comments />} />
-            <Route path="/admin" element={
-              <ProtectedRoute requireAdmin={true}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={<LoadingSpinner size="lg" text="Chargement de la page..." />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/artwork/:id" element={<ArtworkDetail />} />
+              <Route path="/gallery/:galleryId" element={<GalleryDetail />} />
+              <Route path="/voting" element={<Voting />} />
+              <Route path="/comments" element={<Comments />} />
+              <Route path="/admin" element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </main>
         <ArtisticFooter />
+        <ConnectionStatus />
+        <PerformanceMonitor />
       </div>
     </BrowserRouter>
   );
