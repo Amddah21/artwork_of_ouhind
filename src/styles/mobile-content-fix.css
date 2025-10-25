@@ -1,0 +1,144 @@
+/* Mobile Content Visibility Fixes */
+/* Ensure no decorative elements interfere with mobile content */
+
+/* Hide decorative elements on mobile to prevent content overlap */
+@media (max-width: 640px) {
+  /* Hide any potential cursor-like elements */
+  .luxury-floating-elements {
+    display: none !important;
+  }
+  
+  /* Ensure statistics cards are fully visible */
+  .luxury-card-premium {
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+  }
+  
+  /* Remove any potential cursor styling on mobile */
+  * {
+    cursor: default !important;
+  }
+  
+  /* Ensure text is selectable and readable */
+  .luxury-text-primary,
+  .luxury-text-secondary,
+  .luxury-text-muted {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+  }
+  
+  /* Ensure buttons and interactive elements work properly */
+  button,
+  .luxury-btn-primary,
+  .luxury-btn-secondary {
+    cursor: pointer !important;
+    pointer-events: auto;
+  }
+}
+
+/* Additional mobile-specific fixes */
+@media (max-width: 768px) {
+  /* Ensure no absolute positioned elements interfere */
+  .luxury-floating-elements {
+    display: none !important;
+  }
+  
+  /* Ensure statistics grid is properly spaced */
+  .luxury-grid-3 {
+    gap: 0.5rem !important;
+  }
+  
+  /* Ensure cards have proper padding */
+  .luxury-card-premium {
+    padding: 0.75rem !important;
+    min-height: auto;
+  }
+  
+  /* Ensure text is properly sized and readable */
+  .luxury-text-gradient {
+    font-size: 1.25rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .luxury-text-secondary {
+    font-size: 0.75rem !important;
+    line-height: 1.3 !important;
+  }
+}
+
+/* Ultra-small mobile devices */
+@media (max-width: 480px) {
+  /* Further reduce decorative elements */
+  .luxury-floating-elements,
+  .luxury-decorative-elements {
+    display: none !important;
+  }
+  
+  /* Ensure maximum content visibility */
+  .luxury-card-premium {
+    padding: 0.5rem !important;
+    margin: 0 !important;
+  }
+  
+  /* Optimize text for very small screens */
+  .luxury-text-gradient {
+    font-size: 1.125rem !important;
+  }
+  
+  .luxury-text-secondary {
+    font-size: 0.625rem !important;
+  }
+  
+  /* Ensure proper touch targets */
+  button,
+  .luxury-btn-primary,
+  .luxury-btn-secondary {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Prevent any cursor-like animations on mobile */
+@media (max-width: 768px) {
+  @keyframes luxury-particle-float {
+    0%, 100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  
+  @keyframes luxury-shimmer {
+    0%, 100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  
+  /* Disable any floating animations */
+  .luxury-floating-elements,
+  .luxury-particle,
+  .luxury-shimmer {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
+
+/* Ensure content is always visible and accessible */
+.luxury-content-visible {
+  position: relative;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+/* Mobile-specific content protection */
+@media (max-width: 640px) {
+  .luxury-content-visible {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(2px);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+  }
+}

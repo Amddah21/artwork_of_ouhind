@@ -9,6 +9,7 @@ import ArtworkFrame from './ArtworkFrame';
 import ScreenshotDetection from './ScreenshotDetection';
 import '../styles/artist-palette-3d.css';
 import '../styles/artwork-frame.css';
+import '../styles/mobile-content-fix.css';
 
 const Hero: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -176,21 +177,21 @@ const Hero: React.FC = () => {
                   mêlant matériaux précieux et couleurs sublimes pour créer des compositions d'une élégance rare.
                 </p>
                 
-                {/* Luxury decorative elements */}
-                <div className="absolute -top-6 -left-6 w-10 h-10 luxury-floating-elements opacity-40">
+                {/* Luxury decorative elements - Hidden on mobile to prevent overlap */}
+                <div className="absolute -top-6 -left-6 w-10 h-10 luxury-floating-elements opacity-40 hidden sm:block">
                   <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-400 to-indigo-400"></div>
                 </div>
-                <div className="absolute -bottom-6 -right-6 w-8 h-8 luxury-floating-elements opacity-40" style={{ animationDelay: '1s' }}>
+                <div className="absolute -bottom-6 -right-6 w-8 h-8 luxury-floating-elements opacity-40 hidden sm:block" style={{ animationDelay: '1s' }}>
                   <div className="w-full h-full rounded-full bg-gradient-to-br from-rose-400 to-pink-400"></div>
                 </div>
-                <div className="absolute top-1/2 -right-8 w-6 h-6 luxury-floating-elements opacity-30" style={{ animationDelay: '2s' }}>
+                <div className="absolute top-1/2 -right-8 w-6 h-6 luxury-floating-elements opacity-30 hidden sm:block" style={{ animationDelay: '2s' }}>
                   <div className="w-full h-full rounded-full bg-gradient-to-br from-emerald-400 to-teal-400"></div>
                 </div>
               </div>
             </div>
 
             {/* Statistics */}
-            <div className={`grid grid-cols-3 gap-1 sm:gap-2 lg:gap-4 transition-all duration-1000 ${
+            <div className={`grid grid-cols-3 gap-1 sm:gap-2 lg:gap-4 transition-all duration-1000 luxury-content-visible ${
               isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '1.2s' }}>
               {[
@@ -232,14 +233,14 @@ const Hero: React.FC = () => {
                     <ArtistPalette3D className="relative z-10 w-full h-full" />
                   </div>
                   
-                  {/* Floating luxury elements around palette */}
-                  <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 lg:-top-8 lg:-left-8 w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 luxury-floating-elements opacity-30">
+                  {/* Floating luxury elements around palette - Hidden on mobile */}
+                  <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 lg:-top-8 lg:-left-8 w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 luxury-floating-elements opacity-30 hidden sm:block">
                     <div className="w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 animate-pulse"></div>
                   </div>
-                  <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 lg:-bottom-8 lg:-right-8 w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 luxury-floating-elements opacity-40" style={{ animationDelay: '1s' }}>
+                  <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 lg:-bottom-8 lg:-right-8 w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 luxury-floating-elements opacity-40 hidden sm:block" style={{ animationDelay: '1s' }}>
                     <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-400 to-purple-400 animate-pulse"></div>
                   </div>
-                  <div className="absolute top-1/2 -right-6 sm:-right-8 lg:-right-12 w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 luxury-floating-elements opacity-50" style={{ animationDelay: '2s' }}>
+                  <div className="absolute top-1/2 -right-6 sm:-right-8 lg:-right-12 w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 luxury-floating-elements opacity-50 hidden sm:block" style={{ animationDelay: '2s' }}>
                     <div className="w-full h-full rounded-full bg-gradient-to-br from-green-400 to-teal-400 animate-pulse"></div>
                   </div>
                 </div>
