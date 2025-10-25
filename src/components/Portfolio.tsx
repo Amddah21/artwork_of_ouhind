@@ -192,9 +192,67 @@ const Portfolio: React.FC = () => {
           </p>
         </div>
 
+        {/* Category Filter Section */}
+        <div className={`mb-12 transition-all duration-1000 ${
+          isLoaded ? 'opacity-100' : 'opacity-0 translate-y-8'
+        }`} style={{ animationDelay: '0.3s' }}>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => {
+                  setSelectedCategory(category);
+                  setVisibleArtworks(6); // Reset to 6 when changing category
+                }}
+                className={`px-6 py-3 rounded-full font-luxury-body transition-all duration-300 ${
+                  selectedCategory === category
+                    ? 'luxury-btn-primary shadow-lg shadow-amber-200/50'
+                    : 'luxury-btn-secondary hover:shadow-md'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+          
+          {/* Selected Category Indicator */}
+          {selectedCategory !== 'Tous' && (
+            <div className="text-center mt-4">
+              <p className="text-sm text-gray-600">
+                Affichage de la catégorie: <span className="font-semibold text-amber-600">{selectedCategory}</span>
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* Elegant Artworks Grid with Luxury Styling */}
         <div className="luxury-grid luxury-grid-4 gap-4 sm:gap-6 lg:gap-8">
-          {displayedArtworks.map((artwork, index) => (
+          {displayedArtworks.length === 0 ? (
+            <div className="col-span-full text-center py-20">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-100 mb-4">
+                <Palette className="w-10 h-10 text-amber-600" />
+              </div>
+              <h3 className="text-2xl font-semibold text-gray-900 mb-2">Aucune œuvre trouvée</h3>
+              <p className="text-gray-600 mb-6">
+                {selectedCategory === 'Tous' 
+                  ? 'Aucune œuvre disponible pour le moment.'
+                  : `Aucune œuvre disponible dans la catégorie "${selectedCategory}".`
+                }
+              </p>
+              {selectedCategory !== 'Tous' && (
+                <button
+                  onClick={() => {
+                    setSelectedCategory('Tous');
+                    setVisibleArtworks(6);
+                  }}
+                  className="px-6 py-3 rounded-full luxury-btn-primary"
+                >
+                  Voir toutes les œuvres
+                </button>
+              )}
+            </div>
+          ) : (
+            displayedArtworks.map((artwork, index) => (
             <div
               key={artwork.id}
               className={`luxury-gallery-item cursor-pointer ${
@@ -249,37 +307,14 @@ const Portfolio: React.FC = () => {
                 </div>
               </div>
             </div>
-          ))}
+          ))
+          )}
         </div>
 
         {/* Loading State */}
         {isLoading && (
           <div className="text-center py-20">
             <LoadingSpinner size="lg" text="Chargement de la collection..." />
-          </div>
-        )}
-
-        {/* Empty State - when no artworks */}
-        {!isLoading && displayedArtworks.length === 0 && (
-          <div className={`text-center py-20 transition-all duration-1000 ${
-            isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
-          }`} style={{ animationDelay: '0.4s' }}>
-            <div className="max-w-md mx-auto">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
-                <Palette className="w-12 h-12 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ color: 'hsl(240, 10%, 15%)' }}>
-                Galerie Vide
-              </h3>
-              <p className="text-lg mb-6" style={{ color: 'hsl(240, 10%, 35%)' }}>
-                Aucune œuvre n'est encore disponible. Utilisez le tableau de bord pour ajouter vos créations.
-              </p>
-              <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full painterly-card">
-                <span className="text-sm font-medium" style={{ color: 'hsl(240, 10%, 15%)' }}>
-                  💡 Connectez-vous en tant qu'administrateur pour ajouter des œuvres
-                </span>
-              </div>
-            </div>
           </div>
         )}
 
