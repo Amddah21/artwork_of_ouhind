@@ -148,30 +148,30 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
         }
       }}>
       {/* Modal Content */}
-      <div className="absolute inset-0 flex items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
-        <div className="relative w-full max-w-7xl max-h-[90vh] bg-white rounded-lg shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+      <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-4" onClick={(e) => e.stopPropagation()}>
+        <div className="relative w-full max-w-7xl max-h-[90vh] bg-white rounded-xl sm:rounded-lg shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
-          <div className="flex items-center justify-between p-6 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200/30">
-            <div className="flex items-center gap-4">
-              <div className="relative">
+          <div className="flex items-center justify-between p-3 sm:p-6 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200/30">
+            <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+              <div className="relative flex-shrink-0">
                 <div className="absolute inset-0 bg-amber-400 rounded-full blur-xl opacity-40"></div>
-                <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500 flex items-center justify-center shadow-lg">
-                  <Paintbrush className="w-6 h-6 text-white" />
+                <div className="relative w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500 flex items-center justify-center shadow-lg">
+                  <Paintbrush className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                 </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-700 via-orange-600 to-amber-700 bg-clip-text text-transparent">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-base sm:text-2xl font-bold bg-gradient-to-r from-amber-700 via-orange-600 to-amber-700 bg-clip-text text-transparent truncate">
                   Room Preview
                 </h2>
-                <p className="text-sm text-gray-600 font-medium">{artwork.title}</p>
+                <p className="text-xs sm:text-sm text-gray-600 font-medium truncate">{artwork.title}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={resetView}
-                className="text-gray-700 hover:text-amber-700 hover:bg-amber-50 transition-all duration-200 rounded-lg"
+                className="hidden sm:flex text-gray-700 hover:text-amber-700 hover:bg-amber-50 transition-all duration-200 rounded-lg"
               >
                 <RotateCw className="w-4 h-4 mr-2" />
                 Reset View
@@ -266,12 +266,11 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 </div>
 
                 {/* Helpful Instructions */}
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-                  <p className="text-sm text-gray-600">
-                    <Move className="w-4 h-4 inline mr-1" />
-                    Drag to move • 
-                    <Maximize2 className="w-4 h-4 inline mx-1" />
-                    Drag corner to resize
+                <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 sm:p-3 shadow-lg max-w-[90%] sm:max-w-none">
+                  <p className="text-xs sm:text-sm text-gray-600">
+                    <span className="hidden sm:inline"><Move className="w-4 h-4 inline mr-1" />Drag to move • </span>
+                    <span className="hidden sm:inline"><Maximize2 className="w-4 h-4 inline mx-1" />Drag corner to resize</span>
+                    <span className="sm:hidden">Tap controls to adjust</span>
                   </p>
                 </div>
               </div>
@@ -279,7 +278,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
 
             {/* Controls Panel */}
             <div className="w-full lg:w-80 bg-gradient-to-b from-amber-50/30 to-white border-t lg:border-t-0 lg:border-l border-amber-200/30 overflow-y-auto">
-              <div className="p-6 space-y-6">
+              <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Room Selection */}
                 <div>
                   <div className="flex items-center gap-2 mb-4">
@@ -299,7 +298,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                             : 'border-gray-200 hover:border-amber-300 hover:shadow-sm'
                         }`}
                       >
-                        <div className="aspect-video rounded-lg mb-2 overflow-hidden border border-gray-100">
+                        <div className="aspect-video rounded-lg mb-2 overflow-hidden border border-gray-100 bg-gray-100">
                           <OptimizedImage
                             src={room.image}
                             alt={room.name}
