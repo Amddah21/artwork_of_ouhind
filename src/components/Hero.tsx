@@ -4,6 +4,8 @@ import { ArrowRight, Palette, Award, Users, Globe, Brush, Sparkles } from 'lucid
 import Logo from './Logo';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import ProtectedImage from './ProtectedImage';
+import ArtistPalette3D from './ArtistPalette3D';
+import '../styles/artist-palette-3d.css';
 
 const Hero: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -200,20 +202,47 @@ const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column - Featured Artwork */}
-          <div className="lg:col-span-7 flex justify-center lg:justify-end">
+          {/* Right Column - 3D Artist Palette & Featured Artwork */}
+          <div className="lg:col-span-7 flex flex-col justify-center lg:justify-end space-y-8">
+
+            {/* 3D Artist Palette */}
+            <div className={`transition-all duration-1000 ${
+              isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
+            }`} style={{ animationDelay: '0.9s' }}>
+              <div className="flex justify-center lg:justify-end">
+                <div className="relative">
+                  {/* Luxury background for 3D palette */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-100/20 to-orange-100/20 rounded-full blur-3xl scale-150" />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/10 to-purple-100/10 rounded-full blur-2xl scale-125" />
+                  
+                  {/* 3D Artist Palette */}
+                  <ArtistPalette3D className="relative z-10" />
+                  
+                  {/* Floating luxury elements around palette */}
+                  <div className="absolute -top-8 -left-8 w-16 h-16 luxury-floating-elements opacity-30">
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 animate-pulse"></div>
+                  </div>
+                  <div className="absolute -bottom-8 -right-8 w-12 h-12 luxury-floating-elements opacity-40" style={{ animationDelay: '1s' }}>
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-400 to-purple-400 animate-pulse"></div>
+                  </div>
+                  <div className="absolute top-1/2 -right-12 w-8 h-8 luxury-floating-elements opacity-50" style={{ animationDelay: '2s' }}>
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-green-400 to-teal-400 animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Featured Artwork Showcase */}
             {featuredArtworks.length > 0 && (
               <div className={`transition-all duration-1000 ${
                 isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-              }`} style={{ animationDelay: '0.9s' }}>
+              }`} style={{ animationDelay: '1.2s' }}>
                 <div className="relative">
                   <div 
                     className="luxury-card-premium overflow-hidden relative shadow-2xl"
                     style={{
                       width: '100%',
-                      maxWidth: '600px',
+                      maxWidth: '500px',
                       aspectRatio: '4/5'
                     }}
                   >
@@ -235,10 +264,10 @@ const Hero: React.FC = () => {
                       ))}
                       
                       {/* Luxury decorative frame overlay */}
-                      <div className="absolute inset-0 border-8 opacity-60 shadow-2xl" style={{ 
+                      <div className="absolute inset-0 border-4 opacity-60 shadow-2xl" style={{ 
                         borderColor: 'var(--luxury-gold)',
                         borderRadius: '12px',
-                        boxShadow: 'inset 0 0 0 4px rgba(224, 168, 93, 0.3), 0 0 30px rgba(224, 168, 93, 0.4)'
+                        boxShadow: 'inset 0 0 0 2px rgba(224, 168, 93, 0.3), 0 0 20px rgba(224, 168, 93, 0.4)'
                       }} />
                       
                       {/* Inner frame detail */}
@@ -247,24 +276,13 @@ const Hero: React.FC = () => {
                         borderRadius: '8px'
                       }} />
                       
-                      {/* Corner decorative elements */}
-                      <div className="absolute top-4 left-4 w-6 h-6 border-l-4 border-t-4 opacity-60" style={{ borderColor: 'var(--luxury-gold)' }} />
-                      <div className="absolute top-4 right-4 w-6 h-6 border-r-4 border-t-4 opacity-60" style={{ borderColor: 'var(--luxury-gold)' }} />
-                      <div className="absolute bottom-4 left-4 w-6 h-6 border-l-4 border-b-4 opacity-60" style={{ borderColor: 'var(--luxury-gold)' }} />
-                      <div className="absolute bottom-4 right-4 w-6 h-6 border-r-4 border-b-4 opacity-60" style={{ borderColor: 'var(--luxury-gold)' }} />
-                      
-                      {/* Copyright watermark */}
-                      <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
-                        <span className="text-white text-xs font-medium tracking-wide">© {artistName}</span>
-                      </div>
-                      
                       {/* Artwork title overlay */}
                       {featuredArtworks[currentArtworkIndex] && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-6 backdrop-blur-sm">
-                          <h3 className="text-white font-luxury-accent text-lg font-bold text-center mb-1 tracking-wide">
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/80 to-transparent p-4 backdrop-blur-sm">
+                          <h3 className="text-white font-luxury-accent text-base font-bold text-center mb-1 tracking-wide">
                             {featuredArtworks[currentArtworkIndex].title}
                           </h3>
-                          <p className="text-white/90 text-sm font-luxury-body text-center tracking-wider">
+                          <p className="text-white/90 text-xs font-luxury-body text-center tracking-wider">
                             {featuredArtworks[currentArtworkIndex].year} • {featuredArtworks[currentArtworkIndex].category}
                           </p>
                         </div>
@@ -272,25 +290,19 @@ const Hero: React.FC = () => {
                     </div>
                     
                     {/* Enhanced indicator dots */}
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
+                    <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
                       {featuredArtworks.map((_, index) => (
                         <div
                           key={index}
                           className={`transition-all duration-300 cursor-pointer ${
                             index === currentArtworkIndex 
-                              ? 'w-3 h-3 bg-white shadow-lg' 
-                              : 'w-2 h-2 bg-white/40'
+                              ? 'w-2 h-2 bg-white shadow-lg' 
+                              : 'w-1.5 h-1.5 bg-white/40'
                           } rounded-full`}
                           onClick={() => setCurrentArtworkIndex(index)}
                         />
                       ))}
                     </div>
-
-                    {/* Gold corner accents */}
-                    <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2" style={{ borderColor: 'var(--luxury-gold)' }} />
-                    <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2" style={{ borderColor: 'var(--luxury-gold)' }} />
-                    <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2" style={{ borderColor: 'var(--luxury-gold)' }} />
-                    <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2" style={{ borderColor: 'var(--luxury-gold)' }} />
                   </div>
                 </div>
               </div>
