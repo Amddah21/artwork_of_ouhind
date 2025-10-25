@@ -72,6 +72,11 @@ export interface ContactMessage {
 export class OptimizedApiService {
   private static cache = new Map<string, { data: any; timestamp: number }>();
   private static CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  
+  // Request deduplication and rate limiting
+  private static pendingRequests = new Map<string, Promise<any>>();
+  private static lastRequestTime = new Map<string, number>();
+  private static MIN_REQUEST_INTERVAL = 100; // Minimum 100ms between requests
 
   // Cache management
   private static getCachedData(key: string) {
@@ -99,6 +104,38 @@ export class OptimizedApiService {
     }
   }
 
+  // Request deduplication and rate limiting
+  private static async throttledRequest<T>(
+    requestKey: string, 
+    requestFn: () => Promise<T>
+  ): Promise<T> {
+    // Check if there's already a pending request for this key
+    if (this.pendingRequests.has(requestKey)) {
+      console.log(`🔄 [OptimizedApiService] Deduplicating request: ${requestKey}`);
+      return this.pendingRequests.get(requestKey)!;
+    }
+
+    // Rate limiting - ensure minimum interval between requests
+    const lastTime = this.lastRequestTime.get(requestKey) || 0;
+    const timeSinceLastRequest = Date.now() - lastTime;
+    
+    if (timeSinceLastRequest < this.MIN_REQUEST_INTERVAL) {
+      const delay = this.MIN_REQUEST_INTERVAL - timeSinceLastRequest;
+      console.log(`⏱️ [OptimizedApiService] Rate limiting: waiting ${delay}ms for ${requestKey}`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+
+    // Create and store the request promise
+    const requestPromise = requestFn().finally(() => {
+      // Clean up after request completes
+      this.pendingRequests.delete(requestKey);
+      this.lastRequestTime.set(requestKey, Date.now());
+    });
+
+    this.pendingRequests.set(requestKey, requestPromise);
+    return requestPromise;
+  }
+
   // Authentication
   static async signIn(email: string, password: string) {
     return withRetry(() => 
@@ -114,67 +151,96 @@ export class OptimizedApiService {
     return withRetry(() => supabase.auth.getUser());
   }
 
-  // Optimized Artworks with caching
+  // Optimized Artworks with caching and deduplication
   static async getArtworks() {
     const cacheKey = 'artworks_all';
+    const requestKey = 'getArtworks';
+    
     const cached = this.getCachedData(cacheKey);
-    if (cached) return cached;
-
-    const { data, error } = await withRetry(() => 
-      supabase
-        .from('artworks')
-        .select(`
-          *,
-          artwork_images (
-            id,
-            image_url,
-            display_order
-          )
-        `)
-        .order('created_at', { ascending: false })
-    );
-
-    if (error) {
-      console.error('Error fetching artworks:', error);
-      throw error;
+    if (cached) {
+      console.log('📦 [OptimizedApiService] Returning cached artworks');
+      return cached;
     }
 
-    this.setCachedData(cacheKey, data);
-    return data || [];
+    return this.throttledRequest(requestKey, async () => {
+      console.log('🌐 [OptimizedApiService] Fetching artworks from Supabase...');
+      
+      const { data, error } = await withRetry(async () => {
+        const result = await supabase
+          .from('artworks')
+          .select(`
+            *,
+            artwork_images (
+              id,
+              image_url,
+              display_order
+            )
+          `)
+          .order('created_at', { ascending: false });
+        return result;
+      });
+
+      if (error) {
+        console.error('❌ [OptimizedApiService] Error fetching artworks:', error);
+        throw error;
+      }
+
+      const result = data || [];
+      this.setCachedData(cacheKey, result);
+      console.log(`✅ [OptimizedApiService] Fetched ${result.length} artworks`);
+      return result;
+    });
   }
 
   static async getArtworkById(id: string) {
     const cacheKey = `artwork_${id}`;
+    const requestKey = `getArtworkById_${id}`;
+    
     const cached = this.getCachedData(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      console.log(`📦 [OptimizedApiService] Returning cached artwork: ${id}`);
+      return cached;
+    }
 
-    const data = await withRetry(() => 
-      supabase
-        .from('artworks')
-        .select(`
-          *,
-          artwork_images (
-            id,
-            image_url,
-            display_order
-          )
-        `)
-        .eq('id', id)
-        .single()
-    );
+    return this.throttledRequest(requestKey, async () => {
+      console.log(`🌐 [OptimizedApiService] Fetching artwork: ${id}`);
+      
+      const { data, error } = await withRetry(async () => {
+        const result = await supabase
+          .from('artworks')
+          .select(`
+            *,
+            artwork_images (
+              id,
+              image_url,
+              display_order
+            )
+          `)
+          .eq('id', id)
+          .single();
+        return result;
+      });
 
-    this.setCachedData(cacheKey, data);
-    return data;
+      if (error) {
+        console.error(`❌ [OptimizedApiService] Error fetching artwork ${id}:`, error);
+        throw error;
+      }
+
+      this.setCachedData(cacheKey, data);
+      console.log(`✅ [OptimizedApiService] Fetched artwork: ${id}`);
+      return data;
+    });
   }
 
   static async createArtwork(artwork: Partial<Artwork>) {
-    const { data, error } = await withRetry(() => 
-      supabase
+    const { data, error } = await withRetry(async () => {
+      const result = await supabase
         .from('artworks')
         .insert([artwork])
         .select()
-        .single()
-    );
+        .single();
+      return result;
+    });
 
     if (error) {
       console.error('Error creating artwork:', error);

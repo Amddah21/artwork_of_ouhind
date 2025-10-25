@@ -117,8 +117,18 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
-    retry: 2,
-    retryDelay: 1000
+    retry: (failureCount, error) => {
+      // Don't retry on resource exhaustion errors
+      if (error?.message?.includes('ERR_INSUFFICIENT_RESOURCES')) {
+        console.warn('🚫 [ArtworkContext] Skipping retry due to resource exhaustion');
+        return false;
+      }
+      // Only retry up to 2 times for other errors
+      return failureCount < 2;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000), // Exponential backoff
+    refetchOnWindowFocus: false, // Prevent refetch on window focus
+    refetchOnMount: false // Prevent refetch on component mount if data exists
   });
 
   if (error) {

@@ -36,12 +36,27 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
       gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
-      retry: 2,
-      retryDelay: 1000,
+      retry: (failureCount, error) => {
+        // Don't retry on resource exhaustion errors
+        if (error?.message?.includes('ERR_INSUFFICIENT_RESOURCES')) {
+          console.warn('🚫 [QueryClient] Skipping retry due to resource exhaustion');
+          return false;
+        }
+        // Only retry up to 2 times for other errors
+        return failureCount < 2;
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000), // Exponential backoff
       refetchOnWindowFocus: false,
+      refetchOnMount: false, // Prevent unnecessary refetches
     },
     mutations: {
-      retry: 1,
+      retry: (failureCount, error) => {
+        // Don't retry mutations on resource exhaustion
+        if (error?.message?.includes('ERR_INSUFFICIENT_RESOURCES')) {
+          return false;
+        }
+        return failureCount < 1;
+      },
     },
   },
 });
