@@ -439,31 +439,6 @@
 
 @media (max-width: 640px) {
   .luxury-3d-palette-container {
-    width: 200px;
-    height: 200px;
-  }
-  
-  .luxury-palette-base {
-    width: 140px;
-    height: 110px;
-  }
-  
-  .luxury-brush-container {
-    transform: scale(0.7);
-  }
-  
-  .luxury-paint-blob {
-    transform: scale(0.8);
-  }
-  
-  .luxury-frame-corner {
-    width: 16px;
-    height: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .luxury-3d-palette-container {
     width: 180px;
     height: 180px;
   }
@@ -484,6 +459,31 @@
   .luxury-frame-corner {
     width: 14px;
     height: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .luxury-3d-palette-container {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .luxury-palette-base {
+    width: 100px;
+    height: 80px;
+  }
+  
+  .luxury-brush-container {
+    transform: scale(0.5);
+  }
+  
+  .luxury-paint-blob {
+    transform: scale(0.6);
+  }
+  
+  .luxury-frame-corner {
+    width: 12px;
+    height: 12px;
   }
   
   .luxury-frame-border {

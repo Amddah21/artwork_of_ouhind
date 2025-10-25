@@ -122,26 +122,26 @@ const Hero: React.FC = () => {
       </div>
 
       {/* Main Content Container */}
-      <div className="luxury-container relative z-10 w-full px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-center min-h-screen py-8 sm:py-12">
+      <div className="luxury-container relative z-10 w-full px-3 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-center min-h-screen py-6 sm:py-8 lg:py-12">
           
           {/* Left Column - Brand & Text */}
-          <div className="lg:col-span-5 text-center lg:text-left space-y-6 sm:space-y-8">
+          <div className="lg:col-span-5 text-center lg:text-left space-y-4 sm:space-y-6 lg:space-y-8">
           
             {/* Brand Identity */}
             <div className={`transition-all duration-1000 ${
               isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
             }`}>
-              <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 sm:gap-6 mb-6 sm:mb-8">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full flex items-center justify-center shadow-xl" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+              <div className="flex flex-col lg:flex-row items-center lg:items-start gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 rounded-full flex items-center justify-center shadow-xl" style={{ backgroundColor: 'var(--luxury-gold)' }}>
                   <Logo size="lg" />
                 </div>
                 <div className="text-center lg:text-left">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-luxury-display luxury-text-primary tracking-wide leading-tight mb-3 sm:mb-4">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-luxury-display luxury-text-primary tracking-wide leading-tight mb-2 sm:mb-3 lg:mb-4">
                     {artistName.toUpperCase()}
                   </h1>
-                  <div className="w-24 sm:w-32 h-px mx-auto lg:mx-0 mb-3 sm:mb-4" style={{ background: 'linear-gradient(90deg, transparent 0%, var(--luxury-gold) 50%, transparent 100%)' }} />
-                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-luxury-accent luxury-text-secondary leading-relaxed tracking-wider">
+                  <div className="w-20 sm:w-24 lg:w-32 h-px mx-auto lg:mx-0 mb-2 sm:mb-3 lg:mb-4" style={{ background: 'linear-gradient(90deg, transparent 0%, var(--luxury-gold) 50%, transparent 100%)' }} />
+                  <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-luxury-accent luxury-text-secondary leading-relaxed tracking-wider">
                     COLLECTION EXCLUSIVE • ART CONTEMPORAIN
                   </p>
                 </div>
@@ -149,18 +149,18 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start transition-all duration-1000 ${
+            <div className={`flex flex-col gap-3 justify-center lg:justify-start transition-all duration-1000 ${
               isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '0.3s' }}>
               <button 
                 onClick={handleExploreGallery}
-                className="luxury-btn-primary px-6 sm:px-8 lg:px-12 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full luxury-magnetic-hover luxury-sparkle-effect w-full sm:min-w-[180px] lg:min-w-[200px]"
+                className="luxury-btn-primary px-6 sm:px-8 lg:px-12 py-3 sm:py-4 text-sm sm:text-base lg:text-lg font-semibold rounded-full luxury-magnetic-hover luxury-sparkle-effect w-full max-w-xs mx-auto lg:mx-0"
               >
                 COLLECTION
               </button>
               <button 
                 onClick={handleViewWorks}
-                className="luxury-btn-secondary px-6 sm:px-8 lg:px-12 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full luxury-magnetic-hover luxury-sparkle-effect w-full sm:min-w-[180px] lg:min-w-[200px]"
+                className="luxury-btn-secondary px-6 sm:px-8 lg:px-12 py-3 sm:py-4 text-sm sm:text-base lg:text-lg font-semibold rounded-full luxury-magnetic-hover luxury-sparkle-effect w-full max-w-xs mx-auto lg:mx-0"
               >
                 DÉCOUVERTE
               </button>
@@ -170,8 +170,8 @@ const Hero: React.FC = () => {
             <div className={`transition-all duration-1000 ${
               isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '0.6s' }}>
-              <div className="relative max-w-lg mx-auto px-4 sm:px-0">
-                <p className="luxury-artist-statement-premium text-center text-sm sm:text-base lg:text-lg leading-relaxed">
+              <div className="relative max-w-lg mx-auto px-2 sm:px-4 lg:px-0">
+                <p className="luxury-artist-statement-premium text-center text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed">
                   Artiste plasticienne renommée, je façonne des œuvres singulières qui transcendent l'ordinaire, 
                   mêlant matériaux précieux et couleurs sublimes pour créer des compositions d'une élégance rare.
                 </p>
@@ -190,7 +190,7 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Statistics */}
-            <div className={`grid grid-cols-3 gap-2 sm:gap-4 transition-all duration-1000 ${
+            <div className={`grid grid-cols-3 gap-1 sm:gap-2 lg:gap-4 transition-all duration-1000 ${
               isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '1.2s' }}>
               {[
@@ -200,10 +200,10 @@ const Hero: React.FC = () => {
               ].map((stat, index) => (
                 <div 
                   key={index}
-                  className="luxury-card-premium p-2 sm:p-4 text-center hover:shadow-2xl transition-all duration-300 cursor-default group"
+                  className="luxury-card-premium p-2 sm:p-3 lg:p-4 text-center hover:shadow-2xl transition-all duration-300 cursor-default group"
                   style={{ cursor: 'default' }}
                 >
-                  <div className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-luxury-display luxury-text-gradient mb-1 sm:mb-2 group-hover:scale-110 transition-transform duration-300">
+                  <div className="text-base sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl font-luxury-display luxury-text-gradient mb-1 sm:mb-2 group-hover:scale-110 transition-transform duration-300">
                     {stat.number}
                   </div>
                   <div className="text-xs sm:text-xs font-luxury-body luxury-text-secondary uppercase tracking-wider leading-tight">
@@ -215,31 +215,31 @@ const Hero: React.FC = () => {
           </div>
 
           {/* Right Column - 3D Artist Palette & Featured Artwork */}
-          <div className="lg:col-span-7 flex flex-col justify-center lg:justify-end space-y-6 sm:space-y-8 order-first lg:order-last">
+          <div className="lg:col-span-7 flex flex-col justify-center lg:justify-end space-y-4 sm:space-y-6 lg:space-y-8 order-first lg:order-last">
 
             {/* 3D Artist Palette */}
             <div className={`transition-all duration-1000 ${
               isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
             }`} style={{ animationDelay: '0.9s' }}>
-              <div className="flex justify-center lg:justify-end px-4 sm:px-0">
+              <div className="flex justify-center lg:justify-end px-2 sm:px-4 lg:px-0">
                 <div className="relative">
                   {/* Luxury background for 3D palette */}
                   <div className="absolute inset-0 bg-gradient-to-br from-yellow-100/20 to-orange-100/20 rounded-full blur-3xl scale-150" />
                   <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/10 to-purple-100/10 rounded-full blur-2xl scale-125" />
                   
                   {/* 3D Artist Palette - Responsive sizing */}
-                  <div className="w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80">
+                  <div className="w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80">
                     <ArtistPalette3D className="relative z-10 w-full h-full" />
                   </div>
                   
                   {/* Floating luxury elements around palette */}
-                  <div className="absolute -top-6 -left-6 sm:-top-8 sm:-left-8 w-12 h-12 sm:w-16 sm:h-16 luxury-floating-elements opacity-30">
+                  <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 lg:-top-8 lg:-left-8 w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 luxury-floating-elements opacity-30">
                     <div className="w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 animate-pulse"></div>
                   </div>
-                  <div className="absolute -bottom-6 -right-6 sm:-bottom-8 sm:-right-8 w-8 h-8 sm:w-12 sm:h-12 luxury-floating-elements opacity-40" style={{ animationDelay: '1s' }}>
+                  <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 lg:-bottom-8 lg:-right-8 w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 luxury-floating-elements opacity-40" style={{ animationDelay: '1s' }}>
                     <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-400 to-purple-400 animate-pulse"></div>
                   </div>
-                  <div className="absolute top-1/2 -right-8 sm:-right-12 w-6 h-6 sm:w-8 sm:h-8 luxury-floating-elements opacity-50" style={{ animationDelay: '2s' }}>
+                  <div className="absolute top-1/2 -right-6 sm:-right-8 lg:-right-12 w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 luxury-floating-elements opacity-50" style={{ animationDelay: '2s' }}>
                     <div className="w-full h-full rounded-full bg-gradient-to-br from-green-400 to-teal-400 animate-pulse"></div>
                   </div>
                 </div>
@@ -251,14 +251,14 @@ const Hero: React.FC = () => {
               <div className={`transition-all duration-1000 ${
                 isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
               }`} style={{ animationDelay: '1.2s' }}>
-                <div className="flex justify-center lg:justify-end px-4 sm:px-0">
+                <div className="flex justify-center lg:justify-end px-2 sm:px-4 lg:px-0">
                   <ArtworkFrame
                     variant="luxury"
                     size="hero"
                     artistName={artistName}
                     artworkTitle={featuredArtworks[currentArtworkIndex]?.title}
                     year={featuredArtworks[currentArtworkIndex]?.year?.toString()}
-                    className="max-w-[300px] sm:max-w-[400px] lg:max-w-[500px] w-full"
+                    className="max-w-[280px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] w-full"
                   >
                     {/* Fade transition effect */}
                     <div className="relative w-full h-full">
