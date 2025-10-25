@@ -161,7 +161,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
       }}>
       {/* Modal Content */}
       <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-4" onClick={(e) => e.stopPropagation()}>
-        <div className="relative w-full max-w-7xl max-h-[90vh] bg-white rounded-xl sm:rounded-lg shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="relative w-full max-w-7xl h-[95vh] sm:h-[90vh] bg-white rounded-xl sm:rounded-lg shadow-2xl overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="flex items-center justify-between p-3 sm:p-6 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200/30">
             <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
@@ -199,9 +199,9 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
             </div>
           </div>
 
-          <div className="flex flex-col lg:flex-row h-[calc(90vh-80px)]">
+          <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
             {/* Main Preview Area */}
-            <div className="flex-1 relative overflow-hidden bg-gray-100">
+            <div className="flex-1 relative overflow-hidden bg-gray-100 min-h-[200px] sm:min-h-[300px]">
               <div 
                 ref={containerRef}
                 className="w-full h-full relative cursor-move"
@@ -299,8 +299,8 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
             </div>
 
             {/* Controls Panel */}
-            <div className="w-full lg:w-80 bg-gradient-to-b from-amber-50/30 to-white border-t lg:border-t-0 lg:border-l border-amber-200/30 overflow-y-auto">
-              <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
+            <div className="w-full lg:w-80 bg-gradient-to-b from-amber-50/30 to-white border-t lg:border-t-0 lg:border-l border-amber-200/30 overflow-y-auto max-h-[50vh] lg:max-h-none">
+              <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 pb-6">
                 {/* Room Selection */}
                 <div>
                   <div className="flex items-center gap-2 mb-4">
