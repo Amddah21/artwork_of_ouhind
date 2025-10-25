@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, RotateCw, Maximize2, Minimize2, Move, Paintbrush } from 'lucide-react';
+import { X, RotateCw, Maximize2, Minimize2, Move, Paintbrush, Upload, Image } from 'lucide-react';
 import { Button } from './ui/button';
 import OptimizedImage from './OptimizedImage';
 
@@ -57,13 +57,17 @@ const wallColors = [
 
 const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
   const [selectedRoom, setSelectedRoom] = useState<RoomOption>(roomOptions[0]);
+  const [customRoomImage, setCustomRoomImage] = useState<string | null>(null);
+  const [useCustomRoom, setUseCustomRoom] = useState(false);
   const [frameSize, setFrameSize] = useState(100); // percentage
   const [framePosition, setFramePosition] = useState({ x: 50, y: 40 }); // percentage
+  const [rotation, setRotation] = useState(0); // degrees
   const [wallColor, setWallColor] = useState(selectedRoom.wallColor);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const artworkRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setWallColor(selectedRoom.wallColor);
@@ -106,14 +110,35 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
 
   const handleRoomSelect = (room: RoomOption) => {
     setSelectedRoom(room);
+    setUseCustomRoom(false);
     setFrameSize(100); // Reset size
     setFramePosition({ x: 50, y: 40 }); // Reset position
+    setRotation(0); // Reset rotation
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCustomRoomImage(reader.result as string);
+        setUseCustomRoom(true);
+        setSelectedRoom({
+          id: 'custom',
+          name: 'Custom Room',
+          image: reader.result as string,
+          wallColor: '#f5f5f5'
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const resetView = () => {
     setFrameSize(100);
     setFramePosition({ x: 50, y: 40 });
-    setWallColor(selectedRoom.wallColor);
+    setRotation(0);
+    setWallColor(useCustomRoom && customRoomImage ? '#f5f5f5' : selectedRoom.wallColor);
   };
 
   return (
@@ -162,7 +187,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 ref={containerRef}
                 className="w-full h-full relative cursor-move"
                 style={{
-                  backgroundImage: `url(${selectedRoom.image})`,
+                  backgroundImage: `url(${useCustomRoom && customRoomImage ? customRoomImage : selectedRoom.image})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   filter: `brightness(0.85) contrast(1.05) saturate(0.9)`,
@@ -186,7 +211,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     aspectRatio: '4/5'
                   }}
                 >
-                  <div className="relative w-full h-full shadow-2xl">
+                  <div className="relative w-full h-full shadow-2xl" style={{ transform: `rotate(${rotation}deg)` }}>
                     {/* Frame */}
                     <div className="luxury-artwork-frame luxury-frame-medium w-full h-full">
                       <div className="luxury-frame-outer">
@@ -257,7 +282,7 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                         key={room.id}
                         onClick={() => handleRoomSelect(room)}
                         className={`p-3 rounded-lg border-2 transition-all ${
-                          selectedRoom.id === room.id
+                          selectedRoom.id === room.id && !useCustomRoom
                             ? 'border-amber-600 bg-amber-50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
@@ -272,6 +297,33 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                         <p className="text-sm font-medium text-gray-900">{room.name}</p>
                       </button>
                     ))}
+                  </div>
+                  
+                  {/* Upload Custom Room */}
+                  <div className="mt-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      id="room-upload"
+                    />
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload Your Room
+                    </Button>
+                    {useCustomRoom && (
+                      <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg">
+                        <p className="text-xs text-amber-800">
+                          ✓ Custom room uploaded
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -296,6 +348,27 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     <span>Small</span>
                     <span>Medium</span>
                     <span>Large</span>
+                  </div>
+                </div>
+
+                {/* Rotation Slider */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-semibold text-gray-900">Rotation</h3>
+                    <span className="text-sm text-gray-600">{rotation}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="-45"
+                    max="45"
+                    value={rotation}
+                    onChange={(e) => setRotation(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>-45°</span>
+                    <span>0°</span>
+                    <span>45°</span>
                   </div>
                 </div>
 
