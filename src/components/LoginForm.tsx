@@ -30,7 +30,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
       await signIn(email, password);
       
       // Check if user is admin after login
-      const isUserAdmin = email === 'omhind53@gmail.com' && password === 'admin123';
+      const adminEmails = ['omhind53@gmail.com', 'ahmed1965amddah@gmail.com'];
+      const isUserAdmin = adminEmails.includes(email.toLowerCase()) && password === 'admin123';
       
       // Show success message
       toast({
@@ -46,10 +47,31 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
         navigate('/admin');
       }
       // Regular users stay on current page
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Login error:', error);
+      
+      let errorMessage = "Erreur de connexion. Veuillez réessayer.";
+      
+      // Handle specific error cases
+      if (error?.message?.includes('Invalid login credentials')) {
+        errorMessage = "Email ou mot de passe incorrect.";
+      } else if (error?.message?.includes('Email not confirmed')) {
+        errorMessage = "Veuillez confirmer votre email avant de vous connecter.";
+      } else if (error?.message?.includes('Too many requests')) {
+        errorMessage = "Trop de tentatives. Veuillez attendre quelques minutes.";
+      } else if (error?.message?.includes('User not found')) {
+        errorMessage = "Aucun compte trouvé avec cet email.";
+      } else if (error?.message?.includes('Authentication timeout')) {
+        errorMessage = "Timeout de connexion. Vérifiez votre connexion internet.";
+      } else if (error?.message?.includes('ERR_INSUFFICIENT_RESOURCES')) {
+        errorMessage = "Ressources insuffisantes. Veuillez réessayer dans quelques instants.";
+      } else if (error?.message?.includes('Google')) {
+        errorMessage = "Problème avec la vérification Google. Essayez de vous déconnecter de votre compte Google et reconnectez-vous.";
+      }
+      
       toast({
-        title: "Login Failed",
-        description: "Invalid email or password. Please try again.",
+        title: "Erreur de connexion",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -73,6 +95,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
           <CardTitle className="text-2xl font-luxury-display luxury-text-primary">Connexion Administrateur</CardTitle>
           <CardDescription className="font-luxury-body luxury-text-secondary">
             Connectez-vous avec vos identifiants. Les administrateurs seront redirigés vers le panneau d'administration.
+            <br />
+            <span className="text-sm text-gray-500 mt-2 block">
+              💡 Pour les comptes Gmail différents, assurez-vous d'utiliser le bon compte Google.
+            </span>
           </CardDescription>
         </CardHeader>
         <CardContent>

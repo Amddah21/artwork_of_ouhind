@@ -132,11 +132,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Fallback to localStorage for development - accept any credentials
         console.log('Supabase not configured, using localStorage fallback');
         
-        // Check for admin credentials
-        if (email === 'omhind53@gmail.com' && password === 'admin123') {
+        // Check for admin credentials (support multiple admin emails)
+        const adminEmails = ['omhind53@gmail.com', 'ahmed1965amddah@gmail.com'];
+        const isAdminEmail = adminEmails.includes(email.toLowerCase());
+        
+        if (isAdminEmail && password === 'admin123') {
           const adminUser: Profile = {
             id: '1',
-            email: 'omhind53@gmail.com',
+            email: email.toLowerCase(),
             role: 'admin'
           };
           setUser(adminUser);
@@ -146,14 +149,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Accept any other valid email/password as regular user
           const regularUser: Profile = {
             id: Date.now().toString(),
-            email: email,
+            email: email.toLowerCase(),
             role: 'user'
           };
           setUser(regularUser);
           localStorage.setItem('artspark-auth', JSON.stringify(regularUser));
           console.log('Regular user login successful:', regularUser);
         } else {
-          throw new Error('Login Failed');
+          throw new Error('Invalid credentials provided');
         }
         return;
       }
@@ -174,7 +177,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         console.error('❌ Supabase login error:', error);
-        throw new Error('Login Failed');
+        
+        // Provide more specific error messages
+        if (error.message?.includes('Invalid login credentials')) {
+          throw new Error('Invalid login credentials');
+        } else if (error.message?.includes('Email not confirmed')) {
+          throw new Error('Email not confirmed');
+        } else if (error.message?.includes('Too many requests')) {
+          throw new Error('Too many requests');
+        } else if (error.message?.includes('User not found')) {
+          throw new Error('User not found');
+        } else if (error.message?.includes('Google')) {
+          throw new Error('Google verification issue');
+        } else {
+          throw new Error(`Authentication failed: ${error.message}`);
+        }
       }
 
       console.log('✅ Supabase login successful, fetching profile...');
@@ -188,10 +205,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('💥 Sign in error, falling back to localStorage:', error);
       
       // Fallback to localStorage if Supabase fails
-      if (email === 'omhind53@gmail.com' && password === 'admin123') {
+      const adminEmails = ['omhind53@gmail.com', 'ahmed1965amddah@gmail.com'];
+      const isAdminEmail = adminEmails.includes(email.toLowerCase());
+      
+      if (isAdminEmail && password === 'admin123') {
         const adminUser: Profile = {
           id: '1',
-          email: 'omhind53@gmail.com',
+          email: email.toLowerCase(),
           role: 'admin'
         };
         setUser(adminUser);
@@ -201,7 +221,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else if (email && password) {
         const regularUser: Profile = {
           id: Date.now().toString(),
-          email: email,
+          email: email.toLowerCase(),
           role: 'user'
         };
         setUser(regularUser);
