@@ -4,8 +4,13 @@
 /* Hide decorative elements on mobile to prevent content overlap */
 @media (max-width: 640px) {
   /* Hide any potential cursor-like elements */
-  .luxury-floating-elements {
+  .luxury-floating-elements,
+  .luxury-decorative-elements,
+  [class*="cursor-pointer"][class*="overlay"],
+  ::before,
+  ::after {
     display: none !important;
+    content: none !important;
   }
   
   /* Ensure statistics cards are fully visible */
@@ -13,11 +18,35 @@
     position: relative;
     z-index: 10;
     pointer-events: auto;
+    overflow: visible !important;
+  }
+  
+  /* Remove all decorative overlays from statistics cards */
+  .luxury-card-premium::before,
+  .luxury-card-premium::after {
+    display: none !important;
+    content: none !important;
+  }
+  
+  /* Ensure any potential overlay divs are hidden */
+  .luxury-card-premium > div::before,
+  .luxury-card-premium > div::after {
+    display: none !important;
+    content: none !important;
   }
   
   /* Remove any potential cursor styling on mobile */
   * {
     cursor: default !important;
+  }
+  
+  /* Hide any absolute positioned overlays that might cover text */
+  .luxury-card-premium * {
+    position: relative !important;
+  }
+  
+  .luxury-card-premium [style*="position: absolute"] {
+    display: none !important;
   }
   
   /* Ensure text is selectable and readable */
