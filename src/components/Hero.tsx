@@ -14,7 +14,6 @@ import '../styles/mobile-content-fix.css';
 
 const Hero: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [currentArtworkIndex, setCurrentArtworkIndex] = useState(0);
   const heroRef = useRef<HTMLElement>(null);
   const { artworks } = useArtwork();
   
@@ -23,7 +22,7 @@ const Hero: React.FC = () => {
     ? artworks[0].artist_name 
     : 'Omhind';
   
-  // Get featured artworks for the carousel - include a default artwork if none exist
+  // Get the first featured artwork - include a default artwork if none exist
   const defaultArtwork = {
     id: 'default-artwork',
     title: 'Œuvre Contemporaine',
@@ -33,22 +32,11 @@ const Hero: React.FC = () => {
     artist_name: artistName
   };
   
-  const featuredArtworks = artworks.length > 0 ? artworks.slice(0, 6) : [defaultArtwork];
+  const featuredArtwork = artworks.length > 0 ? artworks[0] : defaultArtwork;
 
   useEffect(() => {
     setIsLoaded(true);
   }, []);
-
-  // Auto-rotate artwork every 10 seconds
-  useEffect(() => {
-    if (featuredArtworks.length > 0) {
-      const interval = setInterval(() => {
-        setCurrentArtworkIndex((prev) => (prev + 1) % featuredArtworks.length);
-      }, 10000); // 10 seconds
-
-      return () => clearInterval(interval);
-    }
-  }, [featuredArtworks.length]);
 
   const handleScrollDown = () => {
     const portfolioSection = document.getElementById('portfolio');
@@ -249,42 +237,18 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Featured Artwork Showcase with 3D Effect */}
-            {featuredArtworks.length > 0 && (
+            {featuredArtwork && (
               <div className={`transition-all duration-1000 ${
                 isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
               }`} style={{ animationDelay: '1.2s' }}>
                 <div className="flex justify-center lg:justify-end px-2 sm:px-4 lg:px-0">
                   <div className="relative max-w-[280px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] w-full h-[350px] sm:h-[420px] md:h-[480px] lg:h-[540px] xl:h-[600px]">
-                    {/* 3D Artwork with fade transition */}
-                    {featuredArtworks.map((artwork, index) => (
-                      <div
-                        key={artwork.id}
-                        className={`absolute inset-0 transition-opacity duration-1000 ${
-                          index === currentArtworkIndex ? 'opacity-100' : 'opacity-0'
-                        }`}
-                      >
-                        <Artwork3D
-                          artwork={artwork}
-                          artistName={artistName}
-                          className="w-full h-full"
-                        />
-                      </div>
-                    ))}
-                    
-                    {/* Enhanced indicator dots */}
-                    <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 z-20">
-                      {featuredArtworks.map((_, index) => (
-                        <div
-                          key={index}
-                          className={`transition-all duration-300 cursor-pointer ${
-                            index === currentArtworkIndex 
-                              ? 'w-3 h-3 bg-white shadow-lg' 
-                              : 'w-2 h-2 bg-white/40'
-                          } rounded-full hover:bg-white/80`}
-                          onClick={() => setCurrentArtworkIndex(index)}
-                        />
-                      ))}
-                    </div>
+                    {/* 3D Artwork */}
+                    <Artwork3D
+                      artwork={featuredArtwork}
+                      artistName={artistName}
+                      className="w-full h-full"
+                    />
                   </div>
                 </div>
               </div>
