@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Share2, Eye, ShoppingCart, MessageCircle, Flag, Palette, Calendar, Tag, Star, Phone, Mail, Euro } from 'lucide-react';
+import { ArrowLeft, Share2, Eye, ShoppingCart, MessageCircle, Flag, Palette, Calendar, Tag, Star, Phone, Mail, Euro, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import StarRating from '@/components/StarRating';
 import ReviewSection from '@/components/ReviewSection';
+import RoomPreview from '@/components/RoomPreview';
 import { useRating } from '@/contexts/RatingContext';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import '../styles/luxury-retour-button.css';
@@ -50,6 +51,7 @@ const ArtworkDetail: React.FC = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showRoomPreview, setShowRoomPreview] = useState(false);
   
   const { addRating, getAverageRating, getRatingCount, getUserRating } = useRating();
   const { artworks, incrementViews, isLoading: artworksLoading } = useArtwork();
@@ -494,6 +496,18 @@ const ArtworkDetail: React.FC = () => {
                       <Share2 className="w-4 h-4 mr-2" />
                       Partager
                     </Button>
+                    <Button 
+                      variant="outline" 
+                      className="hover-ink-flow painterly-card"
+                      style={{ 
+                        borderColor: 'hsl(330, 20%, 88%)',
+                        color: 'hsl(240, 10%, 15%)'
+                      }}
+                      onClick={() => setShowRoomPreview(true)}
+                    >
+                      <Home className="w-4 h-4 mr-2" />
+                      Voir en situation
+                    </Button>
                   </div>
                 </div>
 
@@ -560,6 +574,14 @@ const ArtworkDetail: React.FC = () => {
           />
         </div>
       </div>
+      
+      {/* Room Preview Modal */}
+      {showRoomPreview && (
+        <RoomPreview
+          artwork={artwork}
+          onClose={() => setShowRoomPreview(false)}
+        />
+      )}
     </div>
   );
 };
