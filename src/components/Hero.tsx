@@ -251,7 +251,7 @@ const Hero: React.FC = () => {
                 isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
               }`} style={{ animationDelay: '1.2s' }}>
                 <div className="flex justify-center lg:justify-end px-2 sm:px-4 lg:px-0">
-                  <div className="relative max-w-[280px] sm:max-w-[350px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] w-full h-[350px] sm:h-[420px] md:h-[480px] lg:h-[540px] xl:h-[600px]">
+                  <div className="relative max-w-[240px] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[360px] xl:max-w-[400px] w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] xl:h-[500px]">
                     {/* 3D Artwork with lazy loading */}
                     <Suspense fallback={
                       <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
