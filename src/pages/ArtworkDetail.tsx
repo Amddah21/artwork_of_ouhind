@@ -10,6 +10,7 @@ import RoomPreview from '@/components/RoomPreview';
 import { useRating } from '@/contexts/RatingContext';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import '../styles/luxury-retour-button.css';
+import '../styles/luxury-detail-cards.css';
 
 interface Artwork {
   id: string;
@@ -203,7 +204,7 @@ const ArtworkDetail: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen luxury-bg-admin">
+    <div className="min-h-screen luxury-detail-container">
       {/* Header */}
       <div className="luxury-nav backdrop-blur-md shadow-lg" style={{ borderBottom: '1px solid rgba(224, 168, 93, 0.2)' }}>
         <div className="luxury-container py-4">
@@ -247,7 +248,7 @@ const ArtworkDetail: React.FC = () => {
           <div className="space-y-6">
             {/* Main Image */}
             <div className="relative group">
-              <Card className="comfort-card overflow-hidden aspect-[4/3]">
+              <Card className="luxury-artwork-frame overflow-hidden aspect-[4/3]">
                 <img
                   src={multipleViews[currentImageIndex]?.url || artwork.image_url}
                   alt={artwork.title}
@@ -267,10 +268,8 @@ const ArtworkDetail: React.FC = () => {
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                        currentImageIndex === index 
-                          ? 'border-[#7A6B5A] shadow-lg' 
-                          : 'border-transparent hover:border-[#7A6B5A]/50'
+                      className={`luxury-thumbnail w-20 h-20 ${
+                        currentImageIndex === index ? 'active' : ''
                       }`}
                     >
                       <img
@@ -289,61 +288,61 @@ const ArtworkDetail: React.FC = () => {
           <div className="space-y-8">
             
             {/* Title and Artist */}
-            <div>
-              <h1 className="text-4xl lg:text-5xl font-display font-bold comfort-text mb-2">
+            <div className="luxury-fade-in">
+              <h1 className="luxury-detail-title mb-3">
                 {artwork.title}
               </h1>
-              <p className="text-xl comfort-text-muted font-body">
-                par <span className="font-semibold" style={{color: '#7A6B5A'}}>{artwork.artist_name || 'Omhind'}</span>
+              <p className="text-xl text-gray-600 font-body">
+                par <span className="font-semibold text-amber-600">{artwork.artist_name || 'Omhind'}</span>
               </p>
             </div>
 
             {/* Artwork Details Grid */}
             <div className="grid grid-cols-2 gap-6">
-              <Card className="comfort-card p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(122, 107, 90, 0.1)'}}>
-                    <Palette className="w-5 h-5" style={{color: '#7A6B5A'}} />
+              <Card className="luxury-detail-card">
+                <div className="flex items-center gap-3">
+                  <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
+                    <Palette className="w-6 h-6 text-amber-700" />
                   </div>
                   <div>
-                    <p className="text-sm comfort-text-muted font-body">Technique</p>
-                    <p className="font-semibold comfort-text">{artwork.technique || artwork.medium || 'Non spécifié'}</p>
+                    <p className="text-xs text-gray-500 font-body uppercase tracking-wider mb-1">Technique</p>
+                    <p className="font-semibold text-gray-800">{artwork.technique || artwork.medium || 'Non spécifié'}</p>
                   </div>
                 </div>
               </Card>
 
-              <Card className="comfort-card p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(122, 107, 90, 0.1)'}}>
-                    <Tag className="w-5 h-5" style={{color: '#7A6B5A'}} />
+              <Card className="luxury-detail-card">
+                <div className="flex items-center gap-3">
+                  <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
+                    <Tag className="w-6 h-6 text-amber-700" />
                   </div>
                   <div>
-                    <p className="text-sm comfort-text-muted font-body">Dimensions</p>
-                    <p className="font-semibold comfort-text">{artwork.dimensions || artwork.size || 'Non spécifié'}</p>
+                    <p className="text-xs text-gray-500 font-body uppercase tracking-wider mb-1">Dimensions</p>
+                    <p className="font-semibold text-gray-800">{artwork.dimensions || artwork.size || 'Non spécifié'}</p>
                   </div>
                 </div>
               </Card>
 
-              <Card className="comfort-card p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(122, 107, 90, 0.1)'}}>
-                    <Calendar className="w-5 h-5" style={{color: '#7A6B5A'}} />
+              <Card className="luxury-detail-card">
+                <div className="flex items-center gap-3">
+                  <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-amber-700" />
                   </div>
                   <div>
-                    <p className="text-sm comfort-text-muted font-body">Année</p>
-                    <p className="font-semibold comfort-text">{artwork.year}</p>
+                    <p className="text-xs text-gray-500 font-body uppercase tracking-wider mb-1">Année</p>
+                    <p className="font-semibold text-gray-800">{artwork.year}</p>
                   </div>
                 </div>
               </Card>
 
-              <Card className="comfort-card p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(122, 107, 90, 0.1)'}}>
-                    <Tag className="w-5 h-5" style={{color: '#7A6B5A'}} />
+              <Card className="luxury-detail-card">
+                <div className="flex items-center gap-3">
+                  <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
+                    <Tag className="w-6 h-6 text-amber-700" />
                   </div>
                   <div>
-                    <p className="text-sm comfort-text-muted font-body">Référence</p>
-                    <p className="font-semibold comfort-text">{artwork.reference || 'Non spécifié'}</p>
+                    <p className="text-xs text-gray-500 font-body uppercase tracking-wider mb-1">Référence</p>
+                    <p className="font-semibold text-gray-800">{artwork.reference || 'Non spécifié'}</p>
                   </div>
                 </div>
               </Card>
@@ -365,15 +364,12 @@ const ArtworkDetail: React.FC = () => {
             )}
 
             {/* Description */}
-            <Card className="comfort-card p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-1 h-20 rounded-full" style={{backgroundColor: '#7A6B5A'}}></div>
-                <div>
-                  <h3 className="text-lg font-semibold comfort-text mb-3">Description</h3>
-                  <p className="comfort-text-muted font-body leading-relaxed">
-                    {artwork.description}
-                  </p>
-                </div>
+            <Card className="luxury-description-card">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">Description</h3>
+                <p className="text-gray-600 font-body leading-relaxed">
+                  {artwork.description}
+                </p>
               </div>
             </Card>
 
@@ -392,14 +388,12 @@ const ArtworkDetail: React.FC = () => {
             )}
 
             {/* Contact Information */}
-            <Card className="comfort-card p-6">
+            <Card className="luxury-contact-card">
               <div className="text-center space-y-4">
                 {/* Availability Status */}
                 <Badge 
-                  className={`px-4 py-2 ${
-                    artwork.available 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
+                  className={`luxury-badge ${
+                    artwork.available ? 'available' : ''
                   }`}
                 >
                   {artwork.available ? 'Disponible' : 'Vendu'}
