@@ -268,19 +268,20 @@ const Portfolio: React.FC = () => {
                 <div className="luxury-gallery-decoration luxury-gallery-decoration-2" />
                 
                 {/* Premium Image Container with Frame */}
-                <div className="luxury-gallery-image-container">
+                <div className="luxury-gallery-image-container" style={{ aspectRatio: '4/3', overflow: 'hidden' }}>
                   <ArtworkFrame
                     variant="gallery"
                     size="medium"
                     artistName="Omhind"
                     artworkTitle={artwork.title}
                     year={artwork.year?.toString()}
-                    className="w-full"
+                    className="w-full h-full"
                   >
                     <OptimizedImage
                       src={artwork.image_url}
                       alt={artwork.title}
                       className="luxury-gallery-image"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       priority={index < 3} // Prioritize first 3 images
                     />
                   </ArtworkFrame>
