@@ -37,12 +37,12 @@
   position: relative;
   overflow: hidden;
   background: #fafafa;
-  min-height: 400px;
-  max-height: 500px;
+  aspect-ratio: 4 / 3;
+  min-height: 280px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1.5rem;
   margin: 0;
 }
 
@@ -50,8 +50,8 @@
 .luxury-gallery-image-container::before {
   content: '';
   position: absolute;
-  inset: 1.5rem;
-  border: 2px solid rgba(0, 0, 0, 0.08);
+  inset: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 4px;
   pointer-events: none;
   z-index: 1;
@@ -218,24 +218,36 @@
   }
 }
 
-/* Responsive Adjustments for Clean Gallery */
+/* Responsive Adjustments for All Devices */
+@media (max-width: 1280px) {
+  .luxury-gallery-image-container {
+    aspect-ratio: 4 / 3;
+    min-height: 260px;
+    padding: 1.25rem;
+  }
+}
+
 @media (max-width: 1024px) {
   .luxury-gallery-image-container {
-    min-height: 350px;
-    max-height: 450px;
-    padding: 1.5rem;
+    aspect-ratio: 4 / 3;
+    min-height: 240px;
+    padding: 1.25rem;
   }
 }
 
 @media (max-width: 768px) {
   .luxury-gallery-image-container {
-    min-height: 300px;
-    max-height: 400px;
-    padding: 1.25rem;
+    aspect-ratio: 4 / 3;
+    min-height: 220px;
+    padding: 1rem;
+  }
+  
+  .luxury-gallery-image-container::before {
+    inset: 0.75rem;
   }
   
   .luxury-gallery-content {
-    padding: 1.25rem;
+    padding: 1.25rem 1rem;
   }
   
   .luxury-gallery-title {
@@ -246,17 +258,22 @@
     font-size: 0.625rem;
     padding: 0.25rem 0.75rem;
   }
+  
+  .luxury-gallery-year {
+    font-size: 0.8125rem;
+  }
 }
 
 @media (max-width: 640px) {
   .luxury-gallery-image-container {
-    min-height: 280px;
-    max-height: 350px;
-    padding: 1rem;
+    aspect-ratio: 4 / 3;
+    min-height: 200px;
+    padding: 0.75rem;
   }
   
   .luxury-gallery-image-container::before {
-    inset: 1rem;
+    inset: 0.5rem;
+    border-width: 1px;
   }
   
   .luxury-gallery-content {
@@ -265,10 +282,45 @@
   
   .luxury-gallery-title {
     font-size: 0.9375rem;
+    line-height: 1.3;
+  }
+  
+  .luxury-gallery-category {
+    font-size: 0.625rem;
+    padding: 0.25rem 0.625rem;
   }
   
   .luxury-gallery-year {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .luxury-gallery-image-container {
+    aspect-ratio: 3 / 4;
+    min-height: 180px;
+    padding: 0.5rem;
+  }
+  
+  .luxury-gallery-image-container::before {
+    inset: 0.5rem;
+  }
+  
+  .luxury-gallery-content {
+    padding: 0.875rem;
+  }
+  
+  .luxury-gallery-title {
+    font-size: 0.875rem;
+  }
+  
+  .luxury-gallery-category {
+    font-size: 0.5625rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .luxury-gallery-year {
+    font-size: 0.6875rem;
   }
 }
 
