@@ -387,6 +387,95 @@ const ArtworkDetail: React.FC = () => {
               </div>
             )}
 
+            {/* Print Customization Section */}
+            <Card className="luxury-contact-card">
+              <div className="space-y-6">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Personnaliser votre impression</h3>
+                
+                {/* Service Type Selection */}
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">1. Type de service</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      className={`px-4 py-3 rounded-lg border-2 transition-all duration-300 text-left ${
+                        false ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-amber-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="font-semibold text-gray-800">Print and Frames</div>
+                      <div className="text-xs text-gray-500 mt-1">Impression et encadrement</div>
+                    </button>
+                    
+                    <button
+                      className={`px-4 py-3 rounded-lg border-2 transition-all duration-300 text-left ${
+                        false ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-amber-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="font-semibold text-gray-800">Stretched Canvas</div>
+                      <div className="text-xs text-gray-500 mt-1">Toile tendue</div>
+                    </button>
+                    
+                    <button
+                      className={`px-4 py-3 rounded-lg border-2 transition-all duration-300 text-left ${
+                        false ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-amber-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="font-semibold text-gray-800">Wood Mount & More</div>
+                      <div className="text-xs text-gray-500 mt-1">Montage sur bois et plus</div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Print Size Selection */}
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">2. Taille d'impression</h4>
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="text-sm font-semibold text-gray-700 mb-2">
+                      {artwork.dimensions || 'Non spécifié'}
+                    </div>
+                    <div className="text-xs text-gray-500">Taille disponible par défaut</div>
+                  </div>
+                </div>
+
+                {/* Frame Selection */}
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">3. Cadre</h4>
+                  <div className="grid grid-cols-4 gap-3">
+                    <button className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-500 transition-all duration-300">
+                      <div className="w-full h-20 bg-gradient-to-br from-gray-100 to-gray-300 rounded mb-2"></div>
+                      <div className="text-xs font-semibold text-gray-700">Classique</div>
+                    </button>
+                    
+                    <button className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-500 transition-all duration-300">
+                      <div className="w-full h-20 bg-gradient-to-br from-amber-50 to-amber-200 rounded mb-2"></div>
+                      <div className="text-xs font-semibold text-gray-700">Moderne</div>
+                    </button>
+                    
+                    <button className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-500 transition-all duration-300">
+                      <div className="w-full h-20 bg-gradient-to-br from-gray-200 to-gray-400 rounded mb-2"></div>
+                      <div className="text-xs font-semibold text-gray-700">Design</div>
+                    </button>
+                    
+                    <button className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-500 transition-all duration-300">
+                      <div className="w-full h-20 bg-gradient-to-br from-slate-100 to-slate-300 rounded mb-2"></div>
+                      <div className="text-xs font-semibold text-gray-700">Élégant</div>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-200">
+                  <Button 
+                    className="w-full hover-painterly-lift"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
+                      color: 'white'
+                    }}
+                  >
+                    Confirmer la personnalisation
+                  </Button>
+                </div>
+              </div>
+            </Card>
+
             {/* Contact Information */}
             <Card className="luxury-contact-card">
               <div className="text-center space-y-4">
