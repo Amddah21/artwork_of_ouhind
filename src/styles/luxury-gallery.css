@@ -286,22 +286,16 @@
   grid-template-columns: repeat(4, 1fr);
 }
 
-/* Enhanced Responsive Grid System */
+/* Enhanced Responsive Grid System - 4 Columns Reference Layout */
 @media (max-width: 1536px) {
   .luxury-grid-4 {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 1280px) {
-  .luxury-grid-4 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
 @media (max-width: 1024px) {
   .luxury-grid-4 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
   }
 }
@@ -319,8 +313,8 @@
   .luxury-grid-2,
   .luxury-grid-3,
   .luxury-grid-4 {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.875rem;
   }
 }
 

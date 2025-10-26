@@ -32,13 +32,13 @@
     0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Clean Image Container - Full Coverage */
+/* Clean Image Container - Square Aspect Ratio Like Reference */
 .luxury-gallery-image-container {
   position: relative;
   overflow: hidden;
   background: #fafafa;
-  aspect-ratio: 4 / 3;
-  min-height: 240px;
+  aspect-ratio: 1 / 1;
+  min-height: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -212,25 +212,25 @@
   }
 }
 
-/* Responsive Adjustments for All Devices - Full Image Display */
+/* Responsive Adjustments for All Devices - Square Images */
 @media (max-width: 1280px) {
   .luxury-gallery-image-container {
-    aspect-ratio: 4 / 3;
-    min-height: 220px;
+    aspect-ratio: 1 / 1;
+    min-height: 240px;
   }
 }
 
 @media (max-width: 1024px) {
   .luxury-gallery-image-container {
-    aspect-ratio: 4 / 3;
-    min-height: 200px;
+    aspect-ratio: 1 / 1;
+    min-height: 220px;
   }
 }
 
 @media (max-width: 768px) {
   .luxury-gallery-image-container {
-    aspect-ratio: 4 / 3;
-    min-height: 180px;
+    aspect-ratio: 1 / 1;
+    min-height: 200px;
   }
   
   .luxury-gallery-content {
@@ -253,8 +253,8 @@
 
 @media (max-width: 640px) {
   .luxury-gallery-image-container {
-    aspect-ratio: 4 / 3;
-    min-height: 160px;
+    aspect-ratio: 1 / 1;
+    min-height: 180px;
   }
   
   .luxury-gallery-content {
@@ -278,8 +278,8 @@
 
 @media (max-width: 480px) {
   .luxury-gallery-image-container {
-    aspect-ratio: 3 / 4;
-    min-height: 140px;
+    aspect-ratio: 1 / 1;
+    min-height: 160px;
   }
   
   .luxury-gallery-content {
