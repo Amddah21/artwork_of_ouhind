@@ -11,6 +11,7 @@ import { useRating } from '@/contexts/RatingContext';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import '../styles/luxury-retour-button.css';
 import '../styles/luxury-detail-cards.css';
+import '../styles/artwork-detail-responsive.css';
 
 interface Artwork {
   id: string;
@@ -53,6 +54,7 @@ const ArtworkDetail: React.FC = () => {
   const [artwork, setArtwork] = useState<Artwork | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showRoomPreview, setShowRoomPreview] = useState(false);
+  
   
   const { addRating, getAverageRating, getRatingCount, getUserRating } = useRating();
   const { artworks, incrementViews, isLoading: artworksLoading } = useArtwork();
@@ -154,33 +156,55 @@ const ArtworkDetail: React.FC = () => {
     };
 
     try {
-      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-        await navigator.share(shareData);
-      } else {
-        // Fallback: Copy to clipboard
+      // Check if Web Share API is supported and available
+      if (navigator.share && 'canShare' in navigator) {
+        // Verify if we can share the data
+        if (navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+          return;
+        }
+      }
+      
+      // Fallback: Try to copy to clipboard
+      if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(window.location.href);
         
-        // Show a temporary success message
+        // Show success feedback
         const button = document.querySelector('[data-share-button]') as HTMLElement;
         if (button) {
           const originalText = button.textContent;
+          const originalBg = button.style.backgroundColor;
           button.textContent = 'Lien copié !';
           button.style.backgroundColor = '#10b981';
+          button.style.color = '#ffffff';
           setTimeout(() => {
             button.textContent = originalText;
-            button.style.backgroundColor = '';
+            button.style.backgroundColor = originalBg;
+            button.style.color = '';
           }, 2000);
+          return;
         }
       }
+      
+      // Last resort: Show URL in a prompt for manual copying
+      prompt('Copiez ce lien:', window.location.href);
+      
     } catch (error) {
       console.error('Error sharing:', error);
-      // Fallback: Copy to clipboard
+      
+      // If sharing failed, try to copy to clipboard
       try {
-        await navigator.clipboard.writeText(window.location.href);
-        alert('Lien copié dans le presse-papiers !');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(window.location.href);
+          alert('Lien copié dans le presse-papiers !');
+        } else {
+          // Show prompt for manual copying
+          prompt('Copiez ce lien:', window.location.href);
+        }
       } catch (clipboardError) {
         console.error('Clipboard error:', clipboardError);
-        alert('Impossible de partager. Veuillez copier manuellement l\'URL.');
+        // Show prompt as last resort
+        prompt('Copiez ce lien:', window.location.href);
       }
     }
   };
@@ -241,36 +265,40 @@ const ArtworkDetail: React.FC = () => {
         <ArrowLeft className="w-7 h-7 sm:w-8 sm:h-8 text-amber-800" />
       </button>
 
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid lg:grid-cols-2 gap-12">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="grid lg:grid-cols-[55%_45%] gap-6 lg:gap-8">
           
-          {/* Left Side - Artwork Image */}
-          <div className="space-y-6">
-            {/* Main Image */}
-            <div className="relative group">
-              <Card className="luxury-artwork-frame overflow-hidden aspect-[4/3]">
+          {/* Left Side - Artwork Image - Larger Size */}
+          <div className="space-y-4 sm:space-y-6">
+            {/* Main Image - Larger Size */}
+            <div className="relative">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200 relative">
                 <img
                   src={multipleViews[currentImageIndex]?.url || artwork.image_url}
                   alt={artwork.title}
-                  className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+                  className="w-full h-auto object-contain"
+                  style={{ maxHeight: '85vh' }}
                 />
 
                 {/* High Resolution Badge */}
-                <Badge className="absolute top-4 left-4 comfort-card" style={{backgroundColor: 'rgba(248, 248, 248, 0.9)', color: '#7A6B5A'}}>
+                <Badge className="absolute top-2 left-2 sm:top-4 sm:left-4" style={{backgroundColor: 'rgba(248, 248, 248, 0.9)', color: '#7A6B5A', zIndex: 10}}>
                   Haute Résolution
                 </Badge>
-              </Card>
+              </div>
 
-              {/* Thumbnail Navigation */}
+              {/* Thumbnail Navigation - Larger */}
               {multipleViews.length > 1 && (
-                <div className="flex gap-3 mt-4">
+                <div className="flex gap-3 sm:gap-4 mt-4 overflow-x-auto pb-2">
                   {multipleViews.map((view, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`luxury-thumbnail w-20 h-20 ${
-                        currentImageIndex === index ? 'active' : ''
+                      className={`border-2 rounded-lg overflow-hidden transition-all flex-shrink-0 ${
+                        currentImageIndex === index 
+                          ? 'border-amber-500 ring-2 ring-amber-500 ring-offset-2' 
+                          : 'border-gray-300 hover:border-amber-300'
                       }`}
+                      style={{ width: '80px', height: '80px' }}
                     >
                       <img
                         src={view.url}
@@ -284,21 +312,32 @@ const ArtworkDetail: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Side - Artwork Details */}
-          <div className="space-y-8">
+          {/* Right Side - Artwork Details - Responsive */}
+          <div className="space-y-6 sm:space-y-8">
             
-            {/* Title and Artist */}
+            {/* Title and Artist - Responsive */}
             <div className="luxury-fade-in">
-              <h1 className="luxury-detail-title mb-3">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">
                 {artwork.title}
               </h1>
-              <p className="text-xl text-gray-600 font-body">
+              <p className="text-base sm:text-lg lg:text-xl text-gray-600 font-body">
                 par <span className="font-semibold text-amber-600">{artwork.artist_name || 'Omhind'}</span>
               </p>
             </div>
 
-            {/* Artwork Details Grid */}
-            <div className="grid grid-cols-2 gap-6">
+            {/* 1. Description - First */}
+            <Card className="luxury-description-card">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">Description</h3>
+                <p className="text-gray-600 font-body leading-relaxed">
+                  {artwork.description}
+                </p>
+              </div>
+            </Card>
+
+            {/* 2-5. Artwork Details Grid - Responsive */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              {/* 2. Technique */}
               <Card className="luxury-detail-card">
                 <div className="flex items-center gap-3">
                   <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
@@ -311,6 +350,7 @@ const ArtworkDetail: React.FC = () => {
                 </div>
               </Card>
 
+              {/* 3. Dimensions */}
               <Card className="luxury-detail-card">
                 <div className="flex items-center gap-3">
                   <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
@@ -323,6 +363,7 @@ const ArtworkDetail: React.FC = () => {
                 </div>
               </Card>
 
+              {/* 4. Année */}
               <Card className="luxury-detail-card">
                 <div className="flex items-center gap-3">
                   <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
@@ -335,6 +376,7 @@ const ArtworkDetail: React.FC = () => {
                 </div>
               </Card>
 
+              {/* 5. Référence */}
               <Card className="luxury-detail-card">
                 <div className="flex items-center gap-3">
                   <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
@@ -363,16 +405,6 @@ const ArtworkDetail: React.FC = () => {
               </Card>
             )}
 
-            {/* Description */}
-            <Card className="luxury-description-card">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">Description</h3>
-                <p className="text-gray-600 font-body leading-relaxed">
-                  {artwork.description}
-                </p>
-              </div>
-            </Card>
-
             {/* Tags */}
             {artwork.tags && artwork.tags.length > 0 && (
               <div>
@@ -386,95 +418,6 @@ const ArtworkDetail: React.FC = () => {
                 </div>
               </div>
             )}
-
-            {/* Print Customization Section */}
-            <Card className="luxury-contact-card">
-              <div className="space-y-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Personnaliser votre impression</h3>
-                
-                {/* Service Type Selection */}
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">1. Type de service</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <button
-                      className={`px-4 py-3 rounded-lg border-2 transition-all duration-300 text-left ${
-                        false ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-amber-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="font-semibold text-gray-800">Print and Frames</div>
-                      <div className="text-xs text-gray-500 mt-1">Impression et encadrement</div>
-                    </button>
-                    
-                    <button
-                      className={`px-4 py-3 rounded-lg border-2 transition-all duration-300 text-left ${
-                        false ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-amber-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="font-semibold text-gray-800">Stretched Canvas</div>
-                      <div className="text-xs text-gray-500 mt-1">Toile tendue</div>
-                    </button>
-                    
-                    <button
-                      className={`px-4 py-3 rounded-lg border-2 transition-all duration-300 text-left ${
-                        false ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-amber-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="font-semibold text-gray-800">Wood Mount & More</div>
-                      <div className="text-xs text-gray-500 mt-1">Montage sur bois et plus</div>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Print Size Selection */}
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">2. Taille d'impression</h4>
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="text-sm font-semibold text-gray-700 mb-2">
-                      {artwork.dimensions || 'Non spécifié'}
-                    </div>
-                    <div className="text-xs text-gray-500">Taille disponible par défaut</div>
-                  </div>
-                </div>
-
-                {/* Frame Selection */}
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">3. Cadre</h4>
-                  <div className="grid grid-cols-4 gap-3">
-                    <button className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-500 transition-all duration-300">
-                      <div className="w-full h-20 bg-gradient-to-br from-gray-100 to-gray-300 rounded mb-2"></div>
-                      <div className="text-xs font-semibold text-gray-700">Classique</div>
-                    </button>
-                    
-                    <button className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-500 transition-all duration-300">
-                      <div className="w-full h-20 bg-gradient-to-br from-amber-50 to-amber-200 rounded mb-2"></div>
-                      <div className="text-xs font-semibold text-gray-700">Moderne</div>
-                    </button>
-                    
-                    <button className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-500 transition-all duration-300">
-                      <div className="w-full h-20 bg-gradient-to-br from-gray-200 to-gray-400 rounded mb-2"></div>
-                      <div className="text-xs font-semibold text-gray-700">Design</div>
-                    </button>
-                    
-                    <button className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-500 transition-all duration-300">
-                      <div className="w-full h-20 bg-gradient-to-br from-slate-100 to-slate-300 rounded mb-2"></div>
-                      <div className="text-xs font-semibold text-gray-700">Élégant</div>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-gray-200">
-                  <Button 
-                    className="w-full hover-painterly-lift"
-                    style={{
-                      background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
-                      color: 'white'
-                    }}
-                  >
-                    Confirmer la personnalisation
-                  </Button>
-                </div>
-              </div>
-            </Card>
 
             {/* Contact Information */}
             <Card className="luxury-contact-card">
@@ -536,19 +479,6 @@ const ArtworkDetail: React.FC = () => {
                   </div>
                   
                   <div className="flex gap-3">
-                    <Button 
-                      variant="outline" 
-                      className="hover-ink-flow painterly-card"
-                      style={{ 
-                        borderColor: 'hsl(330, 20%, 88%)',
-                        color: 'hsl(240, 10%, 15%)'
-                      }}
-                      onClick={handleShare}
-                      data-share-button
-                    >
-                      <Share2 className="w-4 h-4 mr-2" />
-                      Partager
-                    </Button>
                     <Button 
                       variant="outline" 
                       className="hover-ink-flow painterly-card"

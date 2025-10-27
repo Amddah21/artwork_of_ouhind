@@ -1,18 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Share2, MessageCircle, Star, Tag, Eye, Palette, Calendar, Sparkles, Euro, Phone, Mail, ShoppingCart } from 'lucide-react';
-import RatingDisplay from './RatingDisplay';
-import OptimizedImage from './OptimizedImage';
-import ArtworkFrame from './ArtworkFrame';
-import ScreenshotDetection from './ScreenshotDetection';
-import LoadingSpinner from './LoadingSpinner';
-import ArtworkSkeleton from './ArtworkSkeleton';
+import { Palette } from 'lucide-react';
+import ArtworkGrid from './artwork/ArtworkGrid';
 import { useArtwork } from '@/contexts/ArtworkContext';
 import { useReview } from '@/contexts/ReviewContext';
 import { useGallery } from '@/contexts/GalleryContext';
-import '../styles/artwork-frame.css';
-import '../styles/luxury-gallery-cards.css';
+import './artwork/artwork-grid.css';
+import './artwork/artwork-card.css';
+import './portfolio-clean.css';
 
 interface Artwork {
   id: string;
@@ -163,184 +159,71 @@ const Portfolio: React.FC = () => {
     window.open(mailtoUrl);
   };
 
+  // Map artworks to ArtworkGrid format
+  const mappedArtworks = displayedArtworks.map((artwork) => ({
+    id: artwork.id,
+    title: artwork.title,
+    year: artwork.year,
+    dimensions: artwork.dimensions,
+    technique: artwork.technique,
+    medium: artwork.medium,
+    category: artwork.category,
+    image_url: artwork.image_url,
+    coverUrl: artwork.image_url,
+    available: artwork.available,
+    protected: false,
+  }));
+
   return (
-    <ScreenshotDetection onScreenshotAttempt={handleScreenshotAttempt}>
-      <section id="portfolio" className="luxury-section luxury-bg-secondary" ref={portfolioRef}>
-      <div className="luxury-container">
-        {/* Featured Gallery Section */}
-        <div className={`text-center mb-20 transition-all duration-1000 ${
-          isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-        }`}>
-          <div className="inline-flex items-center space-x-3 mb-8 px-8 py-4 rounded-full" style={{ 
-            backgroundColor: 'rgba(224, 168, 93, 0.1)', 
-            border: '1px solid rgba(224, 168, 93, 0.2)' 
-          }}>
-            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--luxury-gold)' }}>
-              <Palette className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-sm font-luxury-body font-medium luxury-text-secondary uppercase tracking-wider">
-              Collection Exclusive
-            </span>
+    <section id="portfolio" className="portfolio-clean">
+      <div className="portfolio-clean__container">
+        {/* Header */}
+        <div className="portfolio-clean__header">
+          <div className="portfolio-clean__badge">
+            <Palette className="w-5 h-5" />
+            Collection Exclusive
           </div>
-          
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-luxury-display luxury-text-primary mb-8">
-            GALERIE D'ART
-          </h2>
-          
-          <p className="text-xl max-w-4xl mx-auto leading-relaxed font-luxury-body luxury-text-secondary">
+          <h2 className="portfolio-clean__title">GALERIE D'ART</h2>
+          <p className="portfolio-clean__description">
             Découvrez une sélection exclusive d'œuvres d'art originales, chacune racontant une histoire unique à travers la couleur et la forme.
           </p>
         </div>
 
-        {/* Category Filter Section */}
-        <div className={`mb-12 transition-all duration-1000 ${
-          isLoaded ? 'opacity-100' : 'opacity-0 translate-y-8'
-        }`} style={{ animationDelay: '0.3s' }}>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => {
-                  setSelectedCategory(category);
-                  setVisibleArtworks(6); // Reset to 6 when changing category
-                }}
-                className={`px-6 py-3 rounded-full font-luxury-body transition-all duration-300 ${
-                  selectedCategory === category
-                    ? 'luxury-btn-primary shadow-lg shadow-amber-200/50'
-                    : 'luxury-btn-secondary hover:shadow-md'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-          
-          {/* Selected Category Indicator */}
-          {selectedCategory !== 'Tous' && (
-            <div className="text-center mt-4">
-              <p className="text-sm text-gray-600">
-                Affichage de la catégorie: <span className="font-semibold text-amber-600">{selectedCategory}</span>
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Elegant Artworks Grid with Luxury Styling */}
-        <div className="luxury-grid luxury-grid-4 gap-4 sm:gap-6 lg:gap-8">
-          {displayedArtworks.length === 0 ? (
-            <div className="col-span-full text-center py-20">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-100 mb-4">
-                <Palette className="w-10 h-10 text-amber-600" />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-2">Aucune œuvre trouvée</h3>
-              <p className="text-gray-600 mb-6">
-                {selectedCategory === 'Tous' 
-                  ? 'Aucune œuvre disponible pour le moment.'
-                  : `Aucune œuvre disponible dans la catégorie "${selectedCategory}".`
-                }
-              </p>
-              {selectedCategory !== 'Tous' && (
-                <button
-                  onClick={() => {
-                    setSelectedCategory('Tous');
-                    setVisibleArtworks(6);
-                  }}
-                  className="px-6 py-3 rounded-full luxury-btn-primary"
-                >
-                  Voir toutes les œuvres
-                </button>
-              )}
-            </div>
-          ) : (
-            displayedArtworks.map((artwork, index) => (
-            <div
-              key={artwork.id}
-              className={`luxury-gallery-item cursor-pointer ${
-                isLoaded ? 'opacity-100' : 'opacity-0'
+        {/* Category Filters */}
+        <div className="portfolio-clean__filters">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => {
+                setSelectedCategory(category);
+                setVisibleArtworks(12);
+              }}
+              className={`portfolio-clean__filter ${
+                selectedCategory === category ? 'active' : ''
               }`}
-              style={{ transitionDelay: `${index * 0.1}s` }}
-              onClick={() => handleViewArtwork(artwork)}
             >
-              {/* Luxury Card Container */}
-              <div className="luxury-gallery-card">
-                {/* Decorative Elements */}
-                <div className="luxury-gallery-decoration luxury-gallery-decoration-1" />
-                <div className="luxury-gallery-decoration luxury-gallery-decoration-2" />
-                
-                {/* Premium Image Container with Frame */}
-                <div className="luxury-gallery-image-container" style={{ aspectRatio: '4/3', overflow: 'hidden' }}>
-                  <ArtworkFrame
-                    variant="gallery"
-                    size="medium"
-                    artistName="Omhind"
-                    artworkTitle={artwork.title}
-                    year={artwork.year?.toString()}
-                    className="w-full h-full"
-                  >
-                    <OptimizedImage
-                      src={artwork.image_url}
-                      alt={artwork.title}
-                      className="luxury-gallery-image"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      priority={index < 3} // Prioritize first 3 images
-                    />
-                  </ArtworkFrame>
-                </div>
-
-                {/* Luxury Content Section */}
-                <div className="luxury-gallery-content">
-                  <div className="luxury-gallery-content-wrapper">
-                    {/* Title */}
-                    <h3 className="luxury-gallery-title">
-                      {artwork.title}
-                    </h3>
-                    
-                    {/* Category Badge */}
-                    <span className="luxury-gallery-category">
-                      {artwork.category}
-                    </span>
-                    
-                    {/* Year */}
-                    <p className="luxury-gallery-year">
-                      {artwork.year}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))
-          )}
+              {category}
+            </button>
+          ))}
         </div>
 
-        {/* Loading State */}
-        {isLoading && (
-          <div className="text-center py-20">
-            <LoadingSpinner size="lg" text="Chargement de la collection..." />
-          </div>
-        )}
+        {/* Artwork Grid */}
+        <ArtworkGrid artworks={mappedArtworks} isLoading={isLoading} />
 
-        {/* Load More Button with artistic styling */}
+        {/* Load More Button */}
         {visibleArtworks < filteredArtworks.length && (
-          <div className={`text-center mt-12 transition-all duration-1000 ${
-            isLoaded ? 'animate-fade-in-scroll' : 'opacity-0 translate-y-8'
-          }`} style={{ animationDelay: '0.8s' }}>
+          <div className="portfolio-clean__load-more">
             <Button 
               size="lg" 
-              className="hover-painterly-lift paint-splash"
               onClick={loadMore}
-              style={{
-                background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
-                color: 'hsl(45, 100%, 97%)',
-                border: 'none'
-              }}
+              className="portfolio-clean__button"
             >
               Voir Plus d'Œuvres
             </Button>
           </div>
         )}
       </div>
-      </section>
-    </ScreenshotDetection>
+    </section>
   );
 };
 

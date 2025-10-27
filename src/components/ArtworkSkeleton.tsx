@@ -1,5 +1,5 @@
 import React from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
+import './artwork/artwork-grid.css';
 
 interface ArtworkSkeletonProps {
   count?: number;
@@ -11,24 +11,21 @@ const ArtworkSkeleton: React.FC<ArtworkSkeletonProps> = ({
   className = '' 
 }) => {
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}>
+    <>
       {Array.from({ length: count }).map((_, index) => (
-        <div key={index} className="space-y-4">
+        <div key={index} className="artwork-skeleton">
           {/* Image skeleton */}
-          <Skeleton className="aspect-square w-full rounded-lg" />
+          <div className="artwork-skeleton__image" />
           
-          {/* Content skeleton */}
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-3 w-1/2" />
-            <Skeleton className="h-3 w-2/3" />
+          {/* Body skeleton */}
+          <div className="artwork-skeleton__body">
+            <div className="artwork-skeleton__title" />
+            <div className="artwork-skeleton__meta" />
+            <div className="artwork-skeleton__meta" style={{ width: '40%' }} />
           </div>
-          
-          {/* Button skeleton */}
-          <Skeleton className="h-8 w-full rounded-md" />
         </div>
       ))}
-    </div>
+    </>
   );
 };
 

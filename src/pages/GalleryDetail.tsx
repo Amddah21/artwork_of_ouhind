@@ -348,7 +348,7 @@ const GalleryDetail: React.FC = () => {
                     <ProtectedImage
                       src={artwork.image_url}
                       alt={artwork.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="absolute bottom-4 left-4 right-4">
@@ -366,7 +366,19 @@ const GalleryDetail: React.FC = () => {
                     <h3 className="font-bold font-display mb-1" style={{ color: 'hsl(240, 10%, 15%)' }}>
                       {artwork.title}
                     </h3>
-                    <p className="text-sm text-slate-600 mb-2">{artwork.year}</p>
+                    <div className="space-y-2 mb-2">
+                      <p className="text-sm text-slate-600">{artwork.year}</p>
+                      {artwork.dimensions && (
+                        <p className="text-xs text-slate-500">
+                          📏 {artwork.dimensions}
+                        </p>
+                      )}
+                      {artwork.medium && (
+                        <p className="text-xs text-slate-500">
+                          🎨 {artwork.medium}
+                        </p>
+                      )}
+                    </div>
                     <div className="flex items-center justify-between">
                       <StarRating rating={artwork.rating} size="sm" />
                       <Badge variant="outline" className="text-xs">
