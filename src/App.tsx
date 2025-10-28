@@ -62,13 +62,20 @@ const queryClient = new QueryClient({
 
 // Inner component that uses the copyright protection hook
 const AppContent = () => {
-  // Initialize global copyright protection
+  // Check if mobile device to adjust protection settings
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                   (window.matchMedia && window.matchMedia('(max-width: 768px)').matches);
+
+  // Initialize global copyright protection with full security layer
   useCopyrightProtection({
     enableRightClickProtection: true,
     enableDragProtection: true,
     enableKeyboardProtection: true,
     enablePrintProtection: true,
     enableScreenshotProtection: true,
+    enableZoomProtection: true,
+    // Disable DevTools protection messages on mobile to prevent false positives
+    enableDevToolsProtection: !isMobile,
     showProtectionMessages: true,
     protectionMessage: '🛡️ Image protégée par copyright - © Omhind'
   });

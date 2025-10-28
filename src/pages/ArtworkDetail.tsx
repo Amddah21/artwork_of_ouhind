@@ -258,7 +258,7 @@ const ArtworkDetail: React.FC = () => {
           console.log('🎨 Retour button clicked - Navigating back...');
           handleBack();
         }}
-        className="fixed top-20 sm:top-24 left-4 sm:left-6 z-50 group flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-amber-100 via-orange-100 to-yellow-100 border-2 border-amber-300 shadow-lg hover:shadow-xl hover:shadow-amber-300/50 transition-all duration-300 hover:scale-110 active:scale-95"
+        className="fixed top-20 sm:top-24 left-4 sm:left-6 z-50 group flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full backdrop-blur-md bg-white/20 border-2 border-amber-300/80 shadow-lg hover:shadow-xl hover:shadow-amber-300/50 transition-all duration-300 hover:scale-110 active:scale-95"
         type="button"
         style={{ pointerEvents: 'auto' }}
       >
