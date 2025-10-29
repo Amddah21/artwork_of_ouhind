@@ -56,59 +56,74 @@ const ArtisticFooter: React.FC = () => {
   ];
 
   return (
-    <footer className="luxury-footer py-20">
-      <div className="luxury-container">
-        <div className="luxury-grid luxury-grid-4 gap-12">
+    <footer className="py-12 sm:py-16 lg:py-20 relative overflow-hidden" style={{ backgroundColor: '#433D38' /* CHARCOAL TAUPE */ }}>
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-0 left-0 w-32 sm:w-48 lg:w-64 h-32 sm:h-48 lg:h-64 rounded-full blur-3xl" style={{ backgroundColor: '#873F31' /* PIPE */ }}></div>
+        <div className="absolute bottom-0 right-0 w-32 sm:w-48 lg:w-64 h-32 sm:h-48 lg:h-64 rounded-full blur-3xl" style={{ backgroundColor: '#CCB999' /* RUSK */ }}></div>
+      </div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
           
           {/* Artist Brand Section */}
-          <div className="lg:col-span-1 space-y-8">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--luxury-gold)' }}>
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#873F31' /* PIPE */ }}>
                 <Logo size="sm" />
               </div>
               <div>
-                <h3 className="text-xl font-luxury-accent luxury-text-gold">
+                <h3 className="text-lg sm:text-xl font-bold" style={{ color: '#873F31' /* PIPE */, fontFamily: "'Cormorant Garamond', serif" }}>
                   {artistName}
                 </h3>
-                <p className="text-sm font-luxury-body luxury-text-light">
+                <p className="text-xs sm:text-sm" style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>
                   Artiste Peintre
                 </p>
               </div>
             </div>
             
-            <p className="font-luxury-body luxury-text-light leading-relaxed">
+            <p className="text-sm sm:text-base leading-relaxed" style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>
               Artiste peintre passionnée, je crée des œuvres qui capturent l'essence de la beauté 
               et de l'émotion à travers des techniques mixtes et une palette de couleurs vibrantes.
             </p>
 
             {/* Social Links */}
-            <div className="flex space-x-4">
+            <div className="flex space-x-3 sm:space-x-4">
               {footerLinks.social.map((social) => {
                 const IconComponent = social.icon;
                 return (
-                  <button
+                  <a
                     key={social.label}
-                    className="luxury-btn-secondary p-3 luxury-magnetic-hover luxury-sparkle-effect"
-                    onClick={() => window.open(social.href, '_blank')}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                    style={{ 
+                      backgroundColor: '#873F31' /* PIPE */,
+                      color: '#F9F8F3' /* FROSTY WHITE */
+                    }}
+                    aria-label={social.label}
                   >
-                    <IconComponent className="w-5 h-5" />
-                  </button>
+                    <IconComponent className="w-5 h-5 sm:w-6 sm:h-6" />
+                  </a>
                 );
               })}
             </div>
           </div>
 
           {/* Navigation Links */}
-          <div className="space-y-8">
-            <h4 className="text-xl font-luxury-accent luxury-text-gold">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+            <h4 className="text-lg sm:text-xl font-bold" style={{ color: '#873F31' /* PIPE */, fontFamily: "'Cormorant Garamond', serif" }}>
               Navigation
             </h4>
-            <nav className="space-y-4">
+            <nav className="space-y-3 sm:space-y-4">
               {footerLinks.navigation.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="block font-luxury-body luxury-footer-link hover:luxury-text-gold transition-colors duration-300"
+                  className="block text-sm sm:text-base transition-colors duration-300 hover:opacity-80"
+                  style={{ 
+                    color: '#EBE2D1' /* PEACH CREAM */,
+                    fontFamily: "'Proza Libre', sans-serif"
+                  }}
                 >
                   {link.label}
                 </a>
@@ -117,23 +132,27 @@ const ArtisticFooter: React.FC = () => {
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-8">
-            <h4 className="text-xl font-luxury-accent luxury-text-gold">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+            <h4 className="text-lg sm:text-xl font-bold" style={{ color: '#873F31' /* PIPE */, fontFamily: "'Cormorant Garamond', serif" }}>
               Contact
             </h4>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-5 lg:space-y-6">
               {contactInfo.map((contact) => {
                 const IconComponent = contact.icon;
                 return (
-                  <div key={contact.label} className="flex items-start space-x-4">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: 'rgba(224, 168, 93, 0.2)' }}>
-                      <IconComponent className="w-5 h-5 luxury-text-gold" />
+                  <div key={contact.label} className="flex items-start space-x-3 sm:space-x-4">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: 'rgba(135, 63, 49, 0.2)' /* PIPE with opacity */ }}>
+                      <IconComponent className="w-5 h-5" style={{ color: '#873F31' /* PIPE */ }} />
                     </div>
-                    <div>
-                      <p className="text-sm font-luxury-body luxury-text-light">{contact.label}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm mb-1" style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>{contact.label}</p>
                       <a
                         href={contact.href}
-                        className="font-luxury-body luxury-footer-link hover:luxury-text-gold transition-colors duration-300"
+                        className="text-sm sm:text-base break-words transition-colors duration-300 hover:opacity-80"
+                        style={{ 
+                          color: '#F9F8F3' /* FROSTY WHITE */,
+                          fontFamily: "'Proza Libre', sans-serif"
+                        }}
                       >
                         {contact.value}
                       </a>
@@ -145,16 +164,20 @@ const ArtisticFooter: React.FC = () => {
           </div>
 
           {/* Legal Links */}
-          <div className="space-y-8">
-            <h4 className="text-xl font-luxury-accent luxury-text-gold">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+            <h4 className="text-lg sm:text-xl font-bold" style={{ color: '#873F31' /* PIPE */, fontFamily: "'Cormorant Garamond', serif" }}>
               Informations Légales
             </h4>
-            <nav className="space-y-4">
+            <nav className="space-y-3 sm:space-y-4">
               {footerLinks.legal.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="block font-luxury-body luxury-footer-link hover:luxury-text-gold transition-colors duration-300 text-sm"
+                  className="block text-xs sm:text-sm transition-colors duration-300 hover:opacity-80"
+                  style={{ 
+                    color: '#EBE2D1' /* PEACH CREAM */,
+                    fontFamily: "'Proza Libre', sans-serif"
+                  }}
                 >
                   {link.label}
                 </a>
@@ -162,32 +185,34 @@ const ArtisticFooter: React.FC = () => {
             </nav>
 
             {/* Awards/Recognition */}
-            <div className="pt-6" style={{ borderTop: '1px solid rgba(224, 168, 93, 0.2)' }}>
-              <div className="flex items-center space-x-3 text-sm luxury-text-light">
-                <Award className="w-5 h-5 luxury-text-gold" />
-                <span className="font-luxury-body">Artiste Reconnue</span>
+            <div className="pt-4 sm:pt-6 mt-4 sm:mt-6" style={{ borderTop: '1px solid rgba(135, 63, 49, 0.2)' /* PIPE with opacity */ }}>
+              <div className="flex items-center space-x-2 sm:space-x-3 text-xs sm:text-sm mb-2">
+                <Award className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: '#873F31' /* PIPE */ }} />
+                <span style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>Artiste Reconnue</span>
               </div>
-              <div className="flex items-center space-x-3 text-sm luxury-text-light mt-2">
-                <Globe className="w-5 h-5 luxury-text-gold" />
-                <span className="font-luxury-body">Expositions Internationales</span>
+              <div className="flex items-center space-x-2 sm:space-x-3 text-xs sm:text-sm">
+                <Globe className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" style={{ color: '#873F31' /* PIPE */ }} />
+                <span style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>Expositions Internationales</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8" style={{ borderTop: '1px solid rgba(224, 168, 93, 0.2)' }}>
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-2 luxury-text-light">
-              <span className="font-luxury-body">© {currentYear} {artistName}. Tous droits réservés.</span>
+        <div className="mt-8 sm:mt-12 lg:mt-16 pt-6 sm:pt-8" style={{ borderTop: '1px solid rgba(135, 63, 49, 0.2)' /* PIPE with opacity */ }}>
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0 gap-4">
+            <div className="flex items-center">
+              <span className="text-xs sm:text-sm" style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>
+                © {currentYear} {artistName}. Tous droits réservés.
+              </span>
             </div>
             
-            <div className="flex items-center space-x-4">
-              <span className="luxury-text-light font-luxury-body">Fait avec</span>
-              <Sparkles className="w-5 h-5 luxury-text-gold animate-pulse" />
-              <span className="luxury-text-light font-luxury-body">par Digital Teams</span>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--luxury-gold)' }}>
-                <span className="text-white text-sm font-bold">DT</span>
+            <div className="flex items-center space-x-2 sm:space-x-4 flex-wrap justify-center">
+              <span className="text-xs sm:text-sm" style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>Fait avec</span>
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" style={{ color: '#873F31' /* PIPE */ }} />
+              <span className="text-xs sm:text-sm" style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>par Digital Teams</span>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#873F31' /* PIPE */ }}>
+                <span className="text-white text-xs sm:text-sm font-bold" style={{ fontFamily: "'Proza Libre', sans-serif" }}>DT</span>
               </div>
             </div>
           </div>

@@ -166,28 +166,44 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
   };
 
   return (
-      <div className="fixed inset-0 z-50 overflow-hidden bg-black/80 backdrop-blur-sm" onClick={(e) => {
+      <div className="fixed inset-0 z-50 overflow-hidden backdrop-blur-sm" style={{ backgroundColor: 'rgba(43, 48, 46, 0.7)' }} onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
         }
       }}>
       {/* Modal Content */}
       <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-4" onClick={(e) => e.stopPropagation()}>
-        <div className="relative w-full max-w-7xl h-[95vh] sm:h-[90vh] bg-white rounded-xl sm:rounded-lg shadow-2xl overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div className="relative w-full max-w-7xl h-[95vh] sm:h-[90vh] rounded-xl sm:rounded-lg shadow-2xl overflow-hidden flex flex-col border" style={{ 
+          backgroundColor: '#F9F8F3', /* FROSTY WHITE */
+          borderColor: 'rgba(122, 119, 113, 0.3)' /* SAGE */
+        }} onClick={(e) => e.stopPropagation()}>
           {/* Header */}
-          <div className="flex items-center justify-between p-3 sm:p-6 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200/30">
+          <div className="flex items-center justify-between p-3 sm:p-6 border-b" style={{ 
+            backgroundColor: '#F9F8F3',
+            borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+          }}>
             <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
               <div className="relative flex-shrink-0">
-                <div className="absolute inset-0 bg-amber-400 rounded-full blur-xl opacity-40"></div>
-                <div className="relative w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500 flex items-center justify-center shadow-lg">
-                  <Paintbrush className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+                <div className="relative w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center border-2 shadow-lg" style={{ 
+                  backgroundColor: '#873F31', /* PIPE */
+                  borderColor: 'rgba(122, 119, 113, 0.3)' /* SAGE */
+                }}>
+                  <Paintbrush className="w-4 h-4 sm:w-6 sm:h-6" style={{ color: '#F9F8F3' }} />
                 </div>
               </div>
               <div className="min-w-0 flex-1">
-                <h2 className="text-base sm:text-2xl font-bold bg-gradient-to-r from-amber-700 via-orange-600 to-amber-700 bg-clip-text text-transparent truncate">
+                <h2 className="text-base sm:text-2xl font-medium truncate" style={{ 
+                  fontFamily: "'Cormorant Garamond', serif",
+                  color: '#4B4A46' /* CHARCOAL TAUPE */
+                }}>
                   Room Preview
                 </h2>
-                <p className="text-xs sm:text-sm text-gray-600 font-medium truncate">{artwork.title}</p>
+                <p className="text-xs sm:text-sm font-medium truncate" style={{ 
+                  fontFamily: "'Proza Libre', sans-serif",
+                  color: '#717871' /* SAGE */
+                }}>
+                  {artwork.title}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
@@ -195,7 +211,22 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 variant="ghost"
                 size="sm"
                 onClick={resetView}
-                className="hidden sm:flex text-gray-700 hover:text-amber-700 hover:bg-amber-50 transition-all duration-200 rounded-lg"
+                className="hidden sm:flex transition-all duration-300 rounded-lg border"
+                style={{ 
+                  color: '#717871',
+                  borderColor: 'rgba(122, 119, 113, 0.3)',
+                  fontFamily: "'Proza Libre', sans-serif"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(122, 119, 113, 0.08)';
+                  e.currentTarget.style.borderColor = '#873F31';
+                  e.currentTarget.style.color = '#873F31';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.3)';
+                  e.currentTarget.style.color = '#717871';
+                }}
               >
                 <RotateCw className="w-4 h-4 mr-2" />
                 Reset View
@@ -204,7 +235,21 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 variant="ghost"
                 size="sm"
                 onClick={onClose}
-                className="text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-200 rounded-lg"
+                className="transition-all duration-300 rounded-lg border"
+                style={{ 
+                  color: '#717871',
+                  borderColor: 'rgba(122, 119, 113, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(220, 38, 38, 0.1)';
+                  e.currentTarget.style.borderColor = '#dc2626';
+                  e.currentTarget.style.color = '#dc2626';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.3)';
+                  e.currentTarget.style.color = '#717871';
+                }}
               >
                 <X className="w-5 h-5" />
               </Button>
@@ -273,13 +318,24 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
 
                     {/* Resize Handle */}
                     <div
-                      className="absolute -bottom-2 -right-2 w-6 h-6 bg-amber-600 rounded-full cursor-nwse-resize shadow-lg flex items-center justify-center hover:bg-amber-700 transition-colors"
+                      className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full cursor-nwse-resize shadow-lg flex items-center justify-center border-2 transition-all duration-300"
+                      style={{ 
+                        backgroundColor: '#873F31', /* PIPE */
+                        borderColor: '#F9F8F3',
+                        color: '#F9F8F3'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
                       onMouseDown={(e) => {
                         e.stopPropagation();
                         handleMouseDown('resize');
                       }}
                     >
-                      <Maximize2 className="w-3 h-3 text-white" />
+                      <Maximize2 className="w-3 h-3" style={{ color: '#F9F8F3' }} />
                     </div>
 
                     {/* Move Handle */}
@@ -296,29 +352,51 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                   <div 
                     className="absolute left-1/2 top-1/3 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30"
                   >
-                    <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-2 border-white rounded-xl p-4 shadow-2xl">
-                      <p className="text-sm sm:text-base font-bold text-center flex items-center gap-2">
+                    <div className="rounded-lg p-4 shadow-2xl border" style={{ 
+                      backgroundColor: '#873F31', /* PIPE */
+                      color: '#F9F8F3',
+                      borderColor: 'rgba(122, 119, 113, 0.3)'
+                    }}>
+                      <p className="text-sm sm:text-base font-medium text-center flex items-center justify-center gap-2" style={{ 
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}>
                         <Paintbrush className="w-5 h-5" />
                         Your artwork appears here
                       </p>
-                      <p className="text-xs mt-2 text-center opacity-90">Use sliders below to adjust size and position</p>
+                      <p className="text-xs mt-2 text-center opacity-90" style={{ 
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}>
+                        Use sliders below to adjust size and position
+                      </p>
                     </div>
                   </div>
                 )}
 
                 {/* Helpful Instructions */}
                 {useCustomRoom && (
-                  <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-2 rounded-lg shadow-lg">
-                    <p className="text-xs sm:text-sm font-bold flex items-center gap-1">
+                  <div className="absolute top-2 right-2 sm:top-4 sm:right-4 px-3 py-2 rounded-lg border shadow-lg" style={{ 
+                    backgroundColor: '#873F31', /* PIPE */
+                    color: '#F9F8F3',
+                    borderColor: 'rgba(122, 119, 113, 0.3)'
+                  }}>
+                    <p className="text-xs sm:text-sm font-medium flex items-center gap-1" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif"
+                    }}>
                       <Image className="w-4 h-4" />
                       Custom Room Active
                     </p>
                   </div>
                 )}
-                <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-white/90 backdrop-blur-sm rounded-lg p-2 sm:p-3 shadow-lg max-w-[90%] sm:max-w-none">
-                  <p className="text-xs sm:text-sm text-gray-600">
-                    <span className="hidden sm:inline"><Move className="w-4 h-4 inline mr-1" />Drag to move • </span>
-                    <span className="hidden sm:inline"><Maximize2 className="w-4 h-4 inline mx-1" />Drag corner to resize</span>
+                <div className="absolute top-2 left-2 sm:top-4 sm:left-4 backdrop-blur-sm rounded-lg p-2 sm:p-3 shadow-lg max-w-[90%] sm:max-w-none border" style={{ 
+                  backgroundColor: 'rgba(249, 248, 243, 0.95)', /* FROSTY WHITE */
+                  borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+                }}>
+                  <p className="text-xs sm:text-sm" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#717871' /* SAGE */
+                  }}>
+                    <span className="hidden sm:inline"><Move className="w-4 h-4 inline mr-1" style={{ color: '#873F31' }} />Drag to move • </span>
+                    <span className="hidden sm:inline"><Maximize2 className="w-4 h-4 inline mx-1" style={{ color: '#873F31' }} />Drag corner to resize</span>
                     <span className="sm:hidden">Tap controls to adjust</span>
                   </p>
                 </div>
@@ -326,35 +404,62 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
             </div>
 
             {/* Controls Panel */}
-            <div className="w-full lg:w-80 bg-gradient-to-b from-amber-50/30 to-white border-t lg:border-t-0 lg:border-l border-amber-200/30 overflow-y-auto max-h-[50vh] lg:max-h-none">
+            <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l overflow-y-auto max-h-[50vh] lg:max-h-none" style={{ 
+              backgroundColor: '#F9F8F3', /* FROSTY WHITE */
+              borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+            }}>
               <div className="p-3 sm:p-6 space-y-4 sm:space-y-6 pb-6">
                 {/* Room Selection */}
                 <div>
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
-                      <Image className="w-3.5 h-3.5 text-white" />
+                    <div className="w-6 h-6 rounded-lg flex items-center justify-center border" style={{ 
+                      backgroundColor: 'rgba(122, 119, 113, 0.08)', /* SAGE light */
+                      borderColor: 'rgba(122, 119, 113, 0.3)'
+                    }}>
+                      <Image className="w-3.5 h-3.5" style={{ color: '#873F31' }} />
                     </div>
-                    <h3 className="text-base font-bold text-gray-900">Room Type</h3>
+                    <h3 className="text-base font-medium" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}>
+                      Room Type
+                    </h3>
                   </div>
                   <div className="grid grid-cols-2 gap-2 sm:gap-3 max-h-[300px] overflow-y-auto">
                     {roomOptions.map((room) => (
                       <button
                         key={room.id}
                         onClick={() => handleRoomSelect(room)}
-                        className={`p-3 rounded-xl border-2 transition-all duration-200 ${
+                        className={`p-3 rounded-lg border-2 transition-all duration-300 ${
                           selectedRoom.id === room.id && !useCustomRoom
-                            ? 'border-amber-500 bg-gradient-to-br from-amber-50 to-orange-50 shadow-md shadow-amber-200/50'
-                            : 'border-gray-200 hover:border-amber-300 hover:shadow-sm'
+                            ? 'shadow-md'
+                            : 'hover:shadow-sm'
                         }`}
+                        style={{
+                          borderColor: selectedRoom.id === room.id && !useCustomRoom
+                            ? '#873F31' /* PIPE */
+                            : 'rgba(122, 119, 113, 0.2)', /* SAGE */
+                          backgroundColor: selectedRoom.id === room.id && !useCustomRoom
+                            ? 'rgba(135, 63, 49, 0.08)' /* PIPE light */
+                            : '#F9F8F3' /* FROSTY WHITE */
+                        }}
                       >
-                        <div className="aspect-video rounded-lg mb-2 overflow-hidden border border-gray-100 bg-gray-100">
+                        <div className="aspect-video rounded-lg mb-2 overflow-hidden border" style={{ 
+                          borderColor: 'rgba(122, 119, 113, 0.15)',
+                          backgroundColor: '#EBE2D1' /* PEACH CREAM */
+                        }}>
                           <OptimizedImage
                             src={room.image}
                             alt={room.name}
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <p className="text-sm font-semibold text-gray-900">{room.name}</p>
+                        <p className="text-sm font-medium" style={{ 
+                          fontFamily: "'Proza Libre', sans-serif",
+                          color: '#4B4A46' /* CHARCOAL TAUPE */
+                        }}>
+                          {room.name}
+                        </p>
                       </button>
                     ))}
                   </div>
@@ -371,16 +476,38 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     />
                     <Button
                       variant="outline"
-                      className="w-full border-2 border-amber-300 hover:border-amber-500 bg-white hover:bg-amber-50 text-amber-700 hover:text-amber-800 font-medium transition-all duration-200 rounded-xl"
+                      className="w-full border-2 transition-all duration-300 rounded-lg"
+                      style={{ 
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        backgroundColor: 'transparent',
+                        color: '#717871',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#873F31';
+                        e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.08)';
+                        e.currentTarget.style.color = '#873F31';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.3)';
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = '#717871';
+                      }}
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       Upload Your Room
                     </Button>
                     {useCustomRoom && (
-                      <div className="mt-3 p-3 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 rounded-xl shadow-sm">
-                        <p className="text-xs font-semibold text-amber-800 flex items-center gap-1">
-                          <span className="text-green-600">✓</span> Custom room uploaded
+                      <div className="mt-3 p-3 rounded-lg border shadow-sm" style={{ 
+                        backgroundColor: 'rgba(34, 197, 94, 0.08)',
+                        borderColor: '#22c55e'
+                      }}>
+                        <p className="text-xs font-medium flex items-center gap-1" style={{ 
+                          fontFamily: "'Proza Libre', sans-serif",
+                          color: '#22c55e'
+                        }}>
+                          <span>✓</span> Custom room uploaded
                         </p>
                       </div>
                     )}
@@ -388,10 +515,25 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 </div>
 
                 {/* Frame Size Slider */}
-                <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div className="rounded-lg p-4 border shadow-sm" style={{ 
+                  backgroundColor: '#F9F8F3',
+                  borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+                }}>
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-bold text-gray-900">Frame Size</h3>
-                    <span className="text-sm font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">{Math.round(frameSize)}%</span>
+                    <h3 className="text-sm font-medium" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}>
+                      Frame Size
+                    </h3>
+                    <span className="text-sm font-medium px-2 py-1 rounded-full border" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#873F31', /* PIPE */
+                      backgroundColor: 'rgba(135, 63, 49, 0.08)',
+                      borderColor: 'rgba(122, 119, 113, 0.2)'
+                    }}>
+                      {Math.round(frameSize)}%
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -399,12 +541,15 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     max="150"
                     value={frameSize}
                     onChange={(e) => setFrameSize(Number(e.target.value))}
-                    className="w-full h-3 bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 rounded-lg appearance-none cursor-pointer"
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer"
                     style={{
-                      background: `linear-gradient(to right, #f59e0b 0%, #f59e0b ${frameSize}%, #e5e7eb ${frameSize}%, #e5e7eb 100%)`
+                      background: `linear-gradient(to right, #873F31 0%, #873F31 ${((frameSize - 50) / 100) * 100}%, rgba(122, 119, 113, 0.2) ${((frameSize - 50) / 100) * 100}%, rgba(122, 119, 113, 0.2) 100%)`
                     }}
                   />
-                  <div className="flex justify-between text-xs font-semibold text-gray-500 mt-2">
+                  <div className="flex justify-between text-xs font-medium mt-2" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#717871' /* SAGE */
+                  }}>
                     <span>Small</span>
                     <span>Medium</span>
                     <span>Large</span>
@@ -412,17 +557,42 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 </div>
 
                 {/* Precise Position Controls */}
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
-                  <h3 className="text-sm font-bold text-gray-900 mb-3">Position</h3>
+                <div className="rounded-lg p-4 border" style={{ 
+                  backgroundColor: 'rgba(122, 119, 113, 0.04)', /* SAGE very light */
+                  borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+                }}>
+                  <h3 className="text-sm font-medium mb-3" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#4B4A46' /* CHARCOAL TAUPE */
+                  }}>
+                    Position
+                  </h3>
                   <div className="space-y-3">
                     <div>
-                      <label className="text-xs text-gray-600 mb-2 block">Horizontal: {framePosition.x}%</label>
+                      <label className="text-xs mb-2 block" style={{ 
+                        fontFamily: "'Proza Libre', sans-serif",
+                        color: '#717871' /* SAGE */
+                      }}>
+                        Horizontal: {framePosition.x}%
+                      </label>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setFramePosition(prev => ({ ...prev, x: Math.max(10, prev.x - 5) }))}
-                          className="p-2 rounded-lg bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50 transition-all"
+                          className="p-2 rounded-lg border-2 transition-all"
+                          style={{ 
+                            backgroundColor: '#F9F8F3',
+                            borderColor: 'rgba(122, 119, 113, 0.3)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = '#873F31';
+                            e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.08)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.3)';
+                            e.currentTarget.style.backgroundColor = '#F9F8F3';
+                          }}
                         >
-                          <ArrowLeft className="w-4 h-4 text-amber-700" />
+                          <ArrowLeft className="w-4 h-4" style={{ color: '#873F31' }} />
                         </button>
                         <input
                           type="range"
@@ -430,24 +600,56 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                           max="90"
                           value={framePosition.x}
                           onChange={(e) => setFramePosition(prev => ({ ...prev, x: Number(e.target.value) }))}
-                          className="flex-1 h-2 bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 rounded-lg appearance-none cursor-pointer"
+                          className="flex-1 h-2 rounded-lg appearance-none cursor-pointer"
+                          style={{
+                            background: `linear-gradient(to right, #873F31 0%, #873F31 ${((framePosition.x - 10) / 80) * 100}%, rgba(122, 119, 113, 0.2) ${((framePosition.x - 10) / 80) * 100}%, rgba(122, 119, 113, 0.2) 100%)`
+                          }}
                         />
                         <button
                           onClick={() => setFramePosition(prev => ({ ...prev, x: Math.min(90, prev.x + 5) }))}
-                          className="p-2 rounded-lg bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50 transition-all"
+                          className="p-2 rounded-lg border-2 transition-all"
+                          style={{ 
+                            backgroundColor: '#F9F8F3',
+                            borderColor: 'rgba(122, 119, 113, 0.3)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = '#873F31';
+                            e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.08)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.3)';
+                            e.currentTarget.style.backgroundColor = '#F9F8F3';
+                          }}
                         >
-                          <ArrowRight className="w-4 h-4 text-amber-700" />
+                          <ArrowRight className="w-4 h-4" style={{ color: '#873F31' }} />
                         </button>
                       </div>
                     </div>
                     <div>
-                      <label className="text-xs text-gray-600 mb-2 block">Vertical: {framePosition.y}%</label>
+                      <label className="text-xs mb-2 block" style={{ 
+                        fontFamily: "'Proza Libre', sans-serif",
+                        color: '#717871' /* SAGE */
+                      }}>
+                        Vertical: {framePosition.y}%
+                      </label>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setFramePosition(prev => ({ ...prev, y: Math.max(10, prev.y - 5) }))}
-                          className="p-2 rounded-lg bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50 transition-all"
+                          className="p-2 rounded-lg border-2 transition-all"
+                          style={{ 
+                            backgroundColor: '#F9F8F3',
+                            borderColor: 'rgba(122, 119, 113, 0.3)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = '#873F31';
+                            e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.08)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.3)';
+                            e.currentTarget.style.backgroundColor = '#F9F8F3';
+                          }}
                         >
-                          <ArrowUp className="w-4 h-4 text-amber-700" />
+                          <ArrowUp className="w-4 h-4" style={{ color: '#873F31' }} />
                         </button>
                         <input
                           type="range"
@@ -455,13 +657,28 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                           max="90"
                           value={framePosition.y}
                           onChange={(e) => setFramePosition(prev => ({ ...prev, y: Number(e.target.value) }))}
-                          className="flex-1 h-2 bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 rounded-lg appearance-none cursor-pointer"
+                          className="flex-1 h-2 rounded-lg appearance-none cursor-pointer"
+                          style={{
+                            background: `linear-gradient(to right, #873F31 0%, #873F31 ${((framePosition.y - 10) / 80) * 100}%, rgba(122, 119, 113, 0.2) ${((framePosition.y - 10) / 80) * 100}%, rgba(122, 119, 113, 0.2) 100%)`
+                          }}
                         />
                         <button
                           onClick={() => setFramePosition(prev => ({ ...prev, y: Math.min(90, prev.y + 5) }))}
-                          className="p-2 rounded-lg bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50 transition-all"
+                          className="p-2 rounded-lg border-2 transition-all"
+                          style={{ 
+                            backgroundColor: '#F9F8F3',
+                            borderColor: 'rgba(122, 119, 113, 0.3)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = '#873F31';
+                            e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.08)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.3)';
+                            e.currentTarget.style.backgroundColor = '#F9F8F3';
+                          }}
                         >
-                          <ArrowDown className="w-4 h-4 text-amber-700" />
+                          <ArrowDown className="w-4 h-4" style={{ color: '#873F31' }} />
                         </button>
                       </div>
                     </div>
@@ -469,38 +686,99 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 </div>
 
                 {/* Quick Size Controls */}
-                <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                  <h3 className="text-sm font-bold text-gray-900 mb-3">Quick Size</h3>
+                <div className="rounded-lg p-4 border shadow-sm" style={{ 
+                  backgroundColor: '#F9F8F3',
+                  borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+                }}>
+                  <h3 className="text-sm font-medium mb-3" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#4B4A46' /* CHARCOAL TAUPE */
+                  }}>
+                    Quick Size
+                  </h3>
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       onClick={() => setFrameSize(60)}
-                      className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-300 hover:bg-amber-50 transition-all text-sm font-semibold"
+                      className="p-3 rounded-lg border-2 transition-all text-sm font-medium"
+                      style={{ 
+                        borderColor: 'rgba(122, 119, 113, 0.2)',
+                        backgroundColor: '#F9F8F3',
+                        color: '#717871',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#873F31';
+                        e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.08)';
+                        e.currentTarget.style.color = '#873F31';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.2)';
+                        e.currentTarget.style.backgroundColor = '#F9F8F3';
+                        e.currentTarget.style.color = '#717871';
+                      }}
                     >
-                      <ZoomOut className="w-4 h-4 mx-auto mb-1 text-amber-600" />
+                      <ZoomOut className="w-4 h-4 mx-auto mb-1" style={{ color: 'inherit' }} />
                       Small
                     </button>
                     <button
                       onClick={() => setFrameSize(80)}
-                      className="p-3 rounded-lg border-2 border-amber-500 bg-gradient-to-br from-amber-50 to-orange-50 text-sm font-semibold shadow-md"
+                      className="p-3 rounded-lg border-2 text-sm font-medium shadow-md"
+                      style={{ 
+                        borderColor: '#873F31',
+                        backgroundColor: 'rgba(135, 63, 49, 0.08)',
+                        color: '#873F31',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
                     >
-                      <ZoomIn className="w-4 h-4 mx-auto mb-1 text-amber-600" />
+                      <ZoomIn className="w-4 h-4 mx-auto mb-1" style={{ color: 'inherit' }} />
                       Medium
                     </button>
                     <button
                       onClick={() => setFrameSize(100)}
-                      className="p-3 rounded-lg border-2 border-gray-200 hover:border-amber-300 hover:bg-amber-50 transition-all text-sm font-semibold"
+                      className="p-3 rounded-lg border-2 transition-all text-sm font-medium"
+                      style={{ 
+                        borderColor: 'rgba(122, 119, 113, 0.2)',
+                        backgroundColor: '#F9F8F3',
+                        color: '#717871',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#873F31';
+                        e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.08)';
+                        e.currentTarget.style.color = '#873F31';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.2)';
+                        e.currentTarget.style.backgroundColor = '#F9F8F3';
+                        e.currentTarget.style.color = '#717871';
+                      }}
                     >
-                      <ZoomIn className="w-5 h-5 mx-auto mb-1 text-amber-600" />
+                      <ZoomIn className="w-5 h-5 mx-auto mb-1" style={{ color: 'inherit' }} />
                       Large
                     </button>
                   </div>
                 </div>
 
                 {/* Rotation Slider */}
-                <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div className="rounded-lg p-4 border shadow-sm" style={{ 
+                  backgroundColor: '#F9F8F3',
+                  borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+                }}>
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-bold text-gray-900">Rotation</h3>
-                    <span className="text-sm font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">{rotation}°</span>
+                    <h3 className="text-sm font-medium" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}>
+                      Rotation
+                    </h3>
+                    <span className="text-sm font-medium px-2 py-1 rounded-full border" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#873F31', /* PIPE */
+                      backgroundColor: 'rgba(135, 63, 49, 0.08)',
+                      borderColor: 'rgba(122, 119, 113, 0.2)'
+                    }}>
+                      {rotation}°
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -508,12 +786,15 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     max="45"
                     value={rotation}
                     onChange={(e) => setRotation(Number(e.target.value))}
-                    className="w-full h-3 bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 rounded-lg appearance-none cursor-pointer"
+                    className="w-full h-2 rounded-lg appearance-none cursor-pointer"
                     style={{
-                      background: `linear-gradient(to right, #f59e0b 0%, #f59e0b ${((rotation + 45) / 90) * 100}%, #e5e7eb ${((rotation + 45) / 90) * 100}%, #e5e7eb 100%)`
+                      background: `linear-gradient(to right, #873F31 0%, #873F31 ${((rotation + 45) / 90) * 100}%, rgba(122, 119, 113, 0.2) ${((rotation + 45) / 90) * 100}%, rgba(122, 119, 113, 0.2) 100%)`
                     }}
                   />
-                  <div className="flex justify-between text-xs font-semibold text-gray-500 mt-2">
+                  <div className="flex justify-between text-xs font-medium mt-2" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#717871' /* SAGE */
+                  }}>
                     <span>-45°</span>
                     <span>0°</span>
                     <span>45°</span>
@@ -521,33 +802,75 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                 </div>
 
                 {/* Wall Color Selection */}
-                <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                  <h3 className="text-sm font-bold text-gray-900 mb-3">Wall Color</h3>
+                <div className="rounded-lg p-4 border shadow-sm" style={{ 
+                  backgroundColor: '#F9F8F3',
+                  borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+                }}>
+                  <h3 className="text-sm font-medium mb-3" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#4B4A46' /* CHARCOAL TAUPE */
+                  }}>
+                    Wall Color
+                  </h3>
                   <div className="grid grid-cols-3 gap-3">
                     {wallColors.map((color) => (
                       <button
                         key={color.value}
                         onClick={() => setWallColor(color.value)}
-                        className={`p-3 rounded-xl border-2 transition-all duration-200 ${
+                        className={`p-3 rounded-lg border-2 transition-all duration-300 ${
                           wallColor === color.value
-                            ? 'border-amber-500 ring-2 ring-amber-500 ring-offset-2 shadow-lg'
-                            : 'border-gray-200 hover:border-amber-300 hover:shadow-md'
+                            ? 'ring-2 ring-offset-2 shadow-lg ring-[#873F31]'
+                            : 'hover:shadow-md'
                         }`}
-                        style={{ backgroundColor: color.value }}
+                        style={{ 
+                          backgroundColor: color.value,
+                          borderColor: wallColor === color.value
+                            ? '#873F31' /* PIPE */
+                            : 'rgba(122, 119, 113, 0.2)' /* SAGE */
+                        }}
                       >
-                        <div className="text-xs mt-1 font-semibold text-gray-700">{color.name}</div>
+                        <div className="text-xs mt-1 font-medium" style={{ 
+                          fontFamily: "'Proza Libre', sans-serif",
+                          color: wallColor === color.value ? '#873F31' : '#4B4A46'
+                        }}>
+                          {color.name}
+                        </div>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 {/* Quick Presets */}
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
-                  <h3 className="text-sm font-bold text-gray-900 mb-3">Quick Settings</h3>
+                <div className="rounded-lg p-4 border" style={{ 
+                  backgroundColor: 'rgba(122, 119, 113, 0.04)', /* SAGE very light */
+                  borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+                }}>
+                  <h3 className="text-sm font-medium mb-3" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#4B4A46' /* CHARCOAL TAUPE */
+                  }}>
+                    Quick Settings
+                  </h3>
                   <div className="space-y-2">
                     <Button
                       variant="outline"
-                      className="w-full justify-start border-2 border-gray-200 hover:border-amber-300 bg-white hover:bg-amber-50 transition-all duration-200 rounded-xl"
+                      className="w-full justify-start border-2 transition-all duration-300 rounded-lg"
+                      style={{ 
+                        borderColor: 'rgba(122, 119, 113, 0.2)',
+                        backgroundColor: '#F9F8F3',
+                        color: '#717871',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#873F31';
+                        e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.08)';
+                        e.currentTarget.style.color = '#873F31';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.2)';
+                        e.currentTarget.style.backgroundColor = '#F9F8F3';
+                        e.currentTarget.style.color = '#717871';
+                      }}
                       onClick={() => {
                         setFramePosition({ x: 50, y: 35 });
                         setFrameSize(120);
@@ -557,7 +880,23 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     </Button>
                     <Button
                       variant="outline"
-                      className="w-full justify-start border-2 border-gray-200 hover:border-amber-300 bg-white hover:bg-amber-50 transition-all duration-200 rounded-xl"
+                      className="w-full justify-start border-2 transition-all duration-300 rounded-lg"
+                      style={{ 
+                        borderColor: 'rgba(122, 119, 113, 0.2)',
+                        backgroundColor: '#F9F8F3',
+                        color: '#717871',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#873F31';
+                        e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.08)';
+                        e.currentTarget.style.color = '#873F31';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.2)';
+                        e.currentTarget.style.backgroundColor = '#F9F8F3';
+                        e.currentTarget.style.color = '#717871';
+                      }}
                       onClick={() => {
                         setFramePosition({ x: 35, y: 40 });
                         setFrameSize(90);
@@ -567,7 +906,23 @@ const RoomPreview: React.FC<RoomPreviewProps> = ({ artwork, onClose }) => {
                     </Button>
                     <Button
                       variant="outline"
-                      className="w-full justify-start border-2 border-gray-200 hover:border-amber-300 bg-white hover:bg-amber-50 transition-all duration-200 rounded-xl"
+                      className="w-full justify-start border-2 transition-all duration-300 rounded-lg"
+                      style={{ 
+                        borderColor: 'rgba(122, 119, 113, 0.2)',
+                        backgroundColor: '#F9F8F3',
+                        color: '#717871',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#873F31';
+                        e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.08)';
+                        e.currentTarget.style.color = '#873F31';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.2)';
+                        e.currentTarget.style.backgroundColor = '#F9F8F3';
+                        e.currentTarget.style.color = '#717871';
+                      }}
                       onClick={() => {
                         setFramePosition({ x: 65, y: 40 });
                         setFrameSize(90);

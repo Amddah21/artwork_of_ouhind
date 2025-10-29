@@ -179,14 +179,28 @@ const Portfolio: React.FC = () => {
       <div className="portfolio-clean__container">
         {/* Header */}
         <div className="portfolio-clean__header">
-          <div className="portfolio-clean__badge">
-            <Palette className="w-5 h-5" />
-            Collection Exclusive
+          <div className="portfolio-clean__header-content">
+            <div className="portfolio-clean__badge">
+              <Palette className="w-4 h-4" />
+              Collection Exclusive
+            </div>
+            <h2 className="portfolio-clean__title">Tirages les plus vendus</h2>
+            <p className="portfolio-clean__description">
+              Découvrez une sélection exclusive d'œuvres d'art originales, chacune racontant une histoire unique à travers la couleur et la forme.
+            </p>
           </div>
-          <h2 className="portfolio-clean__title">GALERIE D'ART</h2>
-          <p className="portfolio-clean__description">
-            Découvrez une sélection exclusive d'œuvres d'art originales, chacune racontant une histoire unique à travers la couleur et la forme.
-          </p>
+          <button 
+            onClick={() => navigate('/all-artworks')}
+            className="portfolio-clean__view-all"
+            style={{
+              fontFamily: "'Proza Libre', sans-serif",
+              cursor: 'pointer',
+              border: 'none',
+              background: 'transparent'
+            }}
+          >
+            Voir tout
+          </button>
         </div>
 
         {/* Category Filters */}

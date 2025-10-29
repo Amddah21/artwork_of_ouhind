@@ -85,30 +85,59 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
 
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <Card className="w-full max-w-md mx-4 luxury-card-premium">
-        <CardHeader className="relative" style={{ borderBottom: '1px solid rgba(224, 168, 93, 0.2)' }}>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="absolute right-2 top-2 luxury-btn-secondary"
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(43, 48, 46, 0.6)' }}>
+      <div 
+        className="relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
+        style={{ 
+          backgroundColor: '#F9F8F3', /* FROSTY WHITE exact */
+          border: '1px solid rgba(122, 119, 113, 0.3)' /* SAGE subtle */
+        }}
+      >
+        {/* Close Button - Luxury Style */}
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-white/20"
+          style={{ color: '#717871' }} /* SAGE */
+        >
+          <X className="h-5 w-5" />
+        </button>
+
+        {/* Header */}
+        <div className="px-8 pt-12 pb-6">
+          <h2 
+            className="text-3xl font-medium mb-4"
+            style={{ 
+              fontFamily: "'Cormorant Garamond', serif",
+              color: '#4B4A46' /* CHARCOAL TAUPE */
+            }}
           >
-            <X className="h-4 w-4" />
-          </Button>
-          <CardTitle className="text-2xl font-luxury-display luxury-text-primary">Connexion Administrateur</CardTitle>
-          <CardDescription className="font-luxury-body luxury-text-secondary">
+            Connexion Administrateur
+          </h2>
+          <p 
+            className="text-sm leading-relaxed"
+            style={{ 
+              fontFamily: "'Proza Libre', sans-serif",
+              color: '#717871' /* SAGE */
+            }}
+          >
             Connectez-vous avec vos identifiants. Les administrateurs seront redirigés vers le panneau d'administration.
-            <br />
-            <span className="text-sm text-gray-500 mt-2 block">
-              💡 Pour les comptes Gmail différents, assurez-vous d'utiliser le bon compte Google.
-            </span>
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          </p>
+        </div>
+
+        {/* Form Content */}
+        <div className="px-8 pb-12">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label 
+                htmlFor="email"
+                style={{ 
+                  fontFamily: "'Proza Libre', sans-serif",
+                  color: '#4B4A46' /* CHARCOAL TAUPE */
+                }}
+              >
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -116,10 +145,27 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="h-12 border-2 rounded-lg transition-all duration-300 focus:border-amber-600"
+                style={{ 
+                  backgroundColor: '#EBE2D1', /* PEACH CREAM */
+                  borderColor: 'rgba(122, 119, 113, 0.2)', /* SAGE subtle */
+                  fontFamily: "'Proza Libre', sans-serif",
+                  color: '#4B4A46'
+                }}
               />
             </div>
+
+            {/* Password Field */}
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label 
+                htmlFor="password"
+                style={{ 
+                  fontFamily: "'Proza Libre', sans-serif",
+                  color: '#4B4A46' /* CHARCOAL TAUPE */
+                }}
+              >
+                Mot de passe
+              </Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -128,30 +174,49 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onSuccess }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pr-10"
+                  className="pr-12 h-12 border-2 rounded-lg transition-all duration-300 focus:border-amber-600"
+                  style={{ 
+                    backgroundColor: '#EBE2D1', /* PEACH CREAM */
+                    borderColor: 'rgba(122, 119, 113, 0.2)', /* SAGE subtle */
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#4B4A46'
+                  }}
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
+                  style={{ color: '#717871' }} /* SAGE */
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-500" />
+                    <EyeOff className="h-4 w-4" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-500" />
+                    <Eye className="h-4 w-4" />
                   )}
                 </Button>
               </div>
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+
+            {/* Submit Button - Luxury Style */}
+            <Button 
+              type="submit" 
+              className="w-full h-12 rounded-lg font-medium text-base transition-all duration-500 hover:shadow-2xl hover:-translate-y-0.5"
+              disabled={isLoading}
+              style={{ 
+                backgroundColor: '#873F31', /* PIPE */
+                color: '#F9F8F3', /* FROSTY WHITE */
+                fontFamily: "'Proza Libre', sans-serif",
+                boxShadow: '0 4px 12px rgba(135, 63, 49, 0.25)',
+                border: 'none'
+              }}
+            >
               {isLoading ? 'Connexion...' : 'Se connecter'}
             </Button>
-            
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

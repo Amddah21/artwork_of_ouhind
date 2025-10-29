@@ -96,11 +96,33 @@ const ArtisticNavbar: React.FC = () => {
       }`}>
         <div className="luxury-container">
           <div className="flex items-center justify-between h-14 sm:h-16">
-            {/* Logo and Brand */}
-            <div className="flex items-center space-x-3">
+            {/* Logo and Brand - Clickable to Home */}
+            <button
+              onClick={() => {
+                if (location.pathname !== '/') {
+                  navigate('/');
+                } else {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+              className="flex items-center space-x-3 transition-all duration-300 hover:opacity-80 group cursor-pointer"
+              style={{ 
+                backgroundColor: 'transparent',
+                border: 'none',
+                padding: '0.25rem',
+                margin: '-0.25rem'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.05)';
+                e.currentTarget.style.borderRadius = '0.5rem';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
               <div className={`transition-all duration-500 ${
                 isScrolled ? 'scale-90' : 'scale-100'
-              }`}>
+              } group-hover:scale-105`}>
                 <Logo size="sm" />
               </div>
               <div className="hidden lg:block">
@@ -108,7 +130,7 @@ const ArtisticNavbar: React.FC = () => {
                   isScrolled 
                     ? 'luxury-text-primary' 
                     : 'luxury-text-gradient'
-                }`}>
+                } group-hover:scale-105`}>
                   {artistName}
                 </h1>
                 <p className={`text-xs font-luxury-body transition-colors duration-500 ${
@@ -117,7 +139,7 @@ const ArtisticNavbar: React.FC = () => {
                   Artiste Peintre
                 </p>
               </div>
-            </div>
+            </button>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-1">
@@ -152,7 +174,25 @@ const ArtisticNavbar: React.FC = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setShowLoginForm(true)}
-                  className="ml-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200 hover:from-yellow-100 hover:to-orange-100 hover:border-yellow-300 text-yellow-700 hover:text-orange-800 transition-all duration-300 font-medium"
+                  className="ml-2 transition-all duration-300 font-medium hover:shadow-lg"
+                  style={{
+                    fontFamily: "'Proza Libre', sans-serif",
+                    backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+                    color: '#873F31' /* PIPE */,
+                    borderColor: 'rgba(135, 63, 49, 0.3)' /* PIPE */
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#873F31';
+                    e.currentTarget.style.color = '#F9F8F3';
+                    e.currentTarget.style.borderColor = '#873F31';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(135, 63, 49, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#F9F8F3';
+                    e.currentTarget.style.color = '#873F31';
+                    e.currentTarget.style.borderColor = 'rgba(135, 63, 49, 0.3)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   Connexion
@@ -162,15 +202,42 @@ const ArtisticNavbar: React.FC = () => {
                   variant="outline"
                   size="sm"
                   onClick={isAdmin ? () => navigate('/admin') : signOut}
-                  className={`ml-2 transition-all duration-300 font-medium ${
-                    isAdmin 
-                      ? "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 text-blue-700 hover:text-indigo-800"
-                      : "bg-gradient-to-r from-orange-50 to-red-50 border-orange-200 hover:from-orange-100 hover:to-red-100 hover:border-orange-300 text-orange-700 hover:text-red-800"
-                  }`}
+                  className="ml-2 transition-all duration-300 font-medium hover:shadow-lg"
+                  style={{
+                    fontFamily: "'Proza Libre', sans-serif",
+                    ...(isAdmin ? {
+                      backgroundColor: '#873F31' /* PIPE */,
+                      color: '#F9F8F3' /* FROSTY WHITE */,
+                      borderColor: '#873F31' /* PIPE */,
+                      borderWidth: '1px'
+                    } : {
+                      backgroundColor: 'transparent',
+                      color: '#717871' /* SAGE */,
+                      borderColor: 'rgba(122, 119, 113, 0.3)' /* SAGE */
+                    })
+                  }}
+                  onMouseEnter={(e) => {
+                    if (isAdmin) {
+                      e.currentTarget.style.backgroundColor = '#9B4F3F';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(135, 63, 49, 0.3)';
+                    } else {
+                      e.currentTarget.style.backgroundColor = 'rgba(122, 119, 113, 0.1)';
+                      e.currentTarget.style.color = '#873F31';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (isAdmin) {
+                      e.currentTarget.style.backgroundColor = '#873F31';
+                      e.currentTarget.style.boxShadow = 'none';
+                    } else {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = '#717871';
+                    }
+                  }}
                 >
                   {isAdmin ? (
                     <>
-                      <Settings className="w-4 h-4 mr-2" />
+                      <Settings className="w-4 h-4 mr-2" style={{ color: '#F9F8F3' }} />
                       Dashboard Admin
                     </>
                   ) : (
@@ -197,13 +264,18 @@ const ArtisticNavbar: React.FC = () => {
                 e.stopPropagation();
                 setIsMenuOpen(!isMenuOpen);
               }}
-              className="lg:hidden bg-white/80 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 p-2 touch-manipulation"
-              style={{ touchAction: 'manipulation' }}
+              className="lg:hidden backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-300 p-2 touch-manipulation"
+              style={{ 
+                touchAction: 'manipulation',
+                backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+                borderColor: 'rgba(122, 119, 113, 0.3)' /* SAGE */,
+                borderWidth: '1px'
+              }}
             >
               {isMenuOpen ? (
-                <X className="w-4 h-4 text-gray-700" />
+                <X className="w-4 h-4" style={{ color: '#873F31' /* PIPE */ }} />
               ) : (
-                <Menu className="w-4 h-4 text-gray-700" />
+                <Menu className="w-4 h-4" style={{ color: '#873F31' /* PIPE */ }} />
               )}
             </Button>
           </div>
@@ -232,17 +304,36 @@ const ArtisticNavbar: React.FC = () => {
           />
           
           {/* Menu Panel */}
-          <div className="absolute top-16 left-4 right-4 sm:left-auto sm:right-4 sm:w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200 overflow-hidden animate-in slide-in-from-top-2 duration-300">
+          <div className="absolute top-16 left-4 right-4 sm:left-auto sm:right-4 sm:w-80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-300"
+            style={{
+              backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+              border: '1px solid rgba(122, 119, 113, 0.2)' /* SAGE */
+            }}
+          >
             <div className="p-6">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
-                  <Palette className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: '#873F31' /* PIPE */ }}
+                >
+                  <Palette className="w-5 h-5" style={{ color: '#F9F8F3' /* FROSTY WHITE */ }} />
                 </div>
                 <div>
-                  <h2 className="font-display font-semibold text-gray-900">
+                  <h2 
+                    className="font-display font-semibold"
+                    style={{ 
+                      fontFamily: "'Cormorant Garamond', serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}
+                  >
                     Navigation
                   </h2>
-                  <p className="text-xs text-gray-600 font-body">
+                  <p 
+                    className="text-xs font-body"
+                    style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#717871' /* SAGE */
+                    }}
+                  >
                     Explorez mon univers artistique
                   </p>
                 </div>
@@ -266,16 +357,44 @@ const ArtisticNavbar: React.FC = () => {
                         e.stopPropagation();
                         handleNavClick(item.href);
                       }}
-                      className={`w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 touch-manipulation luxury-magnetic-hover ${
-                        isActiveItem
-                          ? 'luxury-btn-primary text-white shadow-xl'
-                          : 'luxury-btn-secondary hover:luxury-btn-primary hover:text-white'
-                      }`}
-                      style={{ touchAction: 'manipulation' }}
+                      className="w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 touch-manipulation hover:shadow-lg"
+                      style={{ 
+                        touchAction: 'manipulation',
+                        fontFamily: "'Proza Libre', sans-serif",
+                        ...(isActiveItem ? {
+                          backgroundColor: '#873F31' /* PIPE */,
+                          color: '#F9F8F3' /* FROSTY WHITE */,
+                          borderColor: '#873F31',
+                          borderWidth: '1px',
+                          boxShadow: '0 4px 12px rgba(135, 63, 49, 0.3)'
+                        } : {
+                          backgroundColor: 'transparent',
+                          color: '#4B4A46' /* CHARCOAL TAUPE */,
+                          borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */,
+                          borderWidth: '1px'
+                        })
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActiveItem) {
+                          e.currentTarget.style.backgroundColor = 'rgba(135, 63, 49, 0.1)';
+                          e.currentTarget.style.color = '#873F31';
+                          e.currentTarget.style.borderColor = 'rgba(135, 63, 49, 0.4)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActiveItem) {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = '#4B4A46';
+                          e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.2)';
+                        }
+                      }}
                     >
-                      <IconComponent className={`w-5 h-5 mr-3 ${
-                        isActiveItem ? 'text-gray-800' : 'text-current'
-                      }`} />
+                      <IconComponent 
+                        className="w-5 h-5 mr-3" 
+                        style={{ 
+                          color: isActiveItem ? '#F9F8F3' : '#873F31' /* PIPE */
+                        }} 
+                      />
                       <span className="font-body font-medium">{item.label}</span>
                     </Button>
                   );
@@ -294,7 +413,25 @@ const ArtisticNavbar: React.FC = () => {
                       setShowLoginForm(true);
                       setIsMenuOpen(false);
                     }}
-                    className="w-full justify-start bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200 hover:from-yellow-100 hover:to-orange-100 hover:border-yellow-300 text-yellow-700 hover:text-orange-800 transition-all duration-300 rounded-lg px-4 py-3 font-medium"
+                    className="w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 font-medium hover:shadow-lg"
+                    style={{
+                      fontFamily: "'Proza Libre', sans-serif",
+                      backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+                      color: '#873F31' /* PIPE */,
+                      borderColor: 'rgba(135, 63, 49, 0.3)' /* PIPE */
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#873F31';
+                      e.currentTarget.style.color = '#F9F8F3';
+                      e.currentTarget.style.borderColor = '#873F31';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(135, 63, 49, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#F9F8F3';
+                      e.currentTarget.style.color = '#873F31';
+                      e.currentTarget.style.borderColor = 'rgba(135, 63, 49, 0.3)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
                   >
                     <LogIn className="w-5 h-5 mr-3" />
                     <span className="font-body font-medium">Connexion</span>
@@ -310,15 +447,42 @@ const ArtisticNavbar: React.FC = () => {
                       }
                       setIsMenuOpen(false);
                     }}
-                    className={`w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 font-medium ${
-                      isAdmin 
-                        ? "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 hover:border-blue-300 text-blue-700 hover:text-indigo-800"
-                        : "bg-gradient-to-r from-orange-50 to-red-50 border-orange-200 hover:from-orange-100 hover:to-red-100 hover:border-orange-300 text-orange-700 hover:text-red-800"
-                    }`}
+                    className="w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 font-medium hover:shadow-lg"
+                    style={{
+                      fontFamily: "'Proza Libre', sans-serif",
+                      ...(isAdmin ? {
+                        backgroundColor: '#873F31' /* PIPE */,
+                        color: '#F9F8F3' /* FROSTY WHITE */,
+                        borderColor: '#873F31' /* PIPE */,
+                        borderWidth: '1px'
+                      } : {
+                        backgroundColor: 'transparent',
+                        color: '#717871' /* SAGE */,
+                        borderColor: 'rgba(122, 119, 113, 0.3)' /* SAGE */
+                      })
+                    }}
+                    onMouseEnter={(e) => {
+                      if (isAdmin) {
+                        e.currentTarget.style.backgroundColor = '#9B4F3F';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(135, 63, 49, 0.3)';
+                      } else {
+                        e.currentTarget.style.backgroundColor = 'rgba(122, 119, 113, 0.1)';
+                        e.currentTarget.style.color = '#873F31';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (isAdmin) {
+                        e.currentTarget.style.backgroundColor = '#873F31';
+                        e.currentTarget.style.boxShadow = 'none';
+                      } else {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = '#717871';
+                      }
+                    }}
                   >
                     {isAdmin ? (
                       <>
-                        <Settings className="w-5 h-5 mr-3" />
+                        <Settings className="w-5 h-5 mr-3" style={{ color: '#F9F8F3' }} />
                         <span className="font-body font-medium">Dashboard Admin</span>
                       </>
                     ) : (
@@ -333,9 +497,18 @@ const ArtisticNavbar: React.FC = () => {
               </nav>
 
               {/* Mobile Menu Footer */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
+              <div 
+                className="mt-6 pt-6"
+                style={{ borderTop: '1px solid rgba(122, 119, 113, 0.2)' /* SAGE */ }}
+              >
                 <div className="text-center">
-                  <p className="text-xs text-gray-500 font-body mb-3">
+                  <p 
+                    className="text-xs font-body mb-3"
+                    style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#717871' /* SAGE */
+                    }}
+                  >
                     Suivez mon travail artistique
                   </p>
                 </div>

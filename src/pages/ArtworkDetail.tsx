@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Share2, Eye, ShoppingCart, MessageCircle, Flag, Palette, Calendar, Tag, Star, Phone, Mail, Euro, Home } from 'lucide-react';
+import { ArrowLeft, Share2, Eye, ShoppingCart, MessageCircle, Flag, Palette, Calendar, Tag, Star, Phone, Mail, Euro, Home, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -111,10 +111,20 @@ const ArtworkDetail: React.FC = () => {
   // Show loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen watercolor-bg canvas-texture flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F9F8F3' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600 mx-auto mb-4"></div>
-          <p className="text-lg text-slate-600">Chargement de l'œuvre...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ 
+            borderTopColor: '#873F31',
+            borderRightColor: 'transparent',
+            borderBottomColor: 'transparent',
+            borderLeftColor: 'transparent'
+          }}></div>
+          <p className="text-lg" style={{ 
+            fontFamily: "'Proza Libre', sans-serif",
+            color: '#717871' /* SAGE */
+          }}>
+            Chargement de l'œuvre...
+          </p>
         </div>
       </div>
     );
@@ -123,10 +133,23 @@ const ArtworkDetail: React.FC = () => {
   // Show error if artwork not found
   if (!artwork) {
     return (
-      <div className="min-h-screen watercolor-bg canvas-texture flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F9F8F3' }}>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-800 mb-4">Œuvre non trouvée</h1>
-          <Button onClick={() => navigate('/')} className="hover-painterly-lift">
+          <h1 className="text-2xl font-medium mb-4" style={{ 
+            fontFamily: "'Cormorant Garamond', serif",
+            color: '#4B4A46' /* CHARCOAL TAUPE */
+          }}>
+            Œuvre non trouvée
+          </h1>
+          <Button 
+            onClick={() => navigate('/')} 
+            className="transition-all duration-300 hover:shadow-xl"
+            style={{
+              backgroundColor: '#873F31',
+              color: '#F9F8F3',
+              fontFamily: "'Proza Libre', sans-serif"
+            }}
+          >
             Retour à la galerie
           </Button>
         </div>
@@ -228,62 +251,93 @@ const ArtworkDetail: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen luxury-detail-container">
-      {/* Header */}
-      <div className="luxury-nav backdrop-blur-md shadow-lg" style={{ borderBottom: '1px solid rgba(224, 168, 93, 0.2)' }}>
-        <div className="luxury-container py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Badge 
-                className="painterly-card" 
-                style={{
-                  backgroundColor: 'rgba(251, 191, 36, 0.1)', 
-                  color: 'hsl(38, 95%, 60%)',
-                  borderColor: 'rgba(251, 191, 36, 0.3)'
-                }}
-              >
-                <Eye className="w-4 h-4 mr-1" />
-                {artwork.views.toLocaleString()} vues
-              </Badge>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Floating Retour Button - Mobile Optimized */}
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('🎨 Retour button clicked - Navigating back...');
-          handleBack();
-        }}
-        className="fixed top-20 sm:top-24 left-4 sm:left-6 z-50 group flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full backdrop-blur-md bg-white/20 border-2 border-amber-300/80 shadow-lg hover:shadow-xl hover:shadow-amber-300/50 transition-all duration-300 hover:scale-110 active:scale-95"
-        type="button"
-        style={{ pointerEvents: 'auto' }}
-      >
-        <ArrowLeft className="w-7 h-7 sm:w-8 sm:h-8 text-amber-800" />
-      </button>
-
+    <div className="min-h-screen" style={{ backgroundColor: '#F9F8F3' }}> {/* FROSTY WHITE */}
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="grid lg:grid-cols-[55%_45%] gap-6 lg:gap-8">
           
-          {/* Left Side - Artwork Image - Larger Size */}
-          <div className="space-y-4 sm:space-y-6">
-            {/* Main Image - Larger Size */}
-            <div className="relative">
-              <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-200 relative">
-                <img
-                  src={multipleViews[currentImageIndex]?.url || artwork.image_url}
-                  alt={artwork.title}
-                  className="w-full h-auto object-contain"
-                  style={{ maxHeight: '85vh' }}
-                />
+          {/* Left Side - Artwork Image with Luxury Frame */}
+          <div className="space-y-4 sm:space-y-6 self-start">
+            {/* Main Image with Luxury Gallery Frame */}
+            <div className="relative group">
+              {/* Outer Frame - Gallery Style with Elegant Double Border */}
+              <div 
+                className="rounded-lg overflow-visible shadow-xl relative transition-all duration-500 hover:shadow-2xl p-1.5 sm:p-2 lg:p-2.5"
+                style={{ 
+                  backgroundColor: '#F9F8F3', /* FROSTY WHITE outer frame */
+                  border: '1.5px solid rgba(122, 119, 113, 0.25)', /* SAGE outer border - reduced from 2px */
+                  boxShadow: '0 12px 40px rgba(67, 76, 70, 0.15), 0 6px 20px rgba(122, 119, 113, 0.1)' /* Elegant layered shadows */
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 16px 48px rgba(67, 76, 70, 0.2), 0 8px 24px rgba(122, 119, 113, 0.15)';
+                  e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.35)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(67, 76, 70, 0.15), 0 6px 20px rgba(122, 119, 113, 0.1)';
+                  e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.25)';
+                }}
+              >
+                {/* Middle Frame Layer - SAGE accent */}
+                <div 
+                  className="relative rounded-sm p-1 sm:p-1.5 lg:p-2"
+                  style={{
+                    backgroundColor: '#F9F8F3', /* FROSTY WHITE */
+                    border: '1px solid rgba(122, 119, 113, 0.2)', /* SAGE accent */
+                    boxShadow: 'inset 0 0 0 0.5px rgba(122, 119, 113, 0.1)'
+                  }}
+                >
+                  {/* Inner Matting - Double Border Effect */}
+                  <div 
+                    className="relative rounded-sm overflow-hidden p-1 sm:p-1.5 lg:p-2"
+                    style={{
+                      backgroundColor: '#EBE2D1', /* PEACH CREAM matting */
+                      border: '1px solid rgba(122, 119, 113, 0.15)', /* SAGE inner border */
+                      boxShadow: 'inset 0 0 0 1px rgba(249, 248, 243, 0.5)' /* Inner highlight */
+                    }}
+                  >
+                    {/* Artwork Image Container */}
+                    <div 
+                      className="relative w-full rounded-sm overflow-hidden transition-transform duration-700 group-hover:scale-[1.01]"
+                      style={{
+                        backgroundColor: 'transparent', /* Transparent - no white background */
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        lineHeight: 0 /* Remove line-height spacing */
+                      }}
+                    >
+                      <img
+                        src={multipleViews[currentImageIndex]?.url || artwork.image_url}
+                        alt={artwork.title}
+                        className="w-full h-auto object-contain transition-opacity duration-500"
+                        style={{ 
+                          maxHeight: '85vh',
+                          maxWidth: '100%',
+                          display: 'block',
+                          verticalAlign: 'bottom' /* Remove bottom spacing */
+                        }}
+                      />
+                    </div>
 
-                {/* High Resolution Badge */}
-                <Badge className="absolute top-2 left-2 sm:top-4 sm:left-4" style={{backgroundColor: 'rgba(248, 248, 248, 0.9)', color: '#7A6B5A', zIndex: 10}}>
-                  Haute Résolution
-                </Badge>
+                    {/* High Resolution Badge - Positioned on image */}
+                    <Badge 
+                      className="absolute top-1 right-1 sm:top-2 sm:right-2 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded border" 
+                      style={{
+                        backgroundColor: 'rgba(67, 76, 70, 0.92)', 
+                        color: '#F9F8F3',
+                        borderColor: 'rgba(122, 119, 113, 0.4)',
+                        fontFamily: "'Proza Libre', sans-serif",
+                        fontSize: '0.65rem',
+                        fontWeight: 500,
+                        letterSpacing: '0.05em',
+                        zIndex: 10,
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                        backdropFilter: 'blur(4px)'
+                      }}
+                    >
+                      Haute Résolution
+                    </Badge>
+                  </div>
+                </div>
               </div>
 
               {/* Thumbnail Navigation - Larger */}
@@ -295,10 +349,14 @@ const ArtworkDetail: React.FC = () => {
                       onClick={() => setCurrentImageIndex(index)}
                       className={`border-2 rounded-lg overflow-hidden transition-all flex-shrink-0 ${
                         currentImageIndex === index 
-                          ? 'border-amber-500 ring-2 ring-amber-500 ring-offset-2' 
-                          : 'border-gray-300 hover:border-amber-300'
+                          ? 'ring-2 ring-offset-2 ring-[#873F31]' 
+                          : ''
                       }`}
-                      style={{ width: '80px', height: '80px' }}
+                      style={{ 
+                        width: '80px', 
+                        height: '80px',
+                        borderColor: currentImageIndex === index ? '#873F31' : 'rgba(122, 119, 113, 0.3)'
+                      }}
                     >
                       <img
                         src={view.url}
@@ -316,20 +374,37 @@ const ArtworkDetail: React.FC = () => {
           <div className="space-y-6 sm:space-y-8">
             
             {/* Title and Artist - Responsive */}
-            <div className="luxury-fade-in">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">
+            <div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-3 sm:mb-4" style={{ 
+                fontFamily: "'Cormorant Garamond', serif",
+                color: '#4B4A46' /* CHARCOAL TAUPE */
+              }}>
                 {artwork.title}
               </h1>
-              <p className="text-base sm:text-lg lg:text-xl text-gray-600 font-body">
-                par <span className="font-semibold text-amber-600">{artwork.artist_name || 'Omhind'}</span>
+              <p className="text-base sm:text-lg lg:text-xl" style={{ 
+                fontFamily: "'Proza Libre', sans-serif",
+                color: '#717871' /* SAGE */
+              }}>
+                par <span className="font-medium" style={{ color: '#873F31' }}>{artwork.artist_name || 'Omhind'}</span>
               </p>
             </div>
 
             {/* 1. Description - First */}
-            <Card className="luxury-description-card">
+            <Card className="p-4 sm:p-6 rounded-lg border shadow-sm" style={{ 
+              backgroundColor: '#F9F8F3',
+              borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+            }}>
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">Description</h3>
-                <p className="text-gray-600 font-body leading-relaxed">
+                <h3 className="text-base sm:text-lg font-medium mb-3 uppercase tracking-wider" style={{ 
+                  fontFamily: "'Proza Libre', sans-serif",
+                  color: '#717871' /* SAGE */
+                }}>
+                  Description
+                </h3>
+                <p className="leading-relaxed" style={{ 
+                  fontFamily: "'Proza Libre', sans-serif",
+                  color: '#4B4A46' /* CHARCOAL TAUPE */
+                }}>
                   {artwork.description}
                 </p>
               </div>
@@ -338,53 +413,105 @@ const ArtworkDetail: React.FC = () => {
             {/* 2-5. Artwork Details Grid - Responsive */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {/* 2. Technique */}
-              <Card className="luxury-detail-card">
+              <Card className="p-4 rounded-lg border shadow-sm" style={{ 
+                backgroundColor: '#F9F8F3',
+                borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+              }}>
                 <div className="flex items-center gap-3">
-                  <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
-                    <Palette className="w-6 h-6 text-amber-700" />
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(122, 119, 113, 0.08)' }}>
+                    <Palette className="w-6 h-6" style={{ color: '#873F31' }} />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 font-body uppercase tracking-wider mb-1">Technique</p>
-                    <p className="font-semibold text-gray-800">{artwork.technique || artwork.medium || 'Non spécifié'}</p>
+                    <p className="text-xs uppercase tracking-wider mb-1" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#717871' /* SAGE */
+                    }}>
+                      Technique
+                    </p>
+                    <p className="font-medium" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}>
+                      {artwork.technique || artwork.medium || 'Non spécifié'}
+                    </p>
                   </div>
                 </div>
               </Card>
 
               {/* 3. Dimensions */}
-              <Card className="luxury-detail-card">
+              <Card className="p-4 rounded-lg border shadow-sm" style={{ 
+                backgroundColor: '#F9F8F3',
+                borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+              }}>
                 <div className="flex items-center gap-3">
-                  <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
-                    <Tag className="w-6 h-6 text-amber-700" />
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(122, 119, 113, 0.08)' }}>
+                    <Tag className="w-6 h-6" style={{ color: '#873F31' }} />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 font-body uppercase tracking-wider mb-1">Dimensions</p>
-                    <p className="font-semibold text-gray-800">{artwork.dimensions || artwork.size || 'Non spécifié'}</p>
+                    <p className="text-xs uppercase tracking-wider mb-1" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#717871' /* SAGE */
+                    }}>
+                      Dimensions
+                    </p>
+                    <p className="font-medium" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}>
+                      {artwork.dimensions || artwork.size || 'Non spécifié'}
+                    </p>
                   </div>
                 </div>
               </Card>
 
               {/* 4. Année */}
-              <Card className="luxury-detail-card">
+              <Card className="p-4 rounded-lg border shadow-sm" style={{ 
+                backgroundColor: '#F9F8F3',
+                borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+              }}>
                 <div className="flex items-center gap-3">
-                  <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
-                    <Calendar className="w-6 h-6 text-amber-700" />
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(122, 119, 113, 0.08)' }}>
+                    <Calendar className="w-6 h-6" style={{ color: '#873F31' }} />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 font-body uppercase tracking-wider mb-1">Année</p>
-                    <p className="font-semibold text-gray-800">{artwork.year}</p>
+                    <p className="text-xs uppercase tracking-wider mb-1" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#717871' /* SAGE */
+                    }}>
+                      Année
+                    </p>
+                    <p className="font-medium" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}>
+                      {artwork.year}
+                    </p>
                   </div>
                 </div>
               </Card>
 
               {/* 5. Référence */}
-              <Card className="luxury-detail-card">
+              <Card className="p-4 rounded-lg border shadow-sm" style={{ 
+                backgroundColor: '#F9F8F3',
+                borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+              }}>
                 <div className="flex items-center gap-3">
-                  <div className="luxury-icon-bg w-12 h-12 rounded-full flex items-center justify-center">
-                    <Tag className="w-6 h-6 text-amber-700" />
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(122, 119, 113, 0.08)' }}>
+                    <Tag className="w-6 h-6" style={{ color: '#873F31' }} />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 font-body uppercase tracking-wider mb-1">Référence</p>
-                    <p className="font-semibold text-gray-800">{artwork.reference || 'Non spécifié'}</p>
+                    <p className="text-xs uppercase tracking-wider mb-1" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#717871' /* SAGE */
+                    }}>
+                      Référence
+                    </p>
+                    <p className="font-medium" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}>
+                      {artwork.reference || 'Non spécifié'}
+                    </p>
                   </div>
                 </div>
               </Card>
@@ -392,12 +519,23 @@ const ArtworkDetail: React.FC = () => {
 
             {/* Story Behind the Piece */}
             {artwork.story && (
-              <Card className="comfort-card p-6">
+              <Card className="p-6 rounded-lg border shadow-sm" style={{ 
+                backgroundColor: '#F9F8F3',
+                borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+              }}>
                 <div className="flex items-start gap-4">
-                  <div className="w-1 h-20 rounded-full" style={{backgroundColor: '#7A6B5A'}}></div>
+                  <div className="w-1 h-20 rounded-full" style={{backgroundColor: '#873F31'}}></div>
                   <div>
-                    <h3 className="text-lg font-semibold comfort-text mb-3">Histoire de cette œuvre</h3>
-                    <p className="comfort-text-muted font-body leading-relaxed italic">
+                    <h3 className="text-lg font-medium mb-3" style={{ 
+                      fontFamily: "'Cormorant Garamond', serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}>
+                      Histoire de cette œuvre
+                    </h3>
+                    <p className="leading-relaxed italic" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#717871' /* SAGE */
+                    }}>
                       {artwork.story}
                     </p>
                   </div>
@@ -408,10 +546,20 @@ const ArtworkDetail: React.FC = () => {
             {/* Tags */}
             {artwork.tags && artwork.tags.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold comfort-text mb-3">Tags</h3>
+                <h3 className="text-lg font-medium mb-3" style={{ 
+                  fontFamily: "'Proza Libre', sans-serif",
+                  color: '#717871' /* SAGE */
+                }}>
+                  Tags
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {artwork.tags.map((tag, index) => (
-                    <Badge key={index} variant="secondary" className="comfort-card">
+                    <Badge key={index} variant="secondary" className="px-3 py-1 rounded-lg border" style={{
+                      backgroundColor: 'rgba(122, 119, 113, 0.08)',
+                      color: '#717871',
+                      borderColor: 'rgba(122, 119, 113, 0.3)',
+                      fontFamily: "'Proza Libre', sans-serif"
+                    }}>
                       {tag}
                     </Badge>
                   ))}
@@ -420,13 +568,21 @@ const ArtworkDetail: React.FC = () => {
             )}
 
             {/* Contact Information */}
-            <Card className="luxury-contact-card">
+            <Card className="p-6 rounded-lg border shadow-sm" style={{ 
+              backgroundColor: '#F9F8F3',
+              borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+            }}>
               <div className="text-center space-y-4">
                 {/* Availability Status */}
                 <Badge 
-                  className={`luxury-badge ${
-                    artwork.available ? 'available' : ''
-                  }`}
+                  className="px-4 py-2 rounded-lg border"
+                  style={{
+                    backgroundColor: artwork.available ? 'rgba(34, 197, 94, 0.1)' : 'rgba(107, 114, 128, 0.1)',
+                    color: artwork.available ? '#22c55e' : '#717871',
+                    borderColor: artwork.available ? '#22c55e' : 'rgba(122, 119, 113, 0.3)',
+                    fontFamily: "'Proza Libre', sans-serif",
+                    fontWeight: 600
+                  }}
                 >
                   {artwork.available ? 'Disponible' : 'Vendu'}
                 </Badge>
@@ -434,31 +590,45 @@ const ArtworkDetail: React.FC = () => {
                 {/* Contact Information Display */}
                 <div className="space-y-3 py-4">
                   <div className="flex items-center justify-center space-x-2">
-                    <Phone className="w-5 h-5" style={{ color: 'hsl(38, 95%, 60%)' }} />
-                    <span className="font-semibold comfort-text">WhatsApp: +212 666 67 27 56</span>
+                    <Phone className="w-5 h-5" style={{ color: '#873F31' }} />
+                    <span className="font-medium" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}>
+                      WhatsApp: +212 666 67 27 56
+                    </span>
                   </div>
                   <div className="flex items-center justify-center space-x-2">
-                    <Mail className="w-5 h-5" style={{ color: 'hsl(38, 95%, 60%)' }} />
-                    <span className="font-semibold comfort-text">Email: omhind53@gmail.com</span>
+                    <Mail className="w-5 h-5" style={{ color: '#873F31' }} />
+                    <span className="font-medium" style={{ 
+                      fontFamily: "'Proza Libre', sans-serif",
+                      color: '#4B4A46' /* CHARCOAL TAUPE */
+                    }}>
+                      Email: omhind53@gmail.com
+                    </span>
                   </div>
                 </div>
 
                 {/* Art Value Display */}
-                <div className="flex items-center space-x-2 py-4 border-t border-gray-200">
-                  <Palette className="w-6 h-6" style={{ color: 'hsl(38, 95%, 60%)' }} />
-                  <span className="text-lg font-semibold text-gradient font-display">
+                <div className="flex items-center justify-center space-x-2 py-4 border-t" style={{ borderColor: 'rgba(122, 119, 113, 0.2)' }}>
+                  <Palette className="w-6 h-6" style={{ color: '#873F31' }} />
+                  <span className="text-lg font-medium" style={{ 
+                    fontFamily: "'Cormorant Garamond', serif",
+                    color: '#4B4A46' /* CHARCOAL TAUPE */
+                  }}>
                     Valeur Artistique Inestimable
                   </span>
                 </div>
 
                 {/* Direct Contact Buttons */}
                 <div className="space-y-3 pt-4">
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <Button 
-                      className="flex-1 hover-painterly-lift"
+                      className="flex-1 transition-all duration-300 hover:shadow-xl"
                       style={{
-                        background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
-                        color: 'white'
+                        backgroundColor: '#25D366',
+                        color: '#F9F8F3',
+                        fontFamily: "'Proza Libre', sans-serif"
                       }}
                       onClick={handleWhatsAppContact}
                     >
@@ -466,10 +636,11 @@ const ArtworkDetail: React.FC = () => {
                       WhatsApp
                     </Button>
                     <Button 
-                      className="flex-1 hover-painterly-lift"
+                      className="flex-1 transition-all duration-300 hover:shadow-xl"
                       style={{
-                        background: 'linear-gradient(135deg, hsl(38, 95%, 60%) 0%, hsl(38, 95%, 55%) 100%)',
-                        color: 'hsl(45, 100%, 97%)'
+                        backgroundColor: '#873F31', /* PIPE */
+                        color: '#F9F8F3',
+                        fontFamily: "'Proza Libre', sans-serif"
                       }}
                       onClick={handleEmailContact}
                     >
@@ -481,10 +652,12 @@ const ArtworkDetail: React.FC = () => {
                   <div className="flex gap-3">
                     <Button 
                       variant="outline" 
-                      className="hover-ink-flow painterly-card"
+                      className="w-full transition-all duration-300"
                       style={{ 
-                        borderColor: 'hsl(330, 20%, 88%)',
-                        color: 'hsl(240, 10%, 15%)'
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        color: '#717871',
+                        backgroundColor: 'transparent',
+                        fontFamily: "'Proza Libre', sans-serif"
                       }}
                       onClick={() => setShowRoomPreview(true)}
                     >
@@ -495,11 +668,20 @@ const ArtworkDetail: React.FC = () => {
                 </div>
 
                 {/* Acquisition Information */}
-                <div className="mt-4 p-4 painterly-card rounded-lg">
-                  <h4 className="font-semibold mb-2 font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                <div className="mt-4 p-4 rounded-lg border" style={{ 
+                  backgroundColor: 'rgba(122, 119, 113, 0.04)',
+                  borderColor: 'rgba(122, 119, 113, 0.2)'
+                }}>
+                  <h4 className="font-medium mb-2" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#4B4A46' /* CHARCOAL TAUPE */
+                  }}>
                     Modalités d'Acquisition
                   </h4>
-                  <ul className="text-sm space-y-1 font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
+                  <ul className="text-sm space-y-1" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#717871' /* SAGE */
+                  }}>
                     <li>• Valeur artistique à discuter en privé</li>
                     <li>• Paiement en espèces uniquement</li>
                     <li>• Certificat d'authenticité inclus</li>
@@ -510,12 +692,20 @@ const ArtworkDetail: React.FC = () => {
             </Card>
 
             {/* Rating Section */}
-            <Card className="comfort-card p-6">
+            <Card className="p-6 rounded-lg border shadow-sm" style={{ 
+              backgroundColor: '#F9F8F3',
+              borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */
+            }}>
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold comfort-text">Évaluation</h3>
+                <h3 className="text-lg font-medium" style={{ 
+                  fontFamily: "'Cormorant Garamond', serif",
+                  color: '#4B4A46' /* CHARCOAL TAUPE */
+                }}>
+                  Évaluation
+                </h3>
                 
                 {/* Current Rating Display */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="flex items-center gap-3">
                     <StarRating
                       rating={getAverageRating(artwork.id) || 4.5}
@@ -524,14 +714,22 @@ const ArtworkDetail: React.FC = () => {
                       count={getRatingCount(artwork.id) || 0}
                     />
                   </div>
-                  <span className="text-sm comfort-text-muted">
+                  <span className="text-sm" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#717871' /* SAGE */
+                  }}>
                     Votre note: {getUserRating(artwork.id) > 0 ? getUserRating(artwork.id) : 'Non noté'}
                   </span>
                 </div>
 
                 {/* Interactive Rating */}
-                <div className="pt-4 border-t border-charcoal-200">
-                  <p className="text-sm comfort-text-muted mb-3">Donnez votre avis :</p>
+                <div className="pt-4 border-t" style={{ borderColor: 'rgba(122, 119, 113, 0.2)' }}>
+                  <p className="text-sm mb-3" style={{ 
+                    fontFamily: "'Proza Libre', sans-serif",
+                    color: '#717871' /* SAGE */
+                  }}>
+                    Donnez votre avis :
+                  </p>
                   <StarRating
                     rating={getUserRating(artwork.id)}
                     interactive={true}
@@ -539,7 +737,7 @@ const ArtworkDetail: React.FC = () => {
                     size="lg"
                   />
                   {getUserRating(artwork.id) > 0 && (
-                    <p className="text-xs text-green-600 mt-2">
+                    <p className="text-xs mt-2" style={{ color: '#22c55e' }}>
                       ✓ Merci pour votre évaluation !
                     </p>
                   )}

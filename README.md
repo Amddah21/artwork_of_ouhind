@@ -1,4 +1,4 @@
-# 🎨 ArtSpark Studio Canvas
+# 🎨 ArtSpark Omhind-art
 
 A modern, full-stack art gallery application built with React, TypeScript, and Supabase.
 

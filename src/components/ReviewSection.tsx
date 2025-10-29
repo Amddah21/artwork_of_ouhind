@@ -99,43 +99,71 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
   const sortedReviews = getSortedReviews();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Rating Overview */}
-      <Card className="bg-white/90 backdrop-blur-sm border-white/20 shadow-xl">
-        <CardHeader className="bg-gradient-to-r from-slate-50 to-yellow-50 rounded-t-lg">
-          <CardTitle className="text-slate-800 flex items-center gap-2">
-            <Star className="h-5 w-5 text-yellow-600" />
+      <Card className="rounded-lg border shadow-lg" style={{
+        backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+        borderColor: 'rgba(122, 119, 113, 0.15)' /* SAGE */
+      }}>
+        <CardHeader className="rounded-t-lg" style={{
+          background: 'linear-gradient(135deg, rgba(135, 63, 49, 0.05) 0%, rgba(135, 63, 49, 0.02) 100%)',
+          borderBottom: '1px solid rgba(122, 119, 113, 0.1)'
+        }}>
+          <CardTitle className="text-lg sm:text-xl font-bold flex items-center gap-2" style={{
+            color: '#433D38' /* CHARCOAL TAUPE */,
+            fontFamily: "'Cormorant Garamond', serif"
+          }}>
+            <Star className="h-5 w-5" style={{ color: '#873F31' /* PIPE */ }} />
             Évaluations et Avis
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CardContent className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Average Rating */}
-            <div className="flex flex-col items-center justify-center p-6 bg-muted rounded-lg">
-              <div className="text-5xl font-bold mb-2">
+            <div className="flex flex-col items-center justify-center p-4 sm:p-6 rounded-lg" style={{
+              backgroundColor: '#EBE2D1' /* PEACH CREAM */
+            }}>
+              <div className="text-4xl sm:text-5xl font-bold mb-2" style={{
+                color: '#433D38' /* CHARCOAL TAUPE */,
+                fontFamily: "'Cormorant Garamond', serif"
+              }}>
                 {ratingData.average > 0 ? ratingData.average.toFixed(1) : '0.0'}
               </div>
               <RatingDisplay rating={ratingData.average} size="lg" />
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-xs sm:text-sm mt-2" style={{
+                color: '#717871' /* SAGE */,
+                fontFamily: "'Proza Libre', sans-serif"
+              }}>
                 {ratingData.count} {ratingData.count === 1 ? 'avis' : 'avis'}
               </p>
             </div>
 
             {/* Rating Distribution */}
-            <div className="space-y-2">
+            <div className="space-y-2 sm:space-y-2.5">
               {[5, 4, 3, 2, 1].map((stars) => {
                 const count = ratingData.distribution[stars - 1];
                 const percentage = ratingData.count > 0 ? (count / ratingData.count) * 100 : 0;
                 return (
                   <div key={stars} className="flex items-center gap-2">
-                    <span className="text-sm w-8">{stars} ★</span>
-                    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                    <span className="text-xs sm:text-sm w-6 sm:w-8" style={{
+                      color: '#433D38' /* CHARCOAL TAUPE */,
+                      fontFamily: "'Proza Libre', sans-serif"
+                    }}>{stars} ★</span>
+                    <div className="flex-1 h-2 rounded-full overflow-hidden" style={{
+                      backgroundColor: '#EBE2D1' /* PEACH CREAM */
+                    }}>
                       <div
-                        className="h-full bg-yellow-400 transition-all"
-                        style={{ width: `${percentage}%` }}
+                        className="h-full transition-all"
+                        style={{ 
+                          width: `${percentage}%`,
+                          backgroundColor: '#873F31' /* PIPE */
+                        }}
                       />
                     </div>
-                    <span className="text-sm text-muted-foreground w-12 text-right">
+                    <span className="text-xs sm:text-sm w-10 sm:w-12 text-right" style={{
+                      color: '#717871' /* SAGE */,
+                      fontFamily: "'Proza Libre', sans-serif"
+                    }}>
                       {count}
                     </span>
                   </div>
@@ -148,13 +176,20 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
 
       {/* Write Review Button */}
       {!showForm && (
-        <div className="flex justify-center">
+        <div className="flex justify-center px-4">
           <Button
             onClick={() => setShowForm(true)}
-            className="w-full md:w-auto bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+            className="w-full sm:w-auto rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg px-6 sm:px-8 py-6 sm:py-7"
+            style={{
+              backgroundColor: '#873F31' /* PIPE */,
+              color: '#F9F8F3' /* FROSTY WHITE */,
+              border: 'none',
+              fontFamily: "'Proza Libre', sans-serif",
+              fontWeight: 600
+            }}
             size="lg"
           >
-            <MessageCircle className="h-5 w-5 mr-2" />
+            <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 mr-2" />
             Écrire un avis
           </Button>
         </div>
@@ -162,28 +197,49 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
 
       {/* Review Form */}
       {showForm && (
-        <Card className="bg-white/90 backdrop-blur-sm border-white/20 shadow-xl">
-          <CardHeader className="bg-gradient-to-r from-slate-50 to-yellow-50 rounded-t-lg">
-            <CardTitle className="text-slate-800 flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-yellow-600" />
+        <Card className="rounded-lg border shadow-xl" style={{
+          backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+          borderColor: 'rgba(122, 119, 113, 0.15)' /* SAGE */
+        }}>
+          <CardHeader className="rounded-t-lg" style={{
+            background: 'linear-gradient(135deg, rgba(135, 63, 49, 0.05) 0%, rgba(135, 63, 49, 0.02) 100%)',
+            borderBottom: '1px solid rgba(122, 119, 113, 0.1)'
+          }}>
+            <CardTitle className="text-base sm:text-lg font-bold flex items-center gap-2" style={{
+              color: '#433D38' /* CHARCOAL TAUPE */,
+              fontFamily: "'Cormorant Garamond', serif"
+            }}>
+              <MessageCircle className="h-5 w-5" style={{ color: '#873F31' /* PIPE */ }} />
               Votre avis sur "{artworkTitle}"
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
-            <form onSubmit={handleSubmitReview} className="space-y-4">
+          <CardContent className="p-4 sm:p-6">
+            <form onSubmit={handleSubmitReview} className="space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="userName">Nom *</Label>
+                  <Label htmlFor="userName" className="text-sm sm:text-base mb-1.5" style={{
+                    color: '#433D38' /* CHARCOAL TAUPE */,
+                    fontFamily: "'Proza Libre', sans-serif"
+                  }}>Nom *</Label>
                   <Input
                     id="userName"
                     value={formData.userName}
                     onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
                     required
                     placeholder="Votre nom complet"
+                    className="text-sm sm:text-base"
+                    style={{
+                      backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+                      borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */,
+                      fontFamily: "'Proza Libre', sans-serif"
+                    }}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="userEmail">Email *</Label>
+                  <Label htmlFor="userEmail" className="text-sm sm:text-base mb-1.5" style={{
+                    color: '#433D38' /* CHARCOAL TAUPE */,
+                    fontFamily: "'Proza Libre', sans-serif"
+                  }}>Email *</Label>
                   <Input
                     id="userEmail"
                     type="email"
@@ -191,12 +247,21 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
                     onChange={(e) => setFormData({ ...formData, userEmail: e.target.value })}
                     required
                     placeholder="votre@email.com"
+                    className="text-sm sm:text-base"
+                    style={{
+                      backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+                      borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */,
+                      fontFamily: "'Proza Libre', sans-serif"
+                    }}
                   />
                 </div>
               </div>
 
               <div>
-                <Label>Note *</Label>
+                <Label className="text-sm sm:text-base mb-2 block" style={{
+                  color: '#433D38' /* CHARCOAL TAUPE */,
+                  fontFamily: "'Proza Libre', sans-serif"
+                }}>Note *</Label>
                 <div className="mt-2">
                   <RatingDisplay
                     rating={formData.rating}
@@ -208,7 +273,10 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
               </div>
 
               <div>
-                <Label htmlFor="comment">Votre avis *</Label>
+                <Label htmlFor="comment" className="text-sm sm:text-base mb-1.5" style={{
+                  color: '#433D38' /* CHARCOAL TAUPE */,
+                  fontFamily: "'Proza Libre', sans-serif"
+                }}>Votre avis *</Label>
                 <Textarea
                   id="comment"
                   value={formData.comment}
@@ -216,23 +284,42 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
                   placeholder="Partagez votre expérience avec cette œuvre..."
                   rows={5}
                   required
+                  className="text-sm sm:text-base"
+                  style={{
+                    backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+                    borderColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */,
+                    fontFamily: "'Proza Libre', sans-serif"
+                  }}
                 />
               </div>
 
-              <div className="flex gap-3 justify-end">
+              <div className="flex flex-col sm:flex-row gap-3 justify-end">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setShowForm(false)}
                   disabled={isSubmitting}
-                  className="border-slate-300 text-slate-600 hover:bg-slate-50"
+                  className="w-full sm:w-auto"
+                  style={{
+                    borderColor: 'rgba(122, 119, 113, 0.3)' /* SAGE */,
+                    color: '#717871' /* SAGE */,
+                    backgroundColor: 'transparent',
+                    fontFamily: "'Proza Libre', sans-serif"
+                  }}
                 >
                   Annuler
                 </Button>
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="w-full sm:w-auto rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  style={{
+                    backgroundColor: '#873F31' /* PIPE */,
+                    color: '#F9F8F3' /* FROSTY WHITE */,
+                    border: 'none',
+                    fontFamily: "'Proza Libre', sans-serif",
+                    fontWeight: 600
+                  }}
                 >
                   {isSubmitting ? (
                     <>
@@ -254,42 +341,66 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
 
       {/* Reviews List */}
       {reviews.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-4 sm:space-y-6">
           {/* Sort Options */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-sm text-muted-foreground">Trier par:</span>
-            <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 flex-wrap px-4">
+            <span className="text-xs sm:text-sm" style={{
+              color: '#717871' /* SAGE */,
+              fontFamily: "'Proza Libre', sans-serif"
+            }}>Trier par:</span>
+            <div className="flex flex-wrap gap-2">
               {[
                 { value: 'recent', label: 'Plus récents' },
                 { value: 'helpful', label: 'Plus utiles' },
                 { value: 'highest', label: 'Note élevée' },
                 { value: 'lowest', label: 'Note basse' }
-              ].map((option) => (
-                <Button
-                  key={option.value}
-                  variant={sortBy === option.value ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSortBy(option.value as any)}
-                >
-                  {option.label}
-                </Button>
-              ))}
+              ].map((option) => {
+                const isActive = sortBy === option.value;
+                return (
+                  <Button
+                    key={option.value}
+                    variant={isActive ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSortBy(option.value as any)}
+                    className="text-xs sm:text-sm rounded-full px-3 sm:px-4 py-1.5 sm:py-2"
+                    style={{
+                      backgroundColor: isActive ? '#873F31' /* PIPE */ : 'transparent',
+                      color: isActive ? '#F9F8F3' /* FROSTY WHITE */ : '#717871' /* SAGE */,
+                      borderColor: isActive ? '#873F31' /* PIPE */ : 'rgba(122, 119, 113, 0.3)' /* SAGE */,
+                      fontFamily: "'Proza Libre', sans-serif"
+                    }}
+                  >
+                    {option.label}
+                  </Button>
+                );
+              })}
             </div>
           </div>
 
-          <Separator />
+          <Separator style={{ backgroundColor: 'rgba(122, 119, 113, 0.2)' /* SAGE */ }} />
 
           {/* Review Cards */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {sortedReviews.map((review) => (
-              <Card key={review.id}>
-                <CardContent className="pt-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-semibold">{review.user_name}</h4>
+              <Card key={review.id} className="rounded-lg border" style={{
+                backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+                borderColor: 'rgba(122, 119, 113, 0.15)' /* SAGE */
+              }}>
+                <CardContent className="pt-4 sm:pt-6 p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-3 sm:gap-4 mb-3">
+                    <div className="flex-1 w-full">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <h4 className="font-semibold text-sm sm:text-base" style={{
+                          color: '#433D38' /* CHARCOAL TAUPE */,
+                          fontFamily: "'Cormorant Garamond', serif"
+                        }}>{review.user_name}</h4>
                         {review.verified && (
-                          <Badge variant="secondary" className="flex items-center gap-1">
+                          <Badge variant="secondary" className="flex items-center gap-1 text-xs rounded-full px-2 py-0.5" style={{
+                            backgroundColor: '#EBE2D1' /* PEACH CREAM */,
+                            color: '#873F31' /* PIPE */,
+                            borderColor: 'rgba(135, 63, 49, 0.2)',
+                            fontFamily: "'Proza Libre', sans-serif"
+                          }}>
                             <CheckCircle className="w-3 h-3" />
                             Vérifié
                           </Badge>
@@ -297,23 +408,33 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
                       </div>
                       <RatingDisplay rating={review.rating} size="sm" />
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm text-muted-foreground">
+                    <div className="text-left sm:text-right">
+                      <p className="text-xs sm:text-sm" style={{
+                        color: '#717871' /* SAGE */,
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}>
                         {formatDate(review.created_at)}
                       </p>
                     </div>
                   </div>
 
-                  <p className="text-foreground mb-4 leading-relaxed">
+                  <p className="text-sm sm:text-base mb-4 leading-relaxed" style={{
+                    color: '#433D38' /* CHARCOAL TAUPE */,
+                    fontFamily: "'Proza Libre', sans-serif"
+                  }}>
                     {review.comment}
                   </p>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => markHelpful(review.id)}
-                      className="flex items-center gap-1"
+                      className="flex items-center gap-1 text-xs sm:text-sm"
+                      style={{
+                        color: '#717871' /* SAGE */,
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
                     >
                       <ThumbsUp className="w-4 h-4" />
                       Utile ({review.helpful})
@@ -326,7 +447,11 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
                           deleteReview(review.id);
                         }
                       }}
-                      className="flex items-center gap-1 text-destructive hover:text-destructive"
+                      className="flex items-center gap-1 text-xs sm:text-sm"
+                      style={{
+                        color: '#dc2626',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
                     >
                       <Trash2 className="w-4 h-4" />
                       Supprimer
@@ -340,24 +465,42 @@ const ReviewSection = ({ artworkId, artworkTitle }: ReviewSectionProps) => {
       )}
 
       {reviews.length === 0 && !showForm && (
-        <Card className="bg-white/90 backdrop-blur-sm border-white/20 shadow-xl">
-          <CardContent className="py-12 text-center">
-            <div className="flex flex-col items-center gap-4">
-              <div className="p-4 bg-yellow-100 rounded-full">
-                <MessageCircle className="h-8 w-8 text-yellow-600" />
+        <Card className="rounded-lg border shadow-xl" style={{
+          backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+          borderColor: 'rgba(122, 119, 113, 0.15)' /* SAGE */
+        }}>
+          <CardContent className="py-8 sm:py-12 text-center px-4">
+            <div className="flex flex-col items-center gap-4 sm:gap-5">
+              <div className="p-4 sm:p-5 rounded-full" style={{
+                backgroundColor: 'rgba(135, 63, 49, 0.1)' /* PIPE with opacity */
+              }}>
+                <MessageCircle className="h-8 w-8 sm:h-10 sm:w-10" style={{ color: '#873F31' /* PIPE */ }} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2" style={{
+                  color: '#433D38' /* CHARCOAL TAUPE */,
+                  fontFamily: "'Cormorant Garamond', serif"
+                }}>
                   Aucun avis pour le moment
                 </h3>
-                <p className="text-slate-600 mb-4">
+                <p className="text-sm sm:text-base mb-4 sm:mb-6" style={{
+                  color: '#717871' /* SAGE */,
+                  fontFamily: "'Proza Libre', sans-serif"
+                }}>
                   Soyez le premier à donner votre avis sur cette œuvre !
                 </p>
                 <Button
                   onClick={() => setShowForm(true)}
-                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="w-full sm:w-auto rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 px-6 sm:px-8 py-6 sm:py-7"
+                  style={{
+                    backgroundColor: '#873F31' /* PIPE */,
+                    color: '#F9F8F3' /* FROSTY WHITE */,
+                    border: 'none',
+                    fontFamily: "'Proza Libre', sans-serif",
+                    fontWeight: 600
+                  }}
                 >
-                  <MessageCircle className="h-4 w-4 mr-2" />
+                  <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                   Écrire le premier avis
                 </Button>
               </div>

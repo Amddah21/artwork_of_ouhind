@@ -232,10 +232,46 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
     }
 
     try {
+      // Mettre à jour les données de l'œuvre
       await OptimizedApiService.updateArtwork(id, artwork);
+      
+      // Gérer la mise à jour des images si fournies
+      if (images && images.length > 0) {
+        const { supabase } = await import('@/lib/supabase');
+        
+        // Supprimer toutes les images existantes pour cette œuvre d'abord
+        const { error: deleteError } = await supabase
+          .from('artwork_images')
+          .delete()
+          .eq('artwork_id', id);
+        
+        if (deleteError) {
+          console.error('Erreur lors de la suppression des images existantes:', deleteError);
+          // Continuer quand même - essayer d'insérer les nouvelles images
+        }
+        
+        // Insérer toutes les nouvelles images (celles conservées et celles nouvellement ajoutées)
+        const imageRecords = images.map((url, index) => ({
+          artwork_id: id,
+          image_url: url,
+          display_order: index
+        }));
+        
+        const { error: insertError } = await supabase
+          .from('artwork_images')
+          .insert(imageRecords);
+        
+        if (insertError) {
+          console.error('Erreur lors de l\'insertion des images:', insertError);
+          throw insertError;
+        }
+        
+        console.log(`✅ ${imageRecords.length} image(s) mise(s) à jour avec succès pour l'œuvre ${id}`);
+      }
+      
       await queryClient.invalidateQueries({ queryKey: ['artworks'] });
     } catch (error) {
-      console.error('Error updating artwork:', error);
+      console.error('Erreur lors de la mise à jour de l\'œuvre:', error);
       throw error;
     }
   };

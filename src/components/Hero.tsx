@@ -1,41 +1,19 @@
-import React, { useEffect, useRef, useState, Suspense, lazy } from 'react';
-import { Button } from './ui/button';
-import { ArrowRight, Palette, Award, Users, Globe, Brush, Sparkles } from 'lucide-react';
-import Logo from './Logo';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronRight, ChevronDown } from 'lucide-react';
 import { useArtwork } from '@/contexts/ArtworkContext';
-import OptimizedImage from './OptimizedImage';
-import LoadingSpinner from './LoadingSpinner';
-import ScreenshotDetection from './ScreenshotDetection';
-import '../styles/artist-palette-3d.css';
-import '../styles/artwork-frame.css';
-import '../styles/artwork-3d.css';
-import '../styles/mobile-content-fix.css';
-
-// Lazy load heavy 3D components
-const ArtistPalette3D = lazy(() => import('./ArtistPalette3D'));
-const Artwork3D = lazy(() => import('./Artwork3D'));
 
 const Hero: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const { artworks } = useArtwork();
+  const navigate = useNavigate();
   
-  // Get the artist name from the first artwork or use default
   const artistName = artworks.length > 0 && artworks[0].artist_name 
     ? artworks[0].artist_name 
     : 'Omhind';
   
-  // Get the first featured artwork - include a default artwork if none exist
-  const defaultArtwork = {
-    id: 'default-artwork',
-    title: 'Œuvre Contemporaine',
-    image_url: '/sedibatr.JPG',
-    year: '2024',
-    category: 'Peinture',
-    artist_name: artistName
-  };
-  
-  const featuredArtwork = artworks.length > 0 ? artworks[0] : defaultArtwork;
+  const featuredArtwork = artworks.length > 0 ? artworks[0] : null;
 
   useEffect(() => {
     setIsLoaded(true);
@@ -45,161 +23,155 @@ const Hero: React.FC = () => {
     const portfolioSection = document.getElementById('portfolio');
     if (portfolioSection) {
       portfolioSection.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
     }
   };
 
   const handleExploreGallery = () => {
-    setTimeout(() => {
-      const portfolioSection = document.getElementById('portfolio');
-      if (portfolioSection) {
-        portfolioSection.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-      }
-    }, 100);
+    const portfolioSection = document.getElementById('portfolio');
+    if (portfolioSection) {
+      portfolioSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
-  const handleViewWorks = () => {
-    setTimeout(() => {
-      const portfolioSection = document.getElementById('portfolio');
-      if (portfolioSection) {
-        portfolioSection.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-      }
-    }, 100);
-  };
-
-  const handleScreenshotAttempt = () => {
-    console.warn('🚫 Screenshot attempt detected - Copyright protection active');
-    // You can add additional actions here like:
-    // - Show a warning message
-    // - Log the attempt
-    // - Redirect or blur the content
+  const handleViewArtwork = () => {
+    if (featuredArtwork) {
+      navigate(`/artwork/${featuredArtwork.id}`);
+    }
   };
 
   return (
-    <ScreenshotDetection onScreenshotAttempt={handleScreenshotAttempt}>
-      <section 
-        id="hero"
-        ref={heroRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden luxury-bg-admin"
-      >
-      {/* Luxury art gallery background */}
-      <div className="absolute inset-0">
-        {/* Sophisticated gradient overlay */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(254, 252, 232, 0.9) 50%, rgba(255, 247, 237, 0.95) 100%)'
-          }}
-        />
-        
-        {/* Elegant gold accents */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 left-10 w-40 h-40 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-48 h-48 bg-gradient-to-br from-yellow-300 to-orange-300 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full blur-2xl" />
-        </div>
-        
-        {/* Subtle texture overlay */}
-        <div 
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E0A85D' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '60px 60px'
-          }}
-        />
-      </div>
+    <section 
+      id="hero"
+      ref={heroRef}
+      className="relative min-h-screen flex items-center"
+      style={{ 
+        backgroundColor: '#F9F8F3', /* FROSTY WHITE exact from brand */
+        backgroundImage: 'radial-gradient(ellipse 800px 600px at 50% 50%, rgba(122, 7%, 50%, 0.02) 0%, transparent 100%)' /* Very subtle SAGE for depth */
+      }}
+    >
 
       {/* Main Content Container */}
-      <div className="luxury-container relative z-10 w-full px-3 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-center min-h-screen py-6 sm:py-8 lg:py-12">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
-          {/* Left Column - Brand & Text */}
-          <div className="lg:col-span-5 text-center lg:text-left space-y-4 sm:space-y-6 lg:space-y-8">
+          {/* Left Column - Brand & Content */}
+          <div className={`space-y-6 sm:space-y-8 transition-all duration-1000 ${
+            isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
           
-            {/* Brand Identity */}
-            <div className={`transition-all duration-1000 ${
-              isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-            }`}>
-              <div className="flex flex-col lg:flex-row items-center lg:items-start gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 xl:w-24 xl:h-24 rounded-full flex items-center justify-center shadow-xl" style={{ backgroundColor: 'var(--luxury-gold)' }}>
-                  <Logo size="lg" />
-                </div>
-                <div className="text-center lg:text-left">
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-luxury-display luxury-text-primary tracking-wide leading-tight mb-2 sm:mb-3 lg:mb-4">
-                    {artistName.toUpperCase()}
-                  </h1>
-                  <div className="w-20 sm:w-24 lg:w-32 h-px mx-auto lg:mx-0 mb-2 sm:mb-3 lg:mb-4" style={{ background: 'linear-gradient(90deg, transparent 0%, var(--luxury-gold) 50%, transparent 100%)' }} />
-                  <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-luxury-accent luxury-text-secondary leading-relaxed tracking-wider">
-                    COLLECTION EXCLUSIVE • ART CONTEMPORAIN
-                  </p>
-                </div>
+            {/* Artist Name & Tagline */}
+            <div>
+              <div 
+                className="text-xs sm:text-sm uppercase tracking-widest mb-4"
+                style={{ fontFamily: "'Proza Libre', sans-serif", color: 'hsl(122, 7%, 50%)' }}
+              >
+                Collection Exclusive
               </div>
+              <h1 
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-medium mb-3 sm:mb-4 leading-tight"
+                style={{ fontFamily: "'Cormorant Garamond', serif", color: 'hsl(43, 77%, 13%)' }}
+              >
+                {artistName}
+              </h1>
+              <p 
+                className="text-base sm:text-lg md:text-xl mb-6"
+                style={{ fontFamily: "'Proza Libre', sans-serif", color: 'hsl(122, 7%, 50%)' }}
+              >
+                Artiste Plasticienne • Art Contemporain
+              </p>
+              <div className="w-16 sm:w-24 h-0.5 mb-8" style={{ backgroundColor: 'hsl(122, 7%, 50%, 0.3)' }} />
             </div>
 
-            {/* Action Buttons */}
-            <div className={`flex flex-col gap-3 justify-center lg:justify-start transition-all duration-1000 ${
-              isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-            }`} style={{ animationDelay: '0.3s' }}>
+            {/* Artist Description */}
+            <div className="space-y-4">
+              <p 
+                className="text-base sm:text-lg leading-relaxed"
+                style={{ fontFamily: "'Proza Libre', sans-serif", color: 'hsl(43, 77%, 13%, 0.8)' }}
+              >
+                Artiste plasticienne renommée, je façonne des œuvres singulières qui transcendent l'ordinaire, 
+                mêlant matériaux précieux et couleurs sublimes pour créer des compositions d'une élégance rare.
+              </p>
+            </div>
+
+            {/* Action Buttons - Luxury Art Style */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <button 
                 onClick={handleExploreGallery}
-                className="luxury-btn-primary px-6 sm:px-8 lg:px-12 py-3 sm:py-4 text-sm sm:text-base lg:text-lg font-semibold rounded-full luxury-magnetic-hover luxury-sparkle-effect w-full max-w-xs mx-auto lg:mx-0"
+                className="px-8 py-4 text-base font-medium rounded-lg transition-all duration-500 w-full sm:w-auto relative overflow-hidden group luxury-btn-primary-custom"
+                style={{ 
+                  backgroundColor: 'hsl(15, 85%, 18%)',
+                  color: 'hsl(52, 15%, 97%)',
+                  fontFamily: "'Proza Libre', sans-serif",
+                  boxShadow: '0 4px 20px hsla(15, 85%, 18%, 0.3), 0 2px 8px hsla(15, 85%, 18%, 0.2)',
+                  border: '1px solid hsla(15, 85%, 22%, 0.3)'
+                }}
               >
-                COLLECTION
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 shimmer-sweep" />
+                <span className="relative z-10 tracking-wide font-medium">Découvrir la Collection</span>
               </button>
-              <button 
-                onClick={handleViewWorks}
-                className="luxury-btn-secondary px-6 sm:px-8 lg:px-12 py-3 sm:py-4 text-sm sm:text-base lg:text-lg font-semibold rounded-full luxury-magnetic-hover luxury-sparkle-effect w-full max-w-xs mx-auto lg:mx-0"
-              >
-                DÉCOUVERTE
-              </button>
-            </div>
-
-            {/* Artist Statement */}
-            <div className={`transition-all duration-1000 ${
-              isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-            }`} style={{ animationDelay: '0.6s' }}>
-              <div className="relative max-w-lg mx-auto px-2 sm:px-4 lg:px-0">
-                <p className="luxury-artist-statement-premium text-center text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed">
-                  Artiste plasticienne renommée, je façonne des œuvres singulières qui transcendent l'ordinaire, 
-                  mêlant matériaux précieux et couleurs sublimes pour créer des compositions d'une élégance rare.
-                </p>
-                
-                {/* Luxury decorative elements - Hidden on mobile to prevent overlap */}
-                <div className="absolute -top-6 -left-6 w-10 h-10 luxury-floating-elements opacity-40 hidden sm:block">
-                  <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-400 to-indigo-400"></div>
-                </div>
-                <div className="absolute -bottom-6 -right-6 w-8 h-8 luxury-floating-elements opacity-40 hidden sm:block" style={{ animationDelay: '1s' }}>
-                  <div className="w-full h-full rounded-full bg-gradient-to-br from-rose-400 to-pink-400"></div>
-                </div>
-                <div className="absolute top-1/2 -right-8 w-6 h-6 luxury-floating-elements opacity-30 hidden sm:block" style={{ animationDelay: '2s' }}>
-                  <div className="w-full h-full rounded-full bg-gradient-to-br from-emerald-400 to-teal-400"></div>
-                </div>
-              </div>
+              {featuredArtwork && (
+                <button 
+                  onClick={handleViewArtwork}
+                  className="px-8 py-4 text-base font-medium rounded-lg flex items-center justify-center gap-2 hover:shadow-xl transition-all duration-500 w-full sm:w-auto relative overflow-hidden group"
+                  style={{ 
+                    backgroundColor: 'hsl(52, 15%, 97%)',
+                    color: 'hsl(15, 85%, 18%)',
+                    border: '2px solid hsl(15, 85%, 18%)',
+                    fontFamily: "'Proza Libre', sans-serif",
+                    boxShadow: '0 2px 12px hsla(122, 7%, 50%, 0.1), 0 0 0 1px hsla(122, 7%, 50%, 0.05)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = '0 6px 24px hsla(15, 85%, 18%, 0.2), 0 2px 8px hsla(122, 7%, 50%, 0.15)';
+                    e.currentTarget.style.borderColor = 'hsl(15, 85%, 22%)';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = '0 2px 12px hsla(122, 7%, 50%, 0.1), 0 0 0 1px hsla(122, 7%, 50%, 0.05)';
+                    e.currentTarget.style.borderColor = 'hsl(15, 85%, 18%)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  {/* Hover background fill */}
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[calc(0.5rem-2px)]"
+                    style={{ 
+                      background: 'linear-gradient(135deg, hsla(15, 85%, 18%, 0.06) 0%, hsla(15, 85%, 22%, 0.04) 100%)'
+                    }}
+                  />
+                  <span className="relative z-10 tracking-wide font-medium">Dernière Œuvre</span>
+                  <ChevronRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-500" style={{ color: 'hsl(15, 85%, 18%)', strokeWidth: 2 }} />
+                </button>
+              )}
             </div>
 
             {/* Statistics */}
-            <div className={`grid grid-cols-3 gap-1 sm:gap-2 lg:gap-4 transition-all duration-1000 luxury-content-visible ${
-              isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-            }`} style={{ animationDelay: '1.2s' }}>
+            <div className={`grid grid-cols-3 gap-4 pt-8 transition-all duration-1000 ${
+              isLoaded ? 'opacity-100' : 'opacity-0'
+            }`} style={{ animationDelay: '0.5s' }}>
               {[
-                { number: "40+", label: "Années d'Excellence" },
-                { number: "200+", label: "Pièces Uniques" },
-                { number: "50+", label: "Expositions Internationales" }
+                { number: "40+", label: "Années" },
+                { number: "200+", label: "Œuvres" },
+                { number: "50+", label: "Expos" }
               ].map((stat, index) => (
                 <div 
                   key={index}
-                  className="luxury-card-premium p-2 sm:p-3 lg:p-4 text-center hover:shadow-2xl transition-all duration-300 cursor-default group"
-                  style={{ cursor: 'default' }}
+                  className="text-center p-4 rounded-lg border hover:shadow-md transition-all duration-300"
+                  style={{ 
+                    borderColor: 'hsl(122, 7%, 50%, 0.2)',
+                    backgroundColor: 'hsl(52, 15%, 97%)'
+                  }}
                 >
-                  <div className="text-base sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl font-luxury-display luxury-text-gradient mb-1 sm:mb-2 group-hover:scale-110 transition-transform duration-300">
+                  <div 
+                    className="text-2xl sm:text-3xl lg:text-4xl font-medium mb-1"
+                    style={{ fontFamily: "'Cormorant Garamond', serif", color: 'hsl(15, 85%, 18%)' }}
+                  >
                     {stat.number}
                   </div>
-                  <div className="text-xs sm:text-xs font-luxury-body luxury-text-secondary uppercase tracking-wider leading-tight">
+                  <div 
+                    className="text-xs sm:text-sm uppercase tracking-wide"
+                    style={{ fontFamily: "'Proza Libre', sans-serif", color: 'hsl(122, 7%, 50%)' }}
+                  >
                     {stat.label}
                   </div>
                 </div>
@@ -207,75 +179,97 @@ const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column - 3D Artist Palette & Featured Artwork */}
-          <div className="lg:col-span-7 flex flex-col justify-center lg:justify-end space-y-4 sm:space-y-6 lg:space-y-8 order-first lg:order-last">
-
-            {/* 3D Artist Palette */}
-            <div className={`transition-all duration-1000 ${
-              isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-            }`} style={{ animationDelay: '0.9s' }}>
-              <div className="flex justify-center lg:justify-end px-2 sm:px-4 lg:px-0">
-                <div className="relative">
-                  {/* Luxury background for 3D palette */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-100/20 to-orange-100/20 rounded-full blur-3xl scale-150" />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/10 to-purple-100/10 rounded-full blur-2xl scale-125" />
-                  
-                  {/* 3D Artist Palette - Responsive sizing with lazy loading */}
-                  <div className="w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80">
-                    <Suspense fallback={
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-100/20 to-orange-100/20 rounded-full">
-                        <LoadingSpinner size="md" text="" />
+          {/* Right Column - Featured Artwork with Luxury Frame */}
+          {featuredArtwork && (
+            <div className={`relative transition-all duration-1000 ${
+              isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+            }`} style={{ animationDelay: '0.3s' }}>
+              {/* Luxury Gallery Frame - Elegant and Refined */}
+              <div 
+                className="relative cursor-pointer group transition-all duration-500 hover:shadow-2xl rounded-lg overflow-visible p-1.5 sm:p-2 lg:p-2.5"
+                onClick={handleViewArtwork}
+                style={{ 
+                  backgroundColor: '#F9F8F3' /* FROSTY WHITE outer frame */,
+                  border: '1.5px solid rgba(122, 119, 113, 0.25)' /* SAGE outer border */,
+                  boxShadow: '0 12px 40px rgba(67, 76, 70, 0.15), 0 6px 20px rgba(122, 119, 113, 0.1)' /* Elegant layered shadows */
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 16px 48px rgba(67, 76, 70, 0.2), 0 8px 24px rgba(122, 119, 113, 0.15)';
+                  e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.35)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(67, 76, 70, 0.15), 0 6px 20px rgba(122, 119, 113, 0.1)';
+                  e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.25)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                {/* Middle Frame Layer - SAGE accent */}
+                <div 
+                  className="relative rounded-sm p-1 sm:p-1.5 lg:p-2"
+                  style={{
+                    backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
+                    border: '1px solid rgba(122, 119, 113, 0.2)' /* SAGE accent */
+                  }}
+                >
+                  {/* Inner Matting - PEACH CREAM */}
+                  <div 
+                    className="relative rounded-sm overflow-hidden p-1 sm:p-1.5 lg:p-2"
+                    style={{
+                      backgroundColor: '#EBE2D1' /* PEACH CREAM matting */,
+                      border: '1px solid rgba(122, 119, 113, 0.15)' /* SAGE inner border */
+                    }}
+                  >
+                    {/* Artwork Image Container */}
+                    <div 
+                      className="relative w-full aspect-square rounded-sm overflow-hidden transition-transform duration-700 group-hover:scale-[1.01]"
+                      style={{
+                        backgroundColor: 'transparent',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        lineHeight: 0
+                      }}
+                    >
+                      <img
+                        src={featuredArtwork.image_url}
+                        alt={featuredArtwork.title}
+                        className="w-full h-full object-contain transition-opacity duration-500"
+                        style={{ 
+                          display: 'block',
+                          verticalAlign: 'bottom'
+                        }}
+                      />
+                      
+                      {/* Hover overlay - Elegant */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-start p-4 sm:p-6 pointer-events-none">
+                        <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                          <div 
+                            className="text-lg sm:text-xl lg:text-2xl font-medium mb-1 text-white drop-shadow-lg"
+                            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                          >
+                            {featuredArtwork.title}
+                          </div>
+                          <div 
+                            className="text-xs sm:text-sm text-white/90 drop-shadow-md"
+                            style={{ fontFamily: "'Proza Libre', sans-serif" }}
+                          >
+                            Voir l'œuvre
+                          </div>
+                        </div>
                       </div>
-                    }>
-                      <ArtistPalette3D className="relative z-10 w-full h-full" />
-                    </Suspense>
-                  </div>
-                  
-                  {/* Floating luxury elements around palette - Hidden on mobile */}
-                  <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 lg:-top-8 lg:-left-8 w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16 luxury-floating-elements opacity-30 hidden sm:block">
-                    <div className="w-full h-full rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 animate-pulse"></div>
-                  </div>
-                  <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 lg:-bottom-8 lg:-right-8 w-6 h-6 sm:w-8 sm:h-8 lg:w-12 lg:h-12 luxury-floating-elements opacity-40 hidden sm:block" style={{ animationDelay: '1s' }}>
-                    <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-400 to-purple-400 animate-pulse"></div>
-                  </div>
-                  <div className="absolute top-1/2 -right-6 sm:-right-8 lg:-right-12 w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 luxury-floating-elements opacity-50 hidden sm:block" style={{ animationDelay: '2s' }}>
-                    <div className="w-full h-full rounded-full bg-gradient-to-br from-green-400 to-teal-400 animate-pulse"></div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Featured Artwork Showcase with 3D Effect */}
-            {featuredArtwork && (
-              <div className={`transition-all duration-1000 ${
-                isLoaded ? 'luxury-animate-fade-in' : 'opacity-0 translate-y-8'
-              }`} style={{ animationDelay: '1.2s' }}>
-                <div className="flex justify-center lg:justify-end px-2 sm:px-4 lg:px-0">
-                  <div className="relative max-w-[240px] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[360px] xl:max-w-[400px] w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] xl:h-[500px]">
-                    {/* 3D Artwork with lazy loading */}
-                    <Suspense fallback={
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
-                        <LoadingSpinner size="md" text="Chargement de l'œuvre..." />
-                      </div>
-                    }>
-                      <Artwork3D
-                        artwork={featuredArtwork}
-                        artistName={artistName}
-                        className="w-full h-full"
-                      />
-                    </Suspense>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
 
-
-      {/* Elegant Scroll Indicator */}
+      {/* Scroll Indicator */}
       <div 
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-10 cursor-pointer"
+        className="absolute bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-10 cursor-pointer animate-bounce"
         onClick={handleScrollDown}
         role="button"
         tabIndex={0}
@@ -285,18 +279,17 @@ const Hero: React.FC = () => {
             handleScrollDown();
           }
         }}
-        aria-label="Scroll down to portfolio section"
+        aria-label="Scroll down"
       >
-        <div className="w-10 h-14 border-2 rounded-full flex justify-center shadow-lg" style={{ 
-          borderColor: 'var(--luxury-gold)', 
-          backgroundColor: 'rgba(250, 248, 245, 0.9)',
+        <div className="w-8 h-10 sm:w-10 sm:h-14 border-2 rounded-full flex justify-center shadow-lg" style={{ 
+          borderColor: 'hsl(122, 7%, 50%)',
+          backgroundColor: 'hsl(52, 15%, 97%, 0.95)',
           backdropFilter: 'blur(10px)'
         }}>
-          <div className="w-2 h-4 rounded-full mt-2 animate-pulse" style={{ backgroundColor: 'var(--luxury-gold)' }} />
+          <div className="w-1.5 h-3 sm:w-2 sm:h-4 rounded-full mt-2 animate-pulse" style={{ backgroundColor: 'hsl(122, 7%, 50%)' }} />
         </div>
       </div>
-      </section>
-    </ScreenshotDetection>
+    </section>
   );
 };
 

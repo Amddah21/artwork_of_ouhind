@@ -599,17 +599,17 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-yellow-50 to-orange-50 p-2 sm:p-4 lg:p-6">
+      <div className="min-h-screen p-2 sm:p-4 lg:p-6" style={{ backgroundColor: '#F9F8F3' }}> {/* FROSTY WHITE */}
         <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-white/20">
+          <div className="rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border" style={{ backgroundColor: '#F9F8F3', borderColor: 'rgba(122, 119, 113, 0.2)' }}> {/* SAGE border */}
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
               <div className="flex-1">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-medium mb-2" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#4B4A46' }}>
                   🎨 Tableau de Bord Admin
                 </h1>
-                <p className="text-slate-600 text-sm sm:text-base">
+                <p className="text-sm sm:text-base" style={{ fontFamily: "'Proza Libre', sans-serif", color: '#717871' }}>
                   Gestion complète des œuvres d'art et du contenu de la galerie
                 </p>
               </div>
@@ -618,7 +618,12 @@ const AdminDashboard: React.FC = () => {
                   onClick={testSupabaseConnection}
                   variant="outline"
                   size="sm"
-                  className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                  className="border hover:bg-white/50"
+                  style={{ 
+                    borderColor: 'rgba(122, 119, 113, 0.3)',
+                    color: '#717871',
+                    fontFamily: "'Proza Libre', sans-serif"
+                  }}
                 >
                   <Grid3X3 className="h-4 w-4 mr-2" />
                   Test Supabase
@@ -627,7 +632,12 @@ const AdminDashboard: React.FC = () => {
                   onClick={resetViews}
                   variant="outline"
                   size="sm"
-                  className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                  className="border hover:bg-white/50"
+                  style={{ 
+                    borderColor: 'rgba(122, 119, 113, 0.3)',
+                    color: '#717871',
+                    fontFamily: "'Proza Libre', sans-serif"
+                  }}
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   Reset Vues
@@ -639,59 +649,73 @@ const AdminDashboard: React.FC = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
-          <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 border" style={{ backgroundColor: '#F9F8F3', borderColor: 'rgba(122, 119, 113, 0.2)' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-slate-700">Total Œuvres</CardTitle>
-              <Eye className="h-4 w-4 text-yellow-600" />
+              <CardTitle className="text-xs sm:text-sm font-medium" style={{ fontFamily: "'Proza Libre', sans-serif", color: '#717871' }}>
+                Total Œuvres
+              </CardTitle>
+              <Eye className="h-4 w-4" style={{ color: '#873F31' }} />
             </CardHeader>
             <CardContent>
-              <div className="text-xl sm:text-2xl font-bold text-slate-800">{artworks.length}</div>
+              <div className="text-xl sm:text-2xl font-medium" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#4B4A46' }}>
+                {artworks.length}
+              </div>
             </CardContent>
           </Card>
           
-          <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 border" style={{ backgroundColor: '#F9F8F3', borderColor: 'rgba(122, 119, 113, 0.2)' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-slate-700">Disponibles</CardTitle>
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">✓</Badge>
+              <CardTitle className="text-xs sm:text-sm font-medium" style={{ fontFamily: "'Proza Libre', sans-serif", color: '#717871' }}>
+                Disponibles
+              </CardTitle>
+              <Badge variant="outline" className="border-green-300" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>✓</Badge>
             </CardHeader>
             <CardContent>
-              <div className="text-xl sm:text-2xl font-bold text-slate-800">
+              <div className="text-xl sm:text-2xl font-medium" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#4B4A46' }}>
                 {artworks.filter(a => a.available).length}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 border" style={{ backgroundColor: '#F9F8F3', borderColor: 'rgba(122, 119, 113, 0.2)' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-slate-700">Total Vues</CardTitle>
-              <Eye className="h-4 w-4 text-blue-600" />
+              <CardTitle className="text-xs sm:text-sm font-medium" style={{ fontFamily: "'Proza Libre', sans-serif", color: '#717871' }}>
+                Total Vues
+              </CardTitle>
+              <Eye className="h-4 w-4" style={{ color: '#873F31' }} />
             </CardHeader>
             <CardContent>
-              <div className="text-xl sm:text-2xl font-bold text-slate-800">
+              <div className="text-xl sm:text-2xl font-medium" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#4B4A46' }}>
                 {artworks.reduce((total, artwork) => total + (artwork.views || 0), 0)}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 border" style={{ backgroundColor: '#F9F8F3', borderColor: 'rgba(122, 119, 113, 0.2)' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-slate-700">En Vedette</CardTitle>
-              <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">⭐</Badge>
+              <CardTitle className="text-xs sm:text-sm font-medium" style={{ fontFamily: "'Proza Libre', sans-serif", color: '#717871' }}>
+                En Vedette
+              </CardTitle>
+              <Badge variant="outline" className="border-amber-300" style={{ backgroundColor: 'rgba(251, 191, 36, 0.1)', color: '#fbbf24' }}>⭐</Badge>
             </CardHeader>
             <CardContent>
-              <div className="text-xl sm:text-2xl font-bold text-slate-800">
+              <div className="text-xl sm:text-2xl font-medium" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#4B4A46' }}>
                 {artworks.filter(a => a.featured).length}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="shadow-lg hover:shadow-xl transition-all duration-300 border" style={{ backgroundColor: '#F9F8F3', borderColor: 'rgba(122, 119, 113, 0.2)' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-slate-700">Catégories</CardTitle>
-              <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">{new Set(artworks.map(a => a.category)).size}</Badge>
+              <CardTitle className="text-xs sm:text-sm font-medium" style={{ fontFamily: "'Proza Libre', sans-serif", color: '#717871' }}>
+                Catégories
+              </CardTitle>
+              <Badge variant="outline" className="border-amber-300" style={{ backgroundColor: 'rgba(251, 191, 36, 0.1)', color: '#fbbf24' }}>
+                {new Set(artworks.map(a => a.category)).size}
+              </Badge>
             </CardHeader>
             <CardContent>
-              <div className="text-xl sm:text-2xl font-bold text-slate-800">
+              <div className="text-xl sm:text-2xl font-medium" style={{ fontFamily: "'Cormorant Garamond', serif", color: '#4B4A46' }}>
                 {new Set(artworks.map(a => a.category)).size}
               </div>
             </CardContent>
@@ -1033,7 +1057,12 @@ const AdminDashboard: React.FC = () => {
           <div className="mb-6 flex gap-4">
             <Button 
               onClick={() => setIsAdding(true)} 
-              className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold py-3 px-6 shadow-lg hover:shadow-xl transition-all duration-300"
+              className="font-medium py-3 px-6 shadow-lg hover:shadow-xl transition-all duration-300"
+              style={{ 
+                backgroundColor: '#873F31', /* PIPE */
+                color: '#F9F8F3', /* FROSTY WHITE */
+                fontFamily: "'Proza Libre', sans-serif"
+              }}
             >
               <Plus className="h-4 w-4 mr-2" />
               Ajouter une nouvelle œuvre

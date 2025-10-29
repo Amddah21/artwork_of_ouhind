@@ -24,6 +24,7 @@ import "@/styles/luxury-gallery.css";
 const Index = lazy(() => import("./pages/Index"));
 const ArtworkDetail = lazy(() => import("./pages/ArtworkDetail"));
 const GalleryDetail = lazy(() => import("./pages/GalleryDetail"));
+const AllArtworks = lazy(() => import("./pages/AllArtworks"));
 const Voting = lazy(() => import("./pages/Voting"));
 const Comments = lazy(() => import("./pages/Comments"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
@@ -90,6 +91,7 @@ const AppContent = () => {
               <Route path="/" element={<Index />} />
               <Route path="/artwork/:id" element={<ArtworkDetail />} />
               <Route path="/gallery/:galleryId" element={<GalleryDetail />} />
+              <Route path="/all-artworks" element={<AllArtworks />} />
               <Route path="/voting" element={<Voting />} />
               <Route path="/comments" element={<Comments />} />
               <Route path="/admin" element={
