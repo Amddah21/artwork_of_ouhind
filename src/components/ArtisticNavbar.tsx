@@ -6,9 +6,6 @@ import Logo from './Logo';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginForm from './LoginForm';
 import { useArtwork } from '@/contexts/ArtworkContext';
-import { useTheme } from '@/contexts/ThemeContext';
-import LuxuryThemeToggle from './LuxuryThemeToggle';
-import '../styles/luxury-theme-toggle.css';
 
 const ArtisticNavbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,7 +15,6 @@ const ArtisticNavbar: React.FC = () => {
   const navigate = useNavigate();
   const { isAdmin, isAuthenticated, signOut } = useAuth();
   const { artworks } = useArtwork();
-  const { toggleTheme, isDark } = useTheme();
   
   // Get the artist name from the first artwork or use default
   const artistName = artworks.length > 0 && artworks[0].artist_name 
@@ -165,8 +161,7 @@ const ArtisticNavbar: React.FC = () => {
                 );
               })}
               
-              {/* Luxury Theme Toggle */}
-              <LuxuryThemeToggle size="sm" className="ml-3" />
+              {/* Theme toggle removed per request */}
               
               {/* Login/Logout Button */}
               {!isAuthenticated ? (
@@ -174,12 +169,17 @@ const ArtisticNavbar: React.FC = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setShowLoginForm(true)}
-                  className="ml-2 transition-all duration-300 font-medium hover:shadow-lg"
+                  className="ml-2 transition-all duration-300 font-medium hover:shadow-lg p-2"
                   style={{
                     fontFamily: "'Proza Libre', sans-serif",
                     backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
                     color: '#873F31' /* PIPE */,
-                    borderColor: 'rgba(135, 63, 49, 0.3)' /* PIPE */
+                    borderColor: 'rgba(135, 63, 49, 0.3)' /* PIPE */,
+                    width: '36px',
+                    height: '36px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = '#873F31';
@@ -193,9 +193,9 @@ const ArtisticNavbar: React.FC = () => {
                     e.currentTarget.style.borderColor = 'rgba(135, 63, 49, 0.3)';
                     e.currentTarget.style.boxShadow = 'none';
                   }}
+                  aria-label="Connexion"
                 >
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Connexion
+                  <LogIn className="w-4 h-4" />
                 </Button>
               ) : (
                 <Button
@@ -400,10 +400,7 @@ const ArtisticNavbar: React.FC = () => {
                   );
                 })}
                 
-                {/* Luxury Theme Toggle for Mobile */}
-                <div className="mt-4 mb-4 flex justify-center">
-                  <LuxuryThemeToggle size="md" />
-                </div>
+                {/* Theme toggle removed for mobile per request */}
                 
                 {/* Login/Logout Button for Mobile */}
                 {!isAuthenticated ? (
@@ -413,7 +410,7 @@ const ArtisticNavbar: React.FC = () => {
                       setShowLoginForm(true);
                       setIsMenuOpen(false);
                     }}
-                    className="w-full justify-start transition-all duration-300 rounded-lg px-4 py-3 font-medium hover:shadow-lg"
+                    className="w-full justify-center transition-all duration-300 rounded-lg py-3 font-medium hover:shadow-lg"
                     style={{
                       fontFamily: "'Proza Libre', sans-serif",
                       backgroundColor: '#F9F8F3' /* FROSTY WHITE */,
@@ -432,9 +429,9 @@ const ArtisticNavbar: React.FC = () => {
                       e.currentTarget.style.borderColor = 'rgba(135, 63, 49, 0.3)';
                       e.currentTarget.style.boxShadow = 'none';
                     }}
+                    aria-label="Connexion"
                   >
-                    <LogIn className="w-5 h-5 mr-3" />
-                    <span className="font-body font-medium">Connexion</span>
+                    <LogIn className="w-5 h-5" />
                   </Button>
                 ) : (
                   <Button

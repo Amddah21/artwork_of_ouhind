@@ -2,6 +2,9 @@ import { Palette, Star, Award, Globe, Users, User } from "lucide-react";
 import Logo from "./Logo";
 
 const About = () => {
+  const handleCanvaLinkClick = () => {
+    window.open('https://www.canva.com/design/DAGXYvuFYQk/o8_aNq9QEBN3zv82-k1aLg/view?utm_content=DAGXYvuFYQk&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hd762ab158a', '_blank');
+  };
   return (
     <section id="about" className="luxury-section relative overflow-hidden" style={{ backgroundColor: '#F9F8F3' }}> {/* FROSTY WHITE exact */}
       <div className="absolute inset-0 opacity-5">
@@ -53,20 +56,23 @@ const About = () => {
             
             <div className="space-y-6 sm:space-y-8">
               <p 
-                className="leading-relaxed text-left sm:text-justify"
+                className="leading-relaxed text-center"
                 style={{ 
-                  fontFamily: "'Proza Libre', sans-serif",
-                  fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
-                  lineHeight: '1.8',
-                  color: '#4B4A46' /* CHARCOAL TAUPE */
+                  fontFamily: "'Georgia', 'Times New Roman', serif",
+                  fontSize: 'clamp(1.0625rem, 1.6vw, 1.3125rem)',
+                  lineHeight: '1.75',
+                  color: '#433D38' /* CHARCOAL TAUPE - slightly darker for better readability */,
+                  fontWeight: 400,
+                  letterSpacing: '0.01em'
                 }}
               >
                 <span 
                   style={{ 
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     color: '#873F31', /* PIPE */
-                    fontSize: '1.15em'
+                    fontSize: '1.2em',
+                    fontStyle: 'italic'
                   }}
                 >
                   Omhind
@@ -75,12 +81,14 @@ const About = () => {
                 expériences et recherches en Arts Plastiques.
               </p>
               <p 
-                className="leading-relaxed text-left sm:text-justify"
+                className="leading-relaxed text-center"
                 style={{ 
-                  fontFamily: "'Proza Libre', sans-serif",
-                  fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
-                  lineHeight: '1.8',
-                  color: '#4B4A46' /* CHARCOAL TAUPE */
+                  fontFamily: "'Georgia', 'Times New Roman', serif",
+                  fontSize: 'clamp(1.0625rem, 1.6vw, 1.3125rem)',
+                  lineHeight: '1.75',
+                  color: '#433D38' /* CHARCOAL TAUPE */,
+                  fontWeight: 400,
+                  letterSpacing: '0.01em'
                 }}
               >
                 Sa signature artistique est <span 
@@ -88,7 +96,8 @@ const About = () => {
                     fontFamily: "'Cormorant Garamond', serif",
                     fontWeight: 600,
                     color: '#873F31', /* PIPE */
-                    fontSize: '1.1em'
+                    fontSize: '1.15em',
+                    fontStyle: 'italic'
                   }}
                 >
                   impressionniste et expressionniste contemporaine
@@ -182,12 +191,29 @@ const About = () => {
           <div className="space-y-8">
             {/* Artist Portrait */}
             <div className="flex justify-center lg:justify-start">
-              <div className="relative">
-                <div className="w-64 h-64 lg:w-80 lg:h-80 rounded-lg overflow-hidden bg-gray-100 shadow-lg">
-                  <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+              <div 
+                className="relative cursor-pointer group transition-all duration-300"
+                onClick={handleCanvaLinkClick}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleCanvaLinkClick();
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label="View Omhind's Canva design"
+              >
+                <div 
+                  className="w-64 h-64 lg:w-80 lg:h-80 rounded-lg overflow-hidden bg-gray-100 shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:scale-[1.02]"
+                  style={{
+                    backgroundColor: '#F9F8F3' /* FROSTY WHITE */
+                  }}
+                >
+                  <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center transition-all duration-300 group-hover:from-gray-50 group-hover:to-gray-100">
                     <div className="text-center">
-                      <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-lg mx-auto mb-4 flex items-center justify-center bg-gray-300">
-                        <User className="w-16 h-16 lg:w-20 lg:h-20 text-gray-500" />
+                      <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-lg mx-auto mb-4 flex items-center justify-center bg-gray-300 group-hover:bg-gray-400 transition-colors duration-300">
+                        <User className="w-16 h-16 lg:w-20 lg:h-20 text-gray-500 group-hover:text-gray-600 transition-colors duration-300" />
                       </div>
                       <p 
                         className="text-lg sm:text-xl font-medium"

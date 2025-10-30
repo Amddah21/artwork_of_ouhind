@@ -43,39 +43,92 @@ const Hero: React.FC = () => {
     <section 
       id="hero"
       ref={heroRef}
-      className="relative min-h-screen flex items-center"
+      className="relative min-h-screen flex items-center overflow-hidden"
       style={{ 
         backgroundColor: '#F9F8F3', /* FROSTY WHITE exact from brand */
-        backgroundImage: 'radial-gradient(ellipse 800px 600px at 50% 50%, rgba(122, 7%, 50%, 0.02) 0%, transparent 100%)' /* Very subtle SAGE for depth */
       }}
     >
+      {/* Abstract Artwork Background */}
+      <div 
+        className="absolute inset-0 w-full h-full"
+        style={{
+          backgroundImage: 'url(/image.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.08,
+          filter: 'blur(2px)'
+        }}
+      />
+      
+      {/* Strong Gradient Overlay to maintain text readability */}
+      <div 
+        className="absolute inset-0 w-full h-full"
+        style={{
+          background: 'linear-gradient(to right, rgba(249, 248, 243, 0.95) 0%, rgba(249, 248, 243, 0.92) 30%, rgba(249, 248, 243, 0.90) 70%, rgba(249, 248, 243, 0.95) 100%), radial-gradient(ellipse 800px 600px at 50% 50%, rgba(122, 7%, 50%, 0.03) 0%, transparent 100%)'
+        }}
+      />
+      
+      {/* Additional light overlay for content area */}
+      <div 
+        className="absolute inset-0 w-full h-full"
+        style={{
+          background: 'radial-gradient(ellipse 120% 100% at 20% 50%, rgba(249, 248, 243, 0.98) 0%, transparent 60%)'
+        }}
+      />
 
       {/* Main Content Container */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           
           {/* Left Column - Brand & Content */}
-          <div className={`space-y-6 sm:space-y-8 transition-all duration-1000 ${
+          <div className={`space-y-6 sm:space-y-8 transition-all duration-1000 relative ${
             isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
+            {/* Subtle background behind content for better text readability */}
+            <div 
+              className="absolute inset-0 rounded-2xl -z-10 opacity-60"
+              style={{
+                background: 'rgba(249, 248, 243, 0.85)',
+                backdropFilter: 'blur(8px)',
+                transform: 'translateX(-2rem) translateY(-2rem)',
+                width: 'calc(100% + 4rem)',
+                height: 'calc(100% + 4rem)'
+              }}
+            />
           
             {/* Artist Name & Tagline */}
             <div>
               <div 
                 className="text-xs sm:text-sm uppercase tracking-widest mb-4"
-                style={{ fontFamily: "'Proza Libre', sans-serif", color: 'hsl(122, 7%, 50%)' }}
+                style={{ 
+                  fontFamily: "'Proza Libre', sans-serif", 
+                  color: '#433D38',
+                  textShadow: '0 1px 2px rgba(249, 248, 243, 0.8)',
+                  fontWeight: 600
+                }}
               >
                 Collection Exclusive
               </div>
               <h1 
                 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-medium mb-3 sm:mb-4 leading-tight"
-                style={{ fontFamily: "'Cormorant Garamond', serif", color: 'hsl(43, 77%, 13%)' }}
+                style={{ 
+                  fontFamily: "'Cormorant Garamond', serif", 
+                  color: '#2A251F',
+                  textShadow: '0 2px 4px rgba(249, 248, 243, 0.9), 0 1px 2px rgba(249, 248, 243, 0.7)',
+                  fontWeight: 600
+                }}
               >
                 {artistName}
               </h1>
               <p 
                 className="text-base sm:text-lg md:text-xl mb-6"
-                style={{ fontFamily: "'Proza Libre', sans-serif", color: 'hsl(122, 7%, 50%)' }}
+                style={{ 
+                  fontFamily: "'Proza Libre', sans-serif", 
+                  color: '#4B4438',
+                  textShadow: '0 1px 2px rgba(249, 248, 243, 0.8)',
+                  fontWeight: 500
+                }}
               >
                 Artiste Plasticienne • Art Contemporain
               </p>
@@ -83,32 +136,44 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Artist Description */}
-            <div className="space-y-4">
+            <div className="space-y-4 relative">
               <p 
-                className="text-base sm:text-lg leading-relaxed"
-                style={{ fontFamily: "'Proza Libre', sans-serif", color: 'hsl(43, 77%, 13%, 0.8)' }}
+                className="text-base sm:text-lg leading-relaxed relative z-10"
+                style={{ 
+                  fontFamily: "'Proza Libre', sans-serif", 
+                  color: '#3D3529',
+                  textShadow: '0 1px 3px rgba(249, 248, 243, 0.9), 0 1px 1px rgba(249, 248, 243, 0.8)',
+                  fontWeight: 500,
+                  lineHeight: '1.75'
+                }}
               >
                 Artiste plasticienne renommée, je façonne des œuvres singulières qui transcendent l'ordinaire, 
                 mêlant matériaux précieux et couleurs sublimes pour créer des compositions d'une élégance rare.
               </p>
             </div>
 
-            {/* Action Buttons - Luxury Art Style */}
+            {/* Action Buttons - Classic Art Style */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <button 
                 onClick={handleExploreGallery}
-                className="px-8 py-4 text-base font-medium rounded-lg transition-all duration-500 w-full sm:w-auto relative overflow-hidden group luxury-btn-primary-custom"
+                className="px-8 py-4 text-base font-medium rounded-lg transition-all duration-300 w-full sm:w-auto relative"
                 style={{ 
-                  backgroundColor: 'hsl(15, 85%, 18%)',
-                  color: 'hsl(52, 15%, 97%)',
+                  backgroundColor: '#3D291F',
+                  color: '#FFFFFF',
                   fontFamily: "'Proza Libre', sans-serif",
-                  boxShadow: '0 4px 20px hsla(15, 85%, 18%, 0.3), 0 2px 8px hsla(15, 85%, 18%, 0.2)',
-                  border: '1px solid hsla(15, 85%, 22%, 0.3)'
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                  border: 'none'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.2)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                {/* Shimmer effect */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 shimmer-sweep" />
-                <span className="relative z-10 tracking-wide font-medium">Découvrir la Collection</span>
+                <span className="tracking-wide font-medium">Découvrir la Collection</span>
               </button>
               {featuredArtwork && (
                 <button 
@@ -170,7 +235,12 @@ const Hero: React.FC = () => {
                   </div>
                   <div 
                     className="text-xs sm:text-sm uppercase tracking-wide"
-                    style={{ fontFamily: "'Proza Libre', sans-serif", color: 'hsl(122, 7%, 50%)' }}
+                    style={{ 
+                      fontFamily: "'Proza Libre', sans-serif", 
+                      color: '#4B4438',
+                      fontWeight: 600,
+                      textShadow: '0 1px 2px rgba(249, 248, 243, 0.8)'
+                    }}
                   >
                     {stat.label}
                   </div>
