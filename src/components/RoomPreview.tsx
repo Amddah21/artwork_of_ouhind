@@ -24,38 +24,50 @@ const roomOptions: RoomOption[] = [
   {
     id: 'living-room',
     name: 'Salon Moderne',
-    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1920&q=90&fit=crop',
+    image: '/art1.jpg',
     wallColor: '#f5f5f5'
   },
   {
     id: 'bedroom',
     name: 'Chambre',
-    image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=1920&q=90&fit=crop',
+    image: '/art2.jpg',
     wallColor: '#f8f6f0'
   },
   {
     id: 'office',
     name: 'Bureau',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=90&fit=crop',
+    image: '/art3.jpg',
     wallColor: '#f5f5f5'
   },
   {
     id: 'dining',
     name: 'Salle à Manger',
-    image: 'https://images.unsplash.com/photo-1556912173-0a0227f7982e?w=1920&q=90&fit=crop',
+    image: '/art4.jpg',
     wallColor: '#faf9f6'
   },
   {
     id: 'gallery',
     name: 'Galerie',
-    image: 'https://images.unsplash.com/photo-1594736797933-d0e2d728ce48?w=1920&q=90&fit=crop',
+    image: '/art5.jpg',
+    wallColor: '#ffffff'
+  },
+  {
+    id: 'gallery',
+    name: 'Galerie',
+    image: '/art6.jpg',
     wallColor: '#ffffff'
   },
   {
     id: 'entry',
     name: 'Entrée',
-    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=90&fit=crop',
+    image: '/art7.jpg',
     wallColor: '#f8f8f8'
+  },
+  {
+    id: 'bedroom',
+    name: 'Chambre',
+    image: '/art8.jpg',
+    wallColor: '#f8f6f0'
   }
 ];
 
