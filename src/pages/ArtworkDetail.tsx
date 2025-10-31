@@ -261,37 +261,37 @@ const ArtworkDetail: React.FC = () => {
             <div className="relative group">
               {/* Outer Frame - Gallery Style with Elegant Double Border */}
               <div 
-                className="rounded-lg overflow-visible shadow-xl relative transition-all duration-500 hover:shadow-2xl p-1.5 sm:p-2 lg:p-2.5"
+                className="rounded-lg overflow-visible shadow-xl relative transition-all duration-500 hover:shadow-2xl p-0.5 sm:p-0.75 lg:p-1"
                 style={{ 
                   backgroundColor: '#F9F8F3', /* FROSTY WHITE outer frame */
-                  border: '1.5px solid rgba(122, 119, 113, 0.25)', /* SAGE outer border - reduced from 2px */
-                  boxShadow: '0 12px 40px rgba(67, 76, 70, 0.15), 0 6px 20px rgba(122, 119, 113, 0.1)' /* Elegant layered shadows */
+                  border: '1px solid rgba(122, 119, 113, 0.25)', /* SAGE outer border - minimized */
+                  boxShadow: '0 8px 24px rgba(67, 76, 70, 0.12), 0 4px 12px rgba(122, 119, 113, 0.08)' /* Reduced shadows */
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 16px 48px rgba(67, 76, 70, 0.2), 0 8px 24px rgba(122, 119, 113, 0.15)';
-                  e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.35)';
+                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(67, 76, 70, 0.16), 0 6px 16px rgba(122, 119, 113, 0.12)';
+                  e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.3)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 12px 40px rgba(67, 76, 70, 0.15), 0 6px 20px rgba(122, 119, 113, 0.1)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(67, 76, 70, 0.12), 0 4px 12px rgba(122, 119, 113, 0.08)';
                   e.currentTarget.style.borderColor = 'rgba(122, 119, 113, 0.25)';
                 }}
               >
                 {/* Middle Frame Layer - SAGE accent */}
                 <div 
-                  className="relative rounded-sm p-1 sm:p-1.5 lg:p-2"
+                  className="relative rounded-sm p-0.5 sm:p-0.75 lg:p-1"
                   style={{
                     backgroundColor: '#F9F8F3', /* FROSTY WHITE */
-                    border: '1px solid rgba(122, 119, 113, 0.2)', /* SAGE accent */
+                    border: '0.5px solid rgba(122, 119, 113, 0.2)', /* SAGE accent - thinner */
                     boxShadow: 'inset 0 0 0 0.5px rgba(122, 119, 113, 0.1)'
                   }}
                 >
                   {/* Inner Matting - Double Border Effect */}
                   <div 
-                    className="relative rounded-sm overflow-hidden p-1 sm:p-1.5 lg:p-2"
+                    className="relative rounded-sm overflow-hidden p-0.5 sm:p-0.75 lg:p-1"
                     style={{
                       backgroundColor: '#EBE2D1', /* PEACH CREAM matting */
-                      border: '1px solid rgba(122, 119, 113, 0.15)', /* SAGE inner border */
-                      boxShadow: 'inset 0 0 0 1px rgba(249, 248, 243, 0.5)' /* Inner highlight */
+                      border: '0.5px solid rgba(122, 119, 113, 0.15)', /* SAGE inner border - thinner */
+                      boxShadow: 'inset 0 0 0 0.5px rgba(249, 248, 243, 0.5)' /* Inner highlight */
                     }}
                   >
                     {/* Artwork Image Container */}
