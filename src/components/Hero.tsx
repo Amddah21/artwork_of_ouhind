@@ -48,7 +48,7 @@ const Hero: React.FC = () => {
         backgroundColor: '#F9F8F3', /* FROSTY WHITE exact from brand */
       }}
     >
-      {/* Abstract Artwork Background */}
+      {/* Abstract Artwork Background - Softly Visible */}
       <div 
         className="absolute inset-0 w-full h-full"
         style={{
@@ -56,24 +56,33 @@ const Hero: React.FC = () => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          opacity: 0.08,
-          filter: 'blur(2px)'
+          opacity: 0.24,
+          filter: 'blur(1px)',
+          transform: 'scale(1.02)'
         }}
       />
       
-      {/* Strong Gradient Overlay to maintain text readability */}
+      {/* Premium White Gradient Overlay - Subtle and Elegant */}
       <div 
         className="absolute inset-0 w-full h-full"
         style={{
-          background: 'linear-gradient(to right, rgba(249, 248, 243, 0.95) 0%, rgba(249, 248, 243, 0.92) 30%, rgba(249, 248, 243, 0.90) 70%, rgba(249, 248, 243, 0.95) 100%), radial-gradient(ellipse 800px 600px at 50% 50%, rgba(122, 7%, 50%, 0.03) 0%, transparent 100%)'
+          background: 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.35) 0%, rgba(249, 248, 243, 0.40) 25%, rgba(249, 248, 243, 0.38) 50%, rgba(249, 248, 243, 0.40) 75%, rgba(255, 255, 255, 0.35) 100%)'
         }}
       />
       
-      {/* Additional light overlay for content area */}
+      {/* Radial Gradient Overlay for Content Focus - Maintains Text Readability */}
       <div 
         className="absolute inset-0 w-full h-full"
         style={{
-          background: 'radial-gradient(ellipse 120% 100% at 20% 50%, rgba(249, 248, 243, 0.98) 0%, transparent 60%)'
+          background: 'radial-gradient(ellipse 100% 80% at 20% 50%, rgba(249, 248, 243, 0.75) 0%, rgba(249, 248, 243, 0.45) 40%, transparent 70%)'
+        }}
+      />
+      
+      {/* Additional Subtle Gradient for Premium Depth */}
+      <div 
+        className="absolute inset-0 w-full h-full"
+        style={{
+          background: 'radial-gradient(ellipse 120% 100% at 80% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 50%)'
         }}
       />
 
@@ -87,10 +96,10 @@ const Hero: React.FC = () => {
           }`}>
             {/* Subtle background behind content for better text readability */}
             <div 
-              className="absolute inset-0 rounded-2xl -z-10 opacity-60"
+              className="absolute inset-0 rounded-2xl -z-10 opacity-70"
               style={{
-                background: 'rgba(249, 248, 243, 0.85)',
-                backdropFilter: 'blur(8px)',
+                background: 'rgba(249, 248, 243, 0.82)',
+                backdropFilter: 'blur(6px)',
                 transform: 'translateX(-2rem) translateY(-2rem)',
                 width: 'calc(100% + 4rem)',
                 height: 'calc(100% + 4rem)'

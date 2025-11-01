@@ -3,7 +3,7 @@ import Logo from "./Logo";
 
 const Footer = () => {
   const handleDigitalTeamsClick = () => {
-    window.open('https://digital-team-8r4yhd9pg-amddah21s-projects.vercel.app/', '_blank', 'noopener,noreferrer');
+    window.open('digital-team.vercel.app/', '_blank', 'noopener,noreferrer');
   };
 
   return (
