@@ -30,7 +30,7 @@ const CommerceContact: React.FC = () => {
       <div className="container mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full painterly-card mb-6">
+          <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full painterly-card mb-6" style={{ backgroundColor: '#F9F8F3' /* FROSTY WHITE */ }}>
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-pink-400 flex items-center justify-center">
               <MessageCircle className="w-4 h-4 text-white" />
             </div>
@@ -52,7 +52,7 @@ const CommerceContact: React.FC = () => {
             </h3>
 
             {/* WhatsApp */}
-            <Card className="painterly-card p-6 hover-painterly-lift">
+            <Card className="painterly-card p-6 hover-painterly-lift" style={{ backgroundColor: '#F9F8F3' /* FROSTY WHITE */ }}>
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
                   <Phone className="w-6 h-6 text-white" />
@@ -79,7 +79,7 @@ const CommerceContact: React.FC = () => {
             </Card>
 
             {/* Email */}
-            <Card className="painterly-card p-6 hover-painterly-lift">
+            <Card className="painterly-card p-6 hover-painterly-lift" style={{ backgroundColor: '#F9F8F3' /* FROSTY WHITE */ }}>
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                   <Mail className="w-6 h-6 text-white" />
@@ -107,7 +107,7 @@ const CommerceContact: React.FC = () => {
 
             {/* Social Media */}
             <div className="grid grid-cols-2 gap-4">
-              <Card className="painterly-card p-4 hover-painterly-lift">
+              <Card className="painterly-card p-4 hover-painterly-lift" style={{ backgroundColor: '#F9F8F3' /* FROSTY WHITE */ }}>
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
                     <Instagram className="w-5 h-5 text-white" />
@@ -128,7 +128,7 @@ const CommerceContact: React.FC = () => {
                 </div>
               </Card>
 
-              <Card className="painterly-card p-4 hover-painterly-lift">
+              <Card className="painterly-card p-4 hover-painterly-lift" style={{ backgroundColor: '#F9F8F3' /* FROSTY WHITE */ }}>
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
                     <Facebook className="w-5 h-5 text-white" />
@@ -158,11 +158,14 @@ const CommerceContact: React.FC = () => {
             </h3>
 
             {/* Contact Details Card */}
-            <Card className="painterly-card p-6">
+            <Card className="painterly-card p-6" style={{ backgroundColor: '#F9F8F3' /* FROSTY WHITE */ }}>
               <div className="space-y-4">
                 
                 <div 
-                  className="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-all duration-300"
+                  className="flex items-center space-x-4 cursor-pointer p-3 rounded-lg transition-all duration-300"
+                  style={{ backgroundColor: '#EBE2D1' /* PEACH CREAM */ }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9F8F3'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#EBE2D1'}
                   onClick={() => {
                     const address = "BP 2595 RABAT CENTRAL/RABAT";
                     const encodedAddress = encodeURIComponent(address);
@@ -259,7 +262,10 @@ const CommerceContact: React.FC = () => {
                 </div>
 
                 <div 
-                  className="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-all duration-300"
+                  className="flex items-center space-x-4 cursor-pointer p-3 rounded-lg transition-all duration-300"
+                  style={{ backgroundColor: '#EBE2D1' /* PEACH CREAM */ }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9F8F3'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#EBE2D1'}
                   onClick={() => {
                     window.open('tel:+212666672756', '_self');
                   }}
@@ -278,7 +284,10 @@ const CommerceContact: React.FC = () => {
                 </div>
 
                 <div 
-                  className="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-all duration-300"
+                  className="flex items-center space-x-4 cursor-pointer p-3 rounded-lg transition-all duration-300"
+                  style={{ backgroundColor: '#EBE2D1' /* PEACH CREAM */ }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9F8F3'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#EBE2D1'}
                   onClick={() => {
                     window.open('mailto:omhind53@gmail.com', '_self');
                   }}
@@ -297,7 +306,10 @@ const CommerceContact: React.FC = () => {
                 </div>
 
                 <div 
-                  className="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-all duration-300"
+                  className="flex items-center space-x-4 cursor-pointer p-3 rounded-lg transition-all duration-300"
+                  style={{ backgroundColor: '#EBE2D1' /* PEACH CREAM */ }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9F8F3'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#EBE2D1'}
                   onClick={handleInstagramContact}
                 >
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
@@ -314,7 +326,10 @@ const CommerceContact: React.FC = () => {
                 </div>
 
                 <div 
-                  className="flex items-center space-x-4 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-all duration-300"
+                  className="flex items-center space-x-4 cursor-pointer p-3 rounded-lg transition-all duration-300"
+                  style={{ backgroundColor: '#EBE2D1' /* PEACH CREAM */ }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9F8F3'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#EBE2D1'}
                   onClick={handleFacebookContact}
                 >
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
@@ -340,7 +355,7 @@ const CommerceContact: React.FC = () => {
             </h3>
 
             {/* Art Value Info */}
-            <Card className="painterly-card p-6">
+            <Card className="painterly-card p-6" style={{ backgroundColor: '#F9F8F3' /* FROSTY WHITE */ }}>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
                   <Palette className="w-6 h-6 text-white" />
@@ -358,7 +373,7 @@ const CommerceContact: React.FC = () => {
             </Card>
 
             {/* Delivery Info */}
-            <Card className="painterly-card p-6">
+            <Card className="painterly-card p-6" style={{ backgroundColor: '#F9F8F3' /* FROSTY WHITE */ }}>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
                   <MapPin className="w-6 h-6 text-white" />
@@ -377,7 +392,7 @@ const CommerceContact: React.FC = () => {
             </Card>
 
             {/* Process Info */}
-            <Card className="painterly-card p-6">
+            <Card className="painterly-card p-6" style={{ backgroundColor: '#F9F8F3' /* FROSTY WHITE */ }}>
               <div className="flex items-center space-x-4 mb-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
                   <Clock className="w-6 h-6 text-white" />
