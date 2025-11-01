@@ -210,10 +210,27 @@ const ArtisticFooter: React.FC = () => {
             <div className="flex items-center space-x-2 sm:space-x-4 flex-wrap justify-center">
               <span className="text-xs sm:text-sm" style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>Fait avec</span>
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" style={{ color: '#873F31' /* PIPE */ }} />
-              <span className="text-xs sm:text-sm" style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>par Digital Teams</span>
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#873F31' /* PIPE */ }}>
-                <span className="text-white text-xs sm:text-sm font-bold" style={{ fontFamily: "'Proza Libre', sans-serif" }}>DT</span>
-              </div>
+              <button
+                onClick={() => window.open('https://digital-team-8r4yhd9pg-amddah21s-projects.vercel.app/', '_blank', 'noopener,noreferrer')}
+                className="text-xs sm:text-sm hover:underline transition-all duration-300 cursor-pointer bg-transparent border-none outline-none focus:outline-none focus:ring-2 focus:ring-[#873F31]/50 rounded px-1 py-0.5"
+                style={{ 
+                  color: '#EBE2D1' /* PEACH CREAM */, 
+                  fontFamily: "'Proza Libre', sans-serif" 
+                }}
+                aria-label="Visit Digital Teams Portfolio"
+              >
+                par Digital Teams
+              </button>
+              <button
+                onClick={() => window.open('https://digital-team-8r4yhd9pg-amddah21s-projects.vercel.app/', '_blank', 'noopener,noreferrer')}
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0 cursor-pointer hover:scale-110 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-[#9333ea]/50"
+                style={{
+                  background: 'linear-gradient(135deg, #9333ea 0%, #3b82f6 100%)'
+                }}
+                aria-label="Visit Digital Teams Portfolio"
+              >
+                <span className="text-white text-[10px] sm:text-xs font-bold" style={{ fontFamily: 'sans-serif' }}>AB</span>
+              </button>
             </div>
           </div>
         </div>

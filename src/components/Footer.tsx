@@ -3,7 +3,7 @@ import Logo from "./Logo";
 
 const Footer = () => {
   const handleDigitalTeamsClick = () => {
-    window.open('https://digital-team.vercel.app/', '_blank', 'noopener,noreferrer');
+    window.open('https://digital-team-8r4yhd9pg-amddah21s-projects.vercel.app/', '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -97,11 +97,14 @@ const Footer = () => {
               aria-label="Visit Digital Teams Portfolio"
             >
               <span>Fait avec ✨ par Digital Teams</span>
-              <img 
-                src="digitaj.jpg" 
-                alt="Digital Team Logo" 
-                className="w-5 h-5"
-              />
+              <div 
+                className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{
+                  background: 'linear-gradient(135deg, #9333ea 0%, #3b82f6 100%)'
+                }}
+              >
+                <span className="text-white text-xs font-bold" style={{ fontFamily: 'sans-serif' }}>AB</span>
+              </div>
             </button>
           </div>
         </div>
