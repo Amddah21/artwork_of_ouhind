@@ -50,7 +50,7 @@ const ArtisticFooter: React.FC = () => {
     {
       icon: MapPin,
       label: 'Adresse',
-      value: 'BP 2595 RABAT CENTRAL/RABAT',
+      value: 'Localisation exacte',
       href: '#'
     }
   ];
@@ -139,6 +139,42 @@ const ArtisticFooter: React.FC = () => {
             <div className="space-y-4 sm:space-y-5 lg:space-y-6">
               {contactInfo.map((contact) => {
                 const IconComponent = contact.icon;
+                // Special handling for address with map button
+                if (contact.label === 'Adresse') {
+                  return (
+                    <div key={contact.label} className="flex items-start space-x-3 sm:space-x-4">
+                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: 'rgba(135, 63, 49, 0.2)' /* PIPE with opacity */ }}>
+                        <IconComponent className="w-5 h-5" style={{ color: '#873F31' /* PIPE */ }} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs sm:text-sm mb-1" style={{ color: '#EBE2D1' /* PEACH CREAM */, fontFamily: "'Proza Libre', sans-serif" }}>{contact.label}</p>
+                        <p className="text-sm sm:text-base break-words mb-2" style={{ 
+                          color: '#F9F8F3' /* FROSTY WHITE */,
+                          fontFamily: "'Proza Libre', sans-serif"
+                        }}>
+                          {contact.value}
+                        </p>
+                        <button
+                          onClick={() => {
+                            // Convert coordinates to decimal: 34°01'15.8"N 6°50'00.9"W = 34.0210556, -6.8335833
+                            const googleMapsUrl = `https://www.google.com/maps?q=34.0210556,-6.8335833`;
+                            window.open(googleMapsUrl, '_blank');
+                          }}
+                          className="text-xs sm:text-sm px-3 py-1.5 rounded transition-all duration-300 hover:opacity-80"
+                          style={{ 
+                            backgroundColor: '#873F31' /* PIPE */,
+                            color: '#F9F8F3' /* FROSTY WHITE */,
+                            fontFamily: "'Proza Libre', sans-serif",
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          📍 Ouvrir dans Google Maps
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
                 return (
                   <div key={contact.label} className="flex items-start space-x-3 sm:space-x-4">
                     <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: 'rgba(135, 63, 49, 0.2)' /* PIPE with opacity */ }}>

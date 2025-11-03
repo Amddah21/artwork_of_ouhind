@@ -161,103 +161,33 @@ const CommerceContact: React.FC = () => {
             <Card className="painterly-card p-6" style={{ backgroundColor: '#F9F8F3' /* FROSTY WHITE */ }}>
               <div className="space-y-4">
                 
-                <div 
-                  className="flex items-center space-x-4 cursor-pointer p-3 rounded-lg transition-all duration-300"
-                  style={{ backgroundColor: '#EBE2D1' /* PEACH CREAM */ }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9F8F3'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#EBE2D1'}
-                  onClick={() => {
-                    const address = "BP 2595 RABAT CENTRAL/RABAT";
-                    const encodedAddress = encodeURIComponent(address);
-                    
-                    // Créer un modal personnalisé pour choisir l'application
-                    const modal = document.createElement('div');
-                    modal.style.cssText = `
-                      position: fixed;
-                      top: 0;
-                      left: 0;
-                      width: 100%;
-                      height: 100%;
-                      background: rgba(0,0,0,0.5);
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      z-index: 9999;
-                    `;
-                    
-                    const modalContent = document.createElement('div');
-                    modalContent.style.cssText = `
-                      background: white;
-                      padding: 30px;
-                      border-radius: 12px;
-                      text-align: center;
-                      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                      max-width: 400px;
-                      width: 90%;
-                    `;
-                    
-                    modalContent.innerHTML = `
-                      <h3 style="margin-bottom: 20px; color: #333; font-size: 18px;">Choisissez votre application de navigation</h3>
-                      <p style="margin-bottom: 25px; color: #666; font-size: 14px;">BP 2595 RABAT CENTRAL/RABAT</p>
-                      <div style="display: flex; gap: 15px; justify-content: center;">
-                        <button id="googleMapsBtn" style="
-                          background: #4285f4;
-                          color: white;
-                          border: none;
-                          padding: 12px 24px;
-                          border-radius: 8px;
-                          cursor: pointer;
-                          font-size: 14px;
-                          font-weight: 500;
-                        ">Google Maps</button>
-                        <button id="wazeBtn" style="
-                          background: #33ccff;
-                          color: white;
-                          border: none;
-                          padding: 12px 24px;
-                          border-radius: 8px;
-                          cursor: pointer;
-                          font-size: 14px;
-                          font-weight: 500;
-                        ">Waze</button>
-                      </div>
-                    `;
-                    
-                    modal.appendChild(modalContent);
-                    document.body.appendChild(modal);
-                    
-                    // Google Maps button
-                    document.getElementById('googleMapsBtn').onclick = () => {
-                      const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
-                      window.open(googleMapsUrl, '_blank');
-                      document.body.removeChild(modal);
-                    };
-                    
-                    // Waze button
-                    document.getElementById('wazeBtn').onclick = () => {
-                      const wazeUrl = `https://waze.com/ul?q=${encodedAddress}&navigate=yes`;
-                      window.open(wazeUrl, '_blank');
-                      document.body.removeChild(modal);
-                    };
-                    
-                    // Close modal when clicking outside
-                    modal.onclick = (e) => {
-                      if (e.target === modal) {
-                        document.body.removeChild(modal);
-                      }
-                    };
-                  }}
-                >
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+                <div className="flex items-start space-x-4 p-3 rounded-lg" style={{ backgroundColor: '#EBE2D1' /* PEACH CREAM */ }}>
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
-                  <div>
-                    <h4 className="text-lg font-semibold font-body" style={{ color: 'hsl(240, 10%, 15%)' }}>
+                  <div className="flex-1">
+                    <h4 className="text-lg font-semibold font-body mb-2" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>
                       Adresse
                     </h4>
-                    <p className="text-sm font-body hover:text-blue-600 transition-colors" style={{ color: 'hsl(240, 10%, 35%)' }}>
-                      BP 2595 RABAT CENTRAL/RABAT
+                    <p className="text-sm font-body mb-3" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>
+                      Localisation exacte
                     </p>
+                    <Button
+                      onClick={() => {
+                        // Convert coordinates to decimal: 34°01'15.8"N 6°50'00.9"W = 34.0210556, -6.8335833
+                        const googleMapsUrl = `https://www.google.com/maps?q=34.0210556,-6.8335833`;
+                        window.open(googleMapsUrl, '_blank');
+                      }}
+                      className="w-full sm:w-auto"
+                      style={{ 
+                        backgroundColor: '#873F31',
+                        color: '#F9F8F3',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
+                    >
+                      <MapPin className="w-4 h-4 mr-2" />
+                      Ouvrir dans Google Maps
+                    </Button>
                   </div>
                 </div>
 
@@ -384,7 +314,7 @@ const CommerceContact: React.FC = () => {
               </div>
               <ul className="space-y-2 text-sm font-body" style={{ color: 'hsl(240, 10%, 35%)' }}>
                 <li>• Retrait possible à l'atelier (Rabat)</li>
-                <li>• BP 2595 RABAT CENTRAL/RABAT</li>
+                <li>• Localisation exacte</li>
                 <li>• Livraison au Maroc</li>
                 <li>• Frais de livraison à discuter</li>
                 <li>• Emballage professionnel inclus</li>

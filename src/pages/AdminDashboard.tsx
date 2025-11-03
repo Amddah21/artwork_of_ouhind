@@ -739,37 +739,54 @@ const AdminDashboard: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {/* Title */}
                   <div className="space-y-2">
-                    <Label htmlFor="title">Titre *</Label>
+                    <Label htmlFor="title" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>Titre *</Label>
                     <Input
                       id="title"
                       value={formData.title}
                       onChange={(e) => setFormData({...formData, title: e.target.value})}
                       placeholder="Nom de l'œuvre"
                       required
+                      style={{ 
+                        backgroundColor: '#F9F8F3',
+                        color: '#4B4A46',
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
                     />
                   </div>
 
                   {/* Artist Name */}
                   <div className="space-y-2">
-                    <Label htmlFor="artist_name">Nom de l'Artiste</Label>
+                    <Label htmlFor="artist_name" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>Nom de l'Artiste</Label>
                     <Input
                       id="artist_name"
                       value={formData.artist_name}
                       onChange={(e) => setFormData({...formData, artist_name: e.target.value})}
                       placeholder="Nom de l'artiste"
+                      style={{ 
+                        backgroundColor: '#F9F8F3',
+                        color: '#4B4A46',
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
                     />
                   </div>
 
                   {/* Category */}
                   <div className="space-y-2">
-                    <Label htmlFor="category">Catégorie *</Label>
+                    <Label htmlFor="category" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>Catégorie *</Label>
                     <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
-                      <SelectTrigger>
+                      <SelectTrigger style={{ 
+                        backgroundColor: '#F9F8F3',
+                        color: '#4B4A46',
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}>
                         <SelectValue placeholder="Sélectionner une catégorie" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent style={{ backgroundColor: '#F9F8F3', borderColor: 'rgba(122, 119, 113, 0.3)' }}>
                         {categories.map(cat => (
-                          <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                          <SelectItem key={cat} value={cat} style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>{cat}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -777,14 +794,19 @@ const AdminDashboard: React.FC = () => {
 
                   {/* Technique */}
                   <div className="space-y-2">
-                    <Label htmlFor="technique">Technique</Label>
+                    <Label htmlFor="technique" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>Technique</Label>
                     <Select value={formData.technique} onValueChange={(value) => setFormData({...formData, technique: value})}>
-                      <SelectTrigger>
+                      <SelectTrigger style={{ 
+                        backgroundColor: '#F9F8F3',
+                        color: '#4B4A46',
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}>
                         <SelectValue placeholder="Sélectionner une technique" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent style={{ backgroundColor: '#F9F8F3', borderColor: 'rgba(122, 119, 113, 0.3)' }}>
                         {techniques.map(tech => (
-                          <SelectItem key={tech} value={tech}>{tech}</SelectItem>
+                          <SelectItem key={tech} value={tech} style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>{tech}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -792,18 +814,24 @@ const AdminDashboard: React.FC = () => {
 
                   {/* Size */}
                   <div className="space-y-2">
-                    <Label htmlFor="size">Dimensions</Label>
+                    <Label htmlFor="size" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>Dimensions</Label>
                     <Input
                       id="size"
                       value={formData.size}
                       onChange={(e) => setFormData({...formData, size: e.target.value})}
                       placeholder="ex: 80x60 cm"
+                      style={{ 
+                        backgroundColor: '#F9F8F3',
+                        color: '#4B4A46',
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
                     />
                   </div>
 
                   {/* Year */}
                   <div className="space-y-2">
-                    <Label htmlFor="year">Année</Label>
+                    <Label htmlFor="year" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>Année</Label>
                     <Input
                       id="year"
                       type="number"
@@ -811,17 +839,29 @@ const AdminDashboard: React.FC = () => {
                       onChange={(e) => setFormData({...formData, year: parseInt(e.target.value) || new Date().getFullYear()})}
                       min="1900"
                       max={new Date().getFullYear()}
+                      style={{ 
+                        backgroundColor: '#F9F8F3',
+                        color: '#4B4A46',
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
                     />
                   </div>
 
                   {/* Image URL */}
                   <div className="space-y-2">
-                    <Label htmlFor="image">URL de l'image</Label>
+                    <Label htmlFor="image" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>URL de l'image</Label>
                     <Input
                       id="image"
                       value={formData.image_url}
                       onChange={(e) => setFormData({...formData, image_url: e.target.value})}
                       placeholder="/artwork1.JPG"
+                      style={{ 
+                        backgroundColor: '#F9F8F3',
+                        color: '#4B4A46',
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
                     />
                   </div>
                 </div>
@@ -829,8 +869,8 @@ const AdminDashboard: React.FC = () => {
                 {/* Multiple Image Upload Section */}
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <Label className="text-base font-semibold text-slate-700">📸 Images de l'œuvre</Label>
-                    <div className="text-xs text-slate-500 bg-blue-50 px-2 py-1 rounded">
+                    <Label className="text-base font-semibold" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>📸 Images de l'œuvre</Label>
+                    <div className="text-xs px-2 py-1 rounded" style={{ color: '#4B4A46', backgroundColor: '#EBE2D1', fontFamily: "'Proza Libre', sans-serif" }}>
                       💡 Astuce: Vous pouvez uploader jusqu'à 20 images (jusqu'à 50MB chacune)
                     </div>
                   </div>
@@ -873,6 +913,12 @@ const AdminDashboard: React.FC = () => {
                               onClick={() => fileInputRef.current?.click()}
                               disabled={isUploading}
                               className="mx-auto"
+                              style={{ 
+                                backgroundColor: '#F9F8F3',
+                                color: '#4B4A46',
+                                borderColor: 'rgba(122, 119, 113, 0.3)',
+                                fontFamily: "'Proza Libre', sans-serif"
+                              }}
                             >
                               {isUploading ? (
                                 <>
@@ -881,7 +927,7 @@ const AdminDashboard: React.FC = () => {
                                 </>
                               ) : (
                                 <>
-                                  <Plus className="h-4 w-4 mr-2" />
+                                  <Plus className="h-4 w-4 mr-2" style={{ color: '#4B4A46' }} />
                                   Ajouter plus d'images
                                 </>
                               )}
@@ -904,10 +950,10 @@ const AdminDashboard: React.FC = () => {
                             <Grid3X3 className="h-8 w-8 text-yellow-600" />
                           </div>
                           <div>
-                            <p className="text-sm text-slate-600 mb-2">
+                            <p className="text-sm mb-2" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>
                               Glissez-déposez des images ou cliquez pour sélectionner plusieurs fichiers
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs" style={{ color: '#717871', fontFamily: "'Proza Libre', sans-serif" }}>
                               PNG, JPG, JPEG jusqu'à 50MB chacun. Maximum 20 images par œuvre.
                             </p>
                           </div>
@@ -918,6 +964,12 @@ const AdminDashboard: React.FC = () => {
                               onClick={() => fileInputRef.current?.click()}
                               disabled={isUploading}
                               className="mx-auto"
+                              style={{ 
+                                backgroundColor: '#F9F8F3',
+                                color: '#4B4A46',
+                                borderColor: 'rgba(122, 119, 113, 0.3)',
+                                fontFamily: "'Proza Libre', sans-serif"
+                              }}
                             >
                               {isUploading ? (
                                 <>
@@ -926,7 +978,7 @@ const AdminDashboard: React.FC = () => {
                                 </>
                               ) : (
                                 <>
-                                  <Upload className="h-4 w-4 mr-2" />
+                                  <Upload className="h-4 w-4 mr-2" style={{ color: '#4B4A46' }} />
                                   Choisir des images
                                 </>
                               )}
@@ -959,7 +1011,7 @@ const AdminDashboard: React.FC = () => {
 
                 {/* Description */}
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description *</Label>
+                  <Label htmlFor="description" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>Description *</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
@@ -967,28 +1019,46 @@ const AdminDashboard: React.FC = () => {
                     placeholder="Description détaillée de l'œuvre..."
                     rows={4}
                     required
+                    style={{ 
+                      backgroundColor: '#F9F8F3',
+                      color: '#4B4A46',
+                      borderColor: 'rgba(122, 119, 113, 0.3)',
+                      fontFamily: "'Proza Libre', sans-serif"
+                    }}
                   />
                 </div>
 
                 {/* Tags and Materials */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="tags">Tags</Label>
+                    <Label htmlFor="tags" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>Tags</Label>
                     <Input
                       id="tags"
                       value={formData.tags}
                       onChange={(e) => setFormData({...formData, tags: e.target.value})}
                       placeholder="Séparés par des virgules"
+                      style={{ 
+                        backgroundColor: '#F9F8F3',
+                        color: '#4B4A46',
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="materials">Matériaux</Label>
+                    <Label htmlFor="materials" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>Matériaux</Label>
                     <Input
                       id="materials"
                       value={formData.materials}
                       onChange={(e) => setFormData({...formData, materials: e.target.value})}
                       placeholder="Séparés par des virgules"
+                      style={{ 
+                        backgroundColor: '#F9F8F3',
+                        color: '#4B4A46',
+                        borderColor: 'rgba(122, 119, 113, 0.3)',
+                        fontFamily: "'Proza Libre', sans-serif"
+                      }}
                     />
                   </div>
                 </div>
@@ -1001,7 +1071,7 @@ const AdminDashboard: React.FC = () => {
                       checked={formData.available}
                       onCheckedChange={(checked) => setFormData({...formData, available: checked})}
                     />
-                    <Label htmlFor="available">Disponible</Label>
+                    <Label htmlFor="available" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>Disponible</Label>
                   </div>
 
                   <div className="flex items-center space-x-2">
@@ -1010,7 +1080,7 @@ const AdminDashboard: React.FC = () => {
                       checked={formData.featured}
                       onCheckedChange={(checked) => setFormData({...formData, featured: checked})}
                     />
-                    <Label htmlFor="featured">En vedette</Label>
+                    <Label htmlFor="featured" style={{ color: '#4B4A46', fontFamily: "'Proza Libre', sans-serif" }}>En vedette</Label>
                   </div>
                 </div>
 
